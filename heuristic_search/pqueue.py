@@ -57,7 +57,7 @@ class PriorityQueue:
         
         for (estimated_node, valid) in self.heap:
         
-            if valid and estimated_node[-1].state[0] == state[0]:
+            if valid and estimated_node[-1].state == state:
                 return estimated_node
         
         return None

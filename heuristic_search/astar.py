@@ -12,13 +12,13 @@ def astar(problem):
     front = PriorityQueue()  
 
     # definisce il nodo di partenza del grafo
-    start_node = problem.start_node # precedentemente Node(problem.start_state)
+    start_node =  Node(problem.start_state)
 
     # in primo luogo, definisce i percorsi che dal nodo di partenza porta agli altri nodi figli.
     # Di questi percorsi ne stima un costo in base alla funzione estimate_cost.
     # Infine definisce una tupla in cui sono presenti la lista dei costi stimati dei percorsi calcolati
     # e il nodo iniziale definito in precedenza
-    estimated_node = (problem.estimate_cost(start_node.path()), start_node)
+    estimated_node = (problem.estimate_cost(start_node.path()), start_node) 
 
     # inserisce all'interno della coda dei percorsi da valutare i percorsi stimati
     front.put(estimated_node)

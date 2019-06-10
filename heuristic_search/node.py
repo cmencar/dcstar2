@@ -8,7 +8,6 @@ class Node:
 
         self.state = state
         self.parent = parent_node
-        self.adiacent_nodes = []
 
 
     # La funzione path ritorna i percorsi inerenti ai nodi figli partendo dal 
@@ -22,34 +21,17 @@ class Node:
             return [self.state]
         else:
             return self.parent.path() + [self.state]
-        
-        
-    # Metodo per l'aggiunta dei nodi adiacenti per un certo nodo
-    def add_adiacent (self, adiacent):
-        
-        for node in adiacent:
-            self.adiacent_nodes.append(node)
-            
-            
-    # Override del metodo per l'operatore di "minore di"
-    # Ritorna true se il peso della distanza dal nodo è minore della distanza
-    # del secondo nodo, false altrimenti
-    def __lt__(self, other):
+       
+    def __lt__ (self, other):
         
         return self.state[1] < other.state[1]
     
-    
-    # Override del metodo per l'operatore di "uguale a"
-    # Ritorna true se sono uguali, false altrimenti
-    def __eq__ (self, other):
+    def __eq__(self, other):
         
         if other is None:
             return False
-        
         if not isinstance(other, Node):
             return False
-        
-        return self.state[1] == other.state[1]
-        
+        return self.state[1] == other.state[1]    
     
     

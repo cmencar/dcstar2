@@ -3,7 +3,6 @@ sys.path.append('../')
 
 from heuristic_search import astar
 from heuristic_search.Problem import Problem
-import numpy as np
 
 
 states = ["Milano", "Torino", "Udine", "Treviso"]
