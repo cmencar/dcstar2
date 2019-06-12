@@ -5,6 +5,7 @@ sys.path.append('../')
 from abc import ABC, abstractmethod
 
 
+# Classe astratta del problema
 class Problem (ABC):
   
     unique_successors = False
