@@ -5,7 +5,7 @@ from deap import creator, base, tools, algorithms
 from genetic_algorithm.GeneticEvolution import GeneticEvolution
 
 # Classe per l'uso della soluzione genetica inerente
-# all'algoritmo A*
+# all'algoritmo A* usufruendo della libreria DEAP
 class DeapGeneticGuide(GeneticEvolution):
     
     # definizione del costruttore della classe
@@ -17,7 +17,13 @@ class DeapGeneticGuide(GeneticEvolution):
     # il numero di individui selezionati nella fase di selezione
     # degli individui migliori (selezione per torneo)
     def __init__(self, evaluate_fun, generate_fun, individual_size, 
-                 attribute_mutation_rate, selected_individuals):
+                 mutation_rate, mating_rate, selected_individuals):
+        
+        # definizione della probabitlià di mutazione dell'individuo
+        self.mutation_rate = mutation_rate
+        
+        # definizione della probabitlià di accoppiamento dell'individuo
+        self.mating_rate = mating_rate
         
         # creazione dell'oggetto per la definizione del massmo valore del fitness
         creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -38,15 +44,13 @@ class DeapGeneticGuide(GeneticEvolution):
         self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 
         # definizione del metodo di accoppiamento tra individui definendo 
-        # un crossover a due tagli tra gli individui
-        #self.toolbox.register("mate", tools.cxTwoPoints)
-        #self.toolbox.register("mate", tools.cxOrdered)
-        self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb = 0.0)
+        # un uniform partially matched crossover sugli individui.
+        self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb = 0)
         
         # definizione del metodo di mutazione dell'individuo figlio
         # tramite un rimescolamento degli attributi atomici, con una
         # percentuale di mutazione pari a mutation_rate
-        self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb = attribute_mutation_rate)
+        self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb = mutation_rate)
         
         # definizione del metodo di selezione degli individui tramite 
         # una competizione formata tra un numero di individui pari a
@@ -71,7 +75,7 @@ class DeapGeneticGuide(GeneticEvolution):
 
     # Metodo per la generazione e la restituzione dei migliori individui
     # secondo l'algoritmo genetico
-    def evolve(self, population_size, generations, mutation_rate, mating_rate, selected_best):
+    def evolve(self, population_size, generations, selected_best):
         
         # definisce l'insieme degli indivdui invocando il metodo population.
         # Tale metodo crea un insieme di individui la cui quantità è pari
@@ -86,9 +90,13 @@ class DeapGeneticGuide(GeneticEvolution):
             # di varAnd, in cui vengono passati la popolazione degli individui,
             # la probabilità di accoppiamento e dimutazione dell'individuo.
             # Inoltre, utilizza l'insieme delle funzioni di servizio, definite
-            # in precedenza nel toolbox per effettuare il crossover,
-            # la mutazione, la selezione e la valutazione
-            offspring = algorithms.varAnd(population, self.toolbox, mating_rate, mutation_rate)
+            # in precedenza nel toolbox per effettuare il crossover e
+            # la mutazione (la valutazione e la selezione vengono effettuate
+            # con le funzioni passate al costruttore)
+            offspring = algorithms.varAnd(population, 
+                                          self.toolbox, 
+                                          self.mating_rate, 
+                                          self.mutation_rate)
             
             # per ogni figlio nella progenie si valuta se possiede dei geni
             # ripetuti che possono compromettere il risultato finale
@@ -114,7 +122,7 @@ class DeapGeneticGuide(GeneticEvolution):
                 # il figlio rivalutato sarà parte della progenie da
                 # analizzare nella nuova generazione
                 son = revaluted_son
-            
+                
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
             fitness = self.toolbox.map(self.toolbox.evaluate, offspring)
@@ -130,10 +138,11 @@ class DeapGeneticGuide(GeneticEvolution):
             # suun numero pari a selected_individual individui
             population = self.toolbox.select(offspring, k = len(population))
             
+        
         # Dopo il completamento di tutte le generazioni vengono selezionati
         # un insieme di individui, il cui numero è pari a selected_best,
         # la cui fitness è in assoluto la migliore della popolazione
-        return tools.selBest(population, selected_best)
+        return tools.selBest(population, selected_best, fit_attr="fitness.value")
         
         
 
