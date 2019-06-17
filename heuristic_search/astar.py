@@ -5,6 +5,9 @@ from heuristic_search.node import Node
 # da uno stato iniziale ad uno finale
 def astar(problem):
 
+    # variabile per la valutazione dei rami valutati dall'algoritmo
+    branches_taken = 0
+    
     # la coda con priorità per inserire i percorsi gia valutati
     closed = PriorityQueue()
 
@@ -25,6 +28,9 @@ def astar(problem):
 
     # finchè nella coda dei percorsi da valutare sarà presente almeno un percorso
     while not front.empty():
+        
+        # incremento del contatore dei rami valutati
+        branches_taken = branches_taken + 1
 
         # si acquisisce una tupla relativa al nodo corrente che si sta analizzando
         # momentaneamente e il costo stimato del percorso in cui il nodo
@@ -47,7 +53,7 @@ def astar(problem):
 
             # allora si restituisce il percorso del nodo corrente
             # poiche è quello giusto
-            return current_node.path()
+            return (current_node.path(), branches_taken)
 
         else:
             
@@ -124,4 +130,4 @@ def astar(problem):
                     front.put((path_estimated_cost, successor_node))
 
     # nessun risultato trovato
-    return None 
+    return (None, branches_taken)
