@@ -4,7 +4,7 @@ sys.path.append('../')
 
 from heuristic_search.Problem import Problem
 from heuristic_search.astar import astar
-from DeapGeneticGuideGraphProblem import DeapGeneticGuideGraphProblem
+from genetic_algorithm.DeapGeneticGuideGraphProblem import DeapGeneticGuideGraphProblem
 from GraphProblem import GraphProblem
 
 state_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"]

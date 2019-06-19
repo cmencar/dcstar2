@@ -6,6 +6,10 @@ from heuristic_search.Problem import Problem
 from heuristic_search.astar import astar
 from DeapGeneticGuideGraphProblem import DeapGeneticGuideGraphProblem
 
+
+# TEST EFFETTUATO SULL'USO DEL GRAPHPROBLEM 
+# PER L'ALGORITMO A*
+
 state_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"]
 
 adiacent_list = {
@@ -40,16 +44,9 @@ distance_list = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         ]
 
-# TEST EFFETTUATO SULL'USO DEL GRAPHPROBLEM 
-# PER L'ALGORITMO A*
 
 problem:Problem = DeapGeneticGuideGraphProblem(state_list, adiacent_list, distance_list, "A", "L")
 problem.initializing_genetic_guide(100, 10, 0.2, 0.5, 5, 1)
 solution = astar(problem)
 
-print("La soluzione del percorso corrente")
-for state in solution[0]:
-    print(state[0])
-
-print("Numero di rami valutati per raggiungere la soluzione")
-print(solution[1])
+print(solution)

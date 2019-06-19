@@ -7,8 +7,51 @@ from genetic_algorithm.GeneticEvolution import GeneticEvolution
 from genetic_algorithm.DeapGeneticGuide import DeapGeneticGuide
 from genetic_algorithm.GeneticGuideProblem import GeneticGuideProblem
 from genetic_algorithm.SecondLevelHeuristic import SecondLevelHeuristic
-from genetic_algorithm.levenshtein import levenshtein  
-from GraphNode import GraphNode
+from genetic_algorithm.levenshtein import levenshtein
+from heuristic_search.node import Node
+
+
+# Classe per la definizione di un nodo
+# utile all'interno del grafo
+class GraphNode(Node):
+    
+    # Costruttore della classe
+    def __init__(self, state, parent_node=None):
+
+        self.state = state
+        self.parent = parent_node
+        self.adiacent_nodes = []
+        
+    # Metodo per l'acquisizione del percorso del nodo
+    def path(self):
+
+        if self.parent is None:
+            return [self.state]
+        else:
+            return self.parent.path() + [self.state]
+        
+    # Metodo per l'acquisizione degli adiacenti del nodo
+    def add_adiacent (self, adiacent):
+        
+        for node in adiacent:
+            self.adiacent_nodes.append(node)
+        
+    # Metodo di servizio per la valutazione "minore di"
+    def __lt__ (self, other):
+        
+        return self.state[1] < other.state[1]
+    
+    # Metodo di servizio per la valutazione "uguale a"
+    def __eq__(self, other):
+        
+        if other is None:
+            return False
+        if not isinstance(other, GraphNode):
+            return False
+        return self.state[1] == other.state[1]
+
+# ----------------------------------------------------------------------------  
+
 
 
 # Classe per la definizione di un individuo utilizzato per il confronto
@@ -156,18 +199,6 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
         self.connect_nodes (self.adiacent_list)
     
     
-    # Metodo per l'inizializzazione della guida genentica
-    def initializing_genetic_guide (self, population_size, 
-                  generations, mutation_rate, mating_rate, 
-                  selected_for_tournament, selected_best):
-        
-        # definisce il generatore dell'euristica di secondo livello
-        self.slh_generator = self.create_second_level_heuristic(population_size, 
-                generations, mutation_rate, mating_rate, 
-                selected_for_tournament, selected_best)
-        
-    
-    
     # Metodo per il calcolo del costo del percorso
     def estimate_cost (self, path):
         
@@ -278,34 +309,23 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
             
         # restituzione della lista dei successori
         return successors
-    
 
-    # Metodo per la creazione del grafo definendo i 
-    # collegamenti tra i nodi
-    def connect_nodes (self, adiacent_list):
+
+    # Metodo per l'inizializzazione della guida genetica
+    # Vengono passati in input valori utili all'inizializzazione
+    # della guida genetica, quali le generazioni totali di esecuzione,
+    # la dimensione della popolazione, il grado di mutazione, ecc.
+    def initializing_genetic_guide (self, population_size, generations, 
+                mutation_rate, mating_rate, selected_for_tournament, selected_best):
         
-        # per ogni stato passato alla classe Problem in
-        # fase di creazione
-        for state in self.state_list:
-            
-            # definizione di un nuova istanza di Node
-            node = GraphNode(state)
-            
-            # aggiunta dell'istanza alla lista dei nodi
-            self.node_list.append(node)
-  
-        # scandendo nuovamente la lista degli stati 
-        for state in self.state_list:
-            
-            # per ogni nodo inserito nella lista
-            for node in self.node_list:
-                
-                # se lo stato del nodo è uguale allo stato analizzato
-                if node.state == state:
-                
-                    # aggiunta di uno stato adiacente al nodo preso in esame
-                    node.add_adiacent(adiacent_list[state])
-
+        # definisce il generatore dell'euristica di secondo livello
+        self.slh_generator = self.create_second_level_heuristic(population_size,
+                                                                generations,
+                                                                mutation_rate,
+                                                                mating_rate,
+                                                                selected_for_tournament,
+                                                                selected_best)   
+    
 
     # Metodo per definire l'euristica di secondo
     # livello inerente al Problem
@@ -379,4 +399,30 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
         
         return string_individual
 
+
+    # Metodo per la creazione del grafo definendo i 
+    # collegamenti tra i nodi
+    def connect_nodes (self, adiacent_list):
+        
+        # per ogni stato passato alla classe Problem in
+        # fase di creazione
+        for state in self.state_list:
+            
+            # definizione di un nuova istanza di Node
+            node = GraphNode(state)
+            
+            # aggiunta dell'istanza alla lista dei nodi
+            self.node_list.append(node)
+  
+        # scandendo nuovamente la lista degli stati 
+        for state in self.state_list:
+            
+            # per ogni nodo inserito nella lista
+            for node in self.node_list:
+                
+                # se lo stato del nodo è uguale allo stato analizzato
+                if node.state == state:
+                
+                    # aggiunta di uno stato adiacente al nodo preso in esame
+                    node.add_adiacent(adiacent_list[state])
     

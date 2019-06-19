@@ -1,3 +1,0 @@
-Test_01 = test su un Problem generico
-Test_02 = test su un Problem dettagliato (GraphProblem)
-Test_03 = test su DeapGeneticGuide

@@ -49,17 +49,39 @@ class GeneticGuideProblem (Problem):
         pass
         
     
+    # Metodo per convertire il percorso di un ramo
+    # in una lista di stati inerenti al Problem.
+    # Ritorna il percorso in una lista di stati
     @abstractmethod
     def stringfy_path (self, path):
         pass
     
     
+    # Metodo per convertire l'individuo ricavato
+    # dall'algoritmo genentico in una lista di stati
+    # inerenti al Problem.
+    # Ritorna l'individuo in una lista di stati
     @abstractmethod
     def stringfy_individual (self, individual):
         pass
     
     
+    # Metodo per definire l'euristica di secondo
+    # livello inerente al Problem
+    # Ritorna un oggetto SecondLevelHeuristic in cui
+    # sono presenti l'individuo e la funzione
+    # valutatrice della seconda euristica (valutazione
+    # che viene effettuata dalla funzione g)
     @abstractmethod
     def create_second_level_heuristic (self):
         pass
-    
+
+
+    # Metodo per l'inizializzazione della guida genentica
+    # Vengono passati in input valori utili all'inizializzazione
+    # della guida genetica, quali le generazioni totali di esecuzione,
+    # la dimensione della popolazione, il grado di mutazione, ecc
+    @abstractmethod
+    def initializing_genetic_guide (self, population_size, generations, 
+                mutation_rate, mating_rate, selected_for_tournament, selected_best):
+        pass
