@@ -4,9 +4,9 @@ sys.path.append('../')
 
 import random
 from genetic_algorithm.GeneticEvolution import GeneticEvolution
-from genetic_algorithm.DeapGeneticGuide import DeapGeneticGuide
 from genetic_algorithm.GeneticGuideProblem import GeneticGuideProblem
 from genetic_algorithm.SecondLevelHeuristic import SecondLevelHeuristic
+from genetic_algorithm.UGPGeneticGuide import UGPGeneticGuide
 from genetic_algorithm.levenshtein import levenshtein
 from heuristic_search.node import Node
 
@@ -51,118 +51,11 @@ class GraphNode(Node):
         return self.state[1] == other.state[1]
 
 # ----------------------------------------------------------------------------  
-
-
-
-# Classe per la definizione di un individuo utilizzato per il confronto
-# e la valutazione della euristica di secondo livello.
-# L'individuo viene creato utilizzando la classe 
-# DeapGeneticGuide
-class Individual():
-    
-    # costruttore della classe
-    def __init__ (self, individual_dim, population_size, 
-                  generations, mutation_rate, mating_rate, 
-                  selected_for_tournament, selected_best):
-        
-        # definizione del genoma (l'individuo vero e proprio)
-        self.genome = None
-        
-        # inizializzazione dei numeri pseudocasuali
-        random.seed()
-        
-        # creazione dell'individuo
-        self.create(individual_dim, 
-                    population_size, 
-                    generations, 
-                    mutation_rate,
-                    mating_rate, 
-                    selected_for_tournament, 
-                    selected_best)
-    
-    
-    # Metodo di generazione dell'individuo
-    # La funzione viene acquisita ed utilizzata
-    # all'interno dell'istanza della classe DeapGeneticGuide
-    def generate(self, individual_class, individual_dim):
-
-        # definizione del genoma dell'individuo
-        genome = list()
-    
-        # settaggio iniziale del genoma con
-        # i geni tutti a zero
-        for i in range (individual_dim):
-            genome.append(0)
-    
-        # definizione di un numero casuale di geni impostati
-        # secondo la sequenza 
-        random_set_genes = random.randint(2, individual_dim)
-    
-        # per ogni elemento nella sequenza 
-        for sequence_number in range(random_set_genes):
-    
-             # definizione di un indice casuale dove inserire
-             # il gene della sequenza
-            random_index = random.randint(0, individual_dim-1)
-    
-            # se all'indice determinato esiste gia un elemento 
-            # si definisce un nuovo indice
-            while genome[random_index] != 0:
-                random_index = random.randint(0, individual_dim-1)
-    
-            # definizione del valore del gene dell'individuo
-            # all'indice valutato
-            genome[random_index] = sequence_number
-    
-        # ritorna il genoma dal quale definire l'individuo
-        return individual_class(genome)
-
-    
-    # Funzione di valutazione dell'individuo
-    # La funzione viene acquisita ed utilizzata
-    # all'interno dell'istanza della classe DeapGeneticGuide
-    def evaluate(self, individual):
-    
-        # definizione della variabile di valutazione
-        valutation = 0 
-    
-        # per ogni attributo dell'individuo
-        for gene in individual:
-    
-            # se è diverso da zero aumenta la valutazione
-            if gene != 0:
-                valutation = valutation + 1
-    
-        # restituisce la valutazione finale
-        return valutation,
-    
-    
-    # Funzione per la creazione degli individui
-    # Restituisce il genome dell'individuo ottimali
-    def create(self, individual_dim, population_size, generations, 
-               mutation_rate, mating_rate, selected_for_tournament, 
-               selected_best):
-        
-        # definizione di un oggetto per la creazione della guida genetica
-        genetic_guide:GeneticEvolution = DeapGeneticGuide(self.evaluate,
-                                                          self.generate,
-                                                          individual_dim,
-                                                          mutation_rate,
-                                                          mating_rate,
-                                                          selected_for_tournament)
-        
-        # evoluzione e acquisizione dell'individuo migliore dalla guida genetica
-        self.genome = genetic_guide.evolve(population_size, 
-                                           generations, 
-                                           selected_best)[0]
-
-#----------------------------------------------------------------------------
-         
-
+       
     
 # Classe per la definizione di un Problem
 # inerente ad un grafo utilizzando la guida genetica
-class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
+class UGPGeneticGuideGraphProblem(GeneticGuideProblem):
     
     # Costruttore della classe Problem
     def __init__ (self, state_list, adiacent_list, distance_list, start_state, end_state):
@@ -333,16 +226,10 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
     # Vengono passati in input valori utili all'inizializzazione
     # della guida genetica, quali le generazioni totali di esecuzione,
     # la dimensione della popolazione, il grado di mutazione, ecc.
-    def initializing_genetic_guide (self, population_size, generations, 
-                mutation_rate, mating_rate, selected_for_tournament, selected_best):
+    def initializing_genetic_guide (self, file_path):
         
         # definisce il generatore dell'euristica di secondo livello
-        self.second_level_heuristic_gen = self.create_second_level_heuristic(population_size,
-                                                                generations,
-                                                                mutation_rate,
-                                                                mating_rate,
-                                                                selected_for_tournament,
-                                                                selected_best)   
+        self.second_level_heuristic_gen = self.create_second_level_heuristic(file_path)   
     
 
     # Metodo per definire l'euristica di secondo
@@ -351,24 +238,17 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
     # sono presenti l'individuo e la funzione
     # valutatrice della seconda euristica (valutazione
     # che viene effettuata dalla funzione g)
-    def create_second_level_heuristic (self, population_size, 
-                  generations, mutation_rate, mating_rate, 
-                  selected_for_tournament, selected_best):
+    def create_second_level_heuristic (self, file_path):
         
         # creazione di una nuova istanza dell'individuo
-        self.individual = Individual(len(self.state_list),
-                                     population_size, 
-                                     generations, 
-                                     mutation_rate, 
-                                     mating_rate, 
-                                     selected_for_tournament, 
-                                     selected_best)
+        self.individual = UGPGeneticGuide(file_path)
         
         # definizione dell'individuo come una stringa
-        # Il carattere vuoto è un inizializzatore della stringa.
-        # Essa non deve contenere un elemento riconducibile
-        # ad uno stato in quanto l'inizializzatore viene poi cancellato
-        string_individual = self.stringfy_individual(self.individual.genome, " ")
+        # Poiche, durante la creazione della classe UGPGeneticGuide
+        # viene effettuata la scrematura dei caratteri non voluti
+        # in questo caso viene acquisito direttamente il "genoma"
+        # dell'individuo
+        string_individual = self.individual.genome 
 
          # stampa della stringa valutata
         print("Evaluated individual: ", string_individual)
