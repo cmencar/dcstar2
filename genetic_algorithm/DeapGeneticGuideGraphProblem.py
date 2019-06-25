@@ -203,13 +203,13 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
     def estimate_cost (self, path):
         
         # valutazione del costo del percorso e della seconda euristica
-        (g, second_level_heuristic) = self.g(path)
+        g = self.g(path)
         
-        # valutazione della prima euristica
-        h = self.h(path)
+        # valutazione della prima e della seconda euristica
+        (h1, h2) = self.h(path)
         
         # ritorno del costo stimato
-        return g + (second_level_heuristic + h)
+        return (g + h1, h2)
     
     
     # Metodo per la restituzione della lunghezza del percorso
@@ -232,6 +232,40 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
                 # con la distanza dal nodo
                 path_length  = path_length + distance
         
+        # restituzione della lunghezza del percorso
+        return path_length
+
+    
+    # Metodo per la restituzione dell'euristica di primo
+    # livello del percorso passato
+    def h1(self, path):
+        
+        # se la lista delle distanze è None allora ritorna un valore arbritario
+        if self.distance_list is None:
+            return 0
+        
+        # altrimenti effettua una valutazione basata sulle distanze tra nodi
+        else:
+            
+            # definizione dello stato di partenza del percorso analizzato
+            start_state_index = self.state_list.index(path[-1][0])
+            
+            # definizione dello stato di fine del percorso analizzato
+            end_state_index = self.end_state.index(self.end_state)
+            
+            # valutazione dell'euristica di secondo livello semplicemente
+            # prendendo il valore della distanza tra lo stato di inizio
+            # e quello di fine del percorso
+            heuristic_cost = self.distance_list[start_state_index][end_state_index]
+            
+            # restituzione dell'euristica di primo livello
+            return heuristic_cost
+    
+    
+    # Metodo per la restituzione dell'euristica di secondo
+    # livello del percorso passato
+    def h2(self, path):
+        
         # estrazione della stringa dal percorso per valutare
         # l'euristica di secondo livello
         string_path = self.stringfy_path(path)
@@ -242,28 +276,12 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
         # confrontata (usando la funzione di euristica definita nel
         # costruttore, in questo caso l'algoritmi di Levenshtein)
         # con l'individuo generato dall'algoritmo genetico
-        second_level_heuristic = self.slh_generator.get(string_path)
+        second_level_heuristic = self.second_level_heuristic_gen.get(string_path)
         
         # Restituisce la lunghezza del percorso insieme
         # all'euristica di secondo livello
-        return path_length, second_level_heuristic
-
+        return second_level_heuristic
     
-    # Metodo per la restituzione dell'euristica
-    # del percorso
-    def h(self, path):
-        
-        # se la lista delle distanze è None allora ritorna un valore arbritario
-        if self.distance_list is None:
-            return 0
-        
-        else:
-            start_state_index = self.state_list.index(path[-1][0])
-            end_state_index = self.end_state.index(self.end_state)
-            
-            heuristic_cost = self.distance_list[start_state_index][end_state_index]
-            
-            return heuristic_cost
     
     
     # Metodo per definire se lo stato analizzato è
@@ -319,7 +337,7 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
                 mutation_rate, mating_rate, selected_for_tournament, selected_best):
         
         # definisce il generatore dell'euristica di secondo livello
-        self.slh_generator = self.create_second_level_heuristic(population_size,
+        self.second_level_heuristic_gen = self.create_second_level_heuristic(population_size,
                                                                 generations,
                                                                 mutation_rate,
                                                                 mating_rate,
@@ -352,6 +370,9 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
         # ad uno stato in quanto l'inizializzatore viene poi cancellato
         string_individual = self.stringfy_individual(self.individual.genome, " ")
 
+         # stampa della stringa valutata
+        print("Evaluated individual: ", string_individual)
+
         # definizione della secondo livello di euristica passando l'individuo
         # e l'algoritmo di Levenshtein
         second_level_heuristic = SecondLevelHeuristic(levenshtein, string_individual)
@@ -365,11 +386,16 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
     # Ritorna il percorso in una lista di stati
     def stringfy_path (self, path):
         
+        # derfinizione della lista
         string_path = []
         
+        # per ogni stato presente nel percorso
         for state in path:
+            
+            # si aggiunge in append alla lista lo stato trovato
             string_path.append(state[0])
         
+        # restituzione della lista di stati
         return string_path
     
 
@@ -379,24 +405,39 @@ class DeapGeneticGuideGraphProblem(GeneticGuideProblem):
     # Ritorna l'individuo in una lista di stati    
     def stringfy_individual (self, individual, initializator):
         
+        # definizione della lista
         string_individual = []
 
+        # per ogni gene presente nell'individuo, si setta
+        # con il valore dell'inizializzatore la lista
         for i in range(0, len(individual)):
             string_individual.append(initializator)        
         
+        # per ogni gene presente nell'individuo
         for i in range(0, len(individual)):
             
+            # si acquisisce l'indice definito nel gene
+            # dell'individuo
             state_index = individual[i]
             
+            # se esso è diverso da zero, ovvero
+            # lo stato associato a tale indice esiste
+            # nell'individuo
             if state_index != 0:
             
+                # si acquisisce lo stato alla posizione definita
                 state = self.state_list[i]
+                
+                # si cambia lo stato nella lista dal valore
+                # di inizializzazione al valore dello stato
                 string_individual[state_index-1] = state
         
+        # cancellazione di tutti i valori inizializzatori
+        # Ciò viene fatto per ottenere un individuo avente
+        # geni che si riferiscono unicamente a stati
         string_individual = [x for x in string_individual if x != initializator]
         
-        print(string_individual)
-        
+        # restituzione della stringa
         return string_individual
 
 
