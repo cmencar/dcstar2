@@ -1,0 +1,1420 @@
+A
+C
+F
+J
+M
+L
+Evaluated branches during solution definition: 
+21
+Evaluated individual:  ['G', 'K', 'A', 'P', 'F', 'L', 'M', 'C', 'D', 'O']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['K', 'H', 'P', 'N', 'B', 'O', 'E', 'C', 'G', 'A', 'M', 'F', 'J', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['O', 'H', 'D', 'N', 'M', 'C', 'G', 'B', 'J', 'L', 'K', 'E', 'P', 'I', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['P', 'N', 'C', 'F', 'O', 'G', 'I', 'E', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['A', 'G', 'K', 'P', 'F', 'N', 'I', 'B', 'L', 'O', 'D', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['E', 'G', 'N', 'P', 'J', 'H', 'C', 'F', 'L', 'M', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['O', 'G', 'I', 'M', 'H', 'N', 'P', 'J', 'D', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['M', 'P', 'C', 'I', 'B', 'G', 'F', 'E', 'O', 'A', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['E', 'L', 'F', 'J', 'O', 'G', 'N', 'M', 'I', 'H', 'A', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+23
+Evaluated individual:  ['O', 'A', 'I', 'N', 'B', 'F', 'H', 'G', 'C', 'J', 'M', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['C', 'I', 'A', 'H', 'J', 'P', 'N', 'B', 'O', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['K', 'N', 'I', 'L', 'O', 'J', 'P', 'A', 'G', 'E', 'B', 'F', 'H']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['A', 'G', 'H', 'F', 'D', 'L', 'O', 'M', 'J', 'P', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['A', 'J', 'I', 'C', 'K', 'F', 'N', 'H', 'L', 'G', 'D', 'P', 'M', 'B', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['C', 'F', 'E', 'M', 'O', 'A', 'I', 'J', 'G', 'H', 'N', 'B', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+23
+Evaluated individual:  ['I', 'K', 'F', 'A', 'O', 'G', 'L', 'C', 'H', 'P', 'M', 'D', 'E', 'B', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['M', 'B', 'J', 'A', 'H', 'K', 'I', 'G', 'L', 'O', 'E', 'D', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['N', 'P', 'A', 'F', 'C', 'M', 'J', 'B', 'I', 'L', 'E', 'H', 'O', 'G', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['L', 'K', 'I', 'J', 'C', 'E', 'A', 'B', 'G', 'P', 'H', 'O', 'M', 'F', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['P', 'M', 'N', 'I', 'G', 'O', 'D', 'A', 'C', 'B', 'K', 'L', 'H']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['D', 'P', 'H', 'M', 'G', 'K', 'I', 'O', 'E', 'B', 'L', 'F', 'A', 'J', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['L', 'C', 'H', 'P', 'O', 'F', 'A', 'I', 'B', 'E', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['F', 'M', 'B', 'D', 'A', 'I', 'G', 'L', 'C', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['P', 'A', 'O', 'K', 'F', 'L', 'H', 'B', 'N', 'E', 'G', 'D', 'M', 'C', 'I']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['M', 'A', 'K', 'B', 'G', 'D', 'J', 'F', 'P', 'O', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['O', 'B', 'E', 'H', 'L', 'M', 'I', 'N', 'C', 'K', 'D', 'P', 'F', 'G', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['L', 'P', 'D', 'J', 'N', 'I', 'C', 'M', 'B', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['E', 'C', 'D', 'K', 'A', 'P', 'F', 'G', 'N', 'O', 'B', 'I', 'L', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['G', 'K', 'J', 'D', 'F', 'A', 'O', 'I', 'H', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['O', 'K', 'P', 'J', 'M', 'C', 'E', 'B', 'H', 'I', 'F', 'G', 'A', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['N', 'J', 'K', 'M', 'P', 'E', 'I', 'G', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['L', 'N', 'B', 'O', 'I', 'F', 'M', 'A', 'D', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['L', 'C', 'F', 'B', 'O', 'P', 'A', 'N', 'K', 'D', 'M', 'I', 'G', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+23
+Evaluated individual:  ['D', 'E', 'P', 'O', 'N', 'F', 'L', 'J', 'A', 'C', 'M', 'G']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['H', 'B', 'A', 'J', 'E', 'M', 'C', 'L', 'K', 'P', 'I', 'N', 'O', 'G', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['N', 'F', 'O', 'B', 'G', 'P', 'M', 'J', 'D', 'H', 'E', 'A', 'I', 'K', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['N', 'D', 'E', 'K', 'M', 'O', 'I', 'B', 'F', 'J', 'G', 'L', 'C', 'A', 'P']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['I', 'C', 'B', 'P', 'A', 'J', 'E', 'L', 'G', 'O', 'K', 'D', 'M', 'H', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['D', 'J', 'A', 'O', 'I', 'F', 'E', 'G', 'K', 'H', 'B', 'P', 'C', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['E', 'C', 'K', 'O', 'F', 'M', 'H', 'I', 'D', 'P', 'J', 'A', 'L', 'B', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['H', 'L', 'F', 'I', 'C', 'D', 'A', 'P', 'B', 'K', 'N', 'G', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['O', 'C', 'J', 'A', 'B', 'K', 'H', 'N', 'P', 'I', 'G', 'M', 'L', 'D', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['K', 'N', 'D', 'P', 'H', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['I', 'A', 'J', 'P', 'K', 'C', 'N', 'D', 'M', 'H', 'B']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['J', 'L', 'E', 'M', 'H', 'F', 'B', 'I', 'N', 'P', 'G', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['E', 'J', 'G', 'B', 'D', 'A', 'P', 'M', 'H', 'I', 'K', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['C', 'A', 'L', 'N', 'H', 'K', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['P', 'A', 'K', 'E', 'O', 'B', 'N', 'G', 'M', 'D', 'I', 'H', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['N', 'O', 'J', 'H', 'L', 'A', 'P', 'F', 'M', 'K', 'C', 'E', 'I', 'B', 'G']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['H', 'K', 'M', 'I', 'C', 'L', 'P', 'B', 'N', 'O', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['L', 'P', 'C', 'D', 'J', 'O', 'B', 'M', 'H', 'I', 'K', 'N', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+23
+Evaluated individual:  ['M', 'C', 'B', 'D', 'I', 'N', 'E', 'G', 'O', 'H', 'L', 'P', 'J', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['N', 'J', 'F', 'I', 'E', 'B', 'D', 'A', 'H', 'K', 'P']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['A', 'P', 'C', 'J', 'F', 'H', 'L', 'E', 'O', 'D', 'N', 'I', 'K', 'B', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['J', 'G', 'A', 'H', 'E', 'B', 'L', 'N', 'M', 'P', 'D', 'F', 'C', 'I', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['D', 'A', 'L', 'O', 'P', 'G', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['F', 'C', 'I', 'E', 'M', 'D', 'G', 'H', 'B', 'J', 'A', 'P', 'N', 'L', 'O']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['B', 'K', 'J', 'G', 'M', 'C', 'E', 'I', 'D', 'N', 'O']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['H', 'N', 'G', 'E', 'C', 'F', 'D', 'O', 'P', 'B']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['F', 'A', 'P', 'L', 'M', 'B', 'G', 'J', 'H', 'O']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['C', 'H', 'N', 'G', 'J', 'B', 'O', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['N', 'I', 'A', 'H', 'P', 'L', 'O', 'J', 'M', 'K', 'B', 'G', 'D', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['C', 'K', 'L', 'I', 'H', 'A', 'B', 'P', 'F', 'J', 'G', 'D', 'N', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['D', 'I', 'M', 'N', 'B', 'O', 'K', 'H', 'F', 'G', 'E', 'L', 'P', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['L', 'C', 'D', 'B', 'M', 'G', 'E', 'H', 'I', 'A', 'P', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['M', 'H', 'C', 'K', 'P', 'A', 'D', 'J', 'B', 'F', 'I', 'O', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['B', 'P', 'I', 'L', 'E', 'C', 'D', 'G', 'A', 'N', 'F', 'J', 'K', 'H']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['H', 'N', 'B', 'A', 'I', 'O', 'P', 'D', 'K', 'E', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['G', 'H', 'L', 'P', 'D', 'N', 'E', 'B', 'O', 'I', 'A', 'J', 'M', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['D', 'P', 'J', 'K', 'A', 'G', 'E', 'N', 'L', 'I', 'H', 'B']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['B', 'A', 'K', 'P', 'J', 'F', 'I', 'N', 'D', 'O', 'H', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['P', 'I', 'H', 'K', 'B', 'M', 'G', 'D', 'J', 'O', 'L', 'E', 'C', 'N', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['P', 'B', 'A', 'E', 'G', 'F', 'H', 'C', 'I', 'M', 'K', 'D', 'N', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['H', 'N', 'B', 'A', 'D', 'O', 'L', 'M', 'I', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['G', 'H', 'B', 'J', 'F', 'A', 'C', 'P', 'L', 'N', 'M', 'O', 'K', 'D', 'E']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['A', 'P', 'O', 'E', 'C', 'H', 'F', 'K', 'B', 'I', 'D', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['C', 'M', 'I', 'D', 'K', 'N', 'J', 'P', 'O', 'G', 'B', 'E', 'H', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['F', 'H', 'C', 'D', 'G', 'K', 'O', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['O', 'D', 'P', 'L', 'B', 'F', 'A', 'G', 'M', 'I', 'C', 'E', 'H', 'K', 'J']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['M', 'I', 'J', 'K', 'F', 'N', 'E', 'L', 'P', 'C', 'G', 'B', 'O', 'A', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['G', 'A', 'E', 'J', 'L', 'N', 'K', 'M', 'B', 'P', 'D', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['N', 'M', 'B', 'G', 'J', 'P', 'K', 'I', 'L', 'D', 'H', 'F', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['A', 'K', 'H', 'G', 'N', 'B', 'D', 'O', 'M', 'I', 'E', 'J', 'F', 'P', 'C']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['A', 'J', 'M', 'B', 'N', 'P', 'K', 'H', 'L', 'F', 'O', 'E', 'I']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['P', 'N', 'F', 'H', 'G', 'K', 'I', 'L', 'J', 'D', 'B', 'E', 'O', 'C', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['J', 'I', 'C', 'F', 'H', 'L', 'D', 'M', 'B', 'E', 'K', 'G']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['P', 'F', 'L', 'G', 'N', 'M', 'O', 'C', 'J', 'A', 'I', 'H', 'D', 'K']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+24
+Evaluated individual:  ['G', 'C', 'A', 'F', 'B', 'K', 'D', 'I', 'O', 'J', 'L', 'H', 'E', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['O', 'J', 'P', 'L', 'H', 'N', 'K', 'M', 'F', 'E', 'C', 'I', 'A', 'G', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['N', 'H', 'L', 'E', 'I', 'P', 'C', 'G', 'A', 'K', 'D', 'O', 'M', 'J', 'F']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['L', 'K', 'D', 'B', 'F', 'N', 'I', 'J', 'E', 'O', 'H', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['A', 'O', 'N', 'M', 'E', 'H', 'L', 'J', 'G', 'K', 'D']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['O', 'C', 'I', 'D', 'J', 'N', 'F', 'B', 'G', 'K', 'P', 'L', 'E', 'A']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['O', 'P', 'H', 'C', 'L', 'E', 'M', 'D', 'J', 'N', 'G']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['D', 'K', 'L', 'E', 'P', 'N', 'F', 'C', 'H', 'J', 'I', 'O', 'A', 'B', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+22
+Evaluated individual:  ['O', 'F', 'I', 'C', 'E', 'B', 'D', 'J', 'L', 'A', 'K', 'H', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['O', 'K', 'I', 'J', 'H', 'F', 'B', 'N']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+21
+Evaluated individual:  ['N', 'G', 'J', 'H', 'K', 'P', 'O', 'C', 'F', 'B', 'I', 'M']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+Evaluated individual:  ['B', 'E', 'K', 'H', 'C', 'I', 'A', 'M', 'F', 'J', 'D', 'G', 'P', 'L']
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in DEAP: 
+20
+
+ON 100 TESTS WITH INDIVIDUAL CREATED BY UGP, THE FINAL EVALUATION IS: 
+-- IDEAL SITUATION:  86 %  NOT IDEAL SITUATION:  14 % --
+AVERAGE EVALUATED BRANCHES WITH A*+GG ARE  20.73  AGAINST  21  EVALUATED BRANCHES TAKEN BY A* ALONE.
+
+
+Evaluated individual:  HNAFEMGLDJC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  PKLGMDIFOHAB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  LNFCGPAOJEKH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  JNLCFEHABPOGM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  LEOBNPADKGHIFM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  ABEFPHNIMCG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  FBGHCJILNEO
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  BPHJLCNFKOMA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  GKACFDBENIOL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  EFGBCODMPLHIA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  ODJHILKMFEC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  EINMFHDOJKB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  CDEKNGBPOFL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BKMDOGNPEFAJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  EAMLGBOFPNHD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  GPIJEDHKAOMN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+23
+Evaluated individual:  IAHBDKEPOFGN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  OCGHJEPNKFABDM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  AEFPMDHCIJOB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  LBMPCHNAFKIJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  JIHEKOFANDLC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BHGCKDMNPEOL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IMGJHDOABNEP
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  NCKEIDMHAPJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+23
+Evaluated individual:  EPJCNFLAGHOI
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  BOGFHPLMCENK
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  COIKGPJNBMAL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  AKMCDJFLOBGH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  EPDOCKJMIHAGL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  BFHDPNMIALEOG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  AMOEJCPLIDNH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  CGANLBIOPFDJE
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  KGCFANLOHDMJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  MAPJNOECHBLF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  MAEHFJKICGPD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  OICGJPKEMLA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  HCBLKFEP
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  KAPBNDMGLEHCF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BHIPANOEFJLGC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  CDBHEOJGKIA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IOLBJEHMCAGF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  FELGJKAPOCBI
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  MIHLDBONEFGJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  NIBMHEFDPGKC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  JAICDBMOFPN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  LAGEKCONFB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BOMNJKFPLGCH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  NKEBDJMAPCF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  LKENMHGCBAOF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IFBMPOKHNAGC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  GDMIFHNLCPBJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IMJFPKHNLBG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  MDIKFJEANHLB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  EIPCKOALMFNJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  CNPMAEIKHDLJF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  JALKCGEMBDINP
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  PGJKOLFIAMD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  NIFPDKMHCJAB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  NCPHIGAELFJD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  LMEPKNCFJABO
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  GPMHFELKCJDOA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  GHIAFKCPEJNM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  GCPINMHAFKOLD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  KFBDEOANHGC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  ABCEJGDFNHPM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  NECFHJKPMBAL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IDJLNAHMEOCPG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  JOELCDIKMBAG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  JHGIBKFALME
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  MIAHCKFDLBO
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  ANHPMBIEJFKD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  OJMIDEGCNBLH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  ELFHCAONIBJKP
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  PHJOKFBGLCINA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  LAOFDBHPCMG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  KMHGLNDIPCEFJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  FLPJOKDGIAN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  OFDBHGKMLJN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  DMLNEIBKHPFJG
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  GIDFOBMAJLKN
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  IFLANDCGHEK
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  FHKLAPCJODGI
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  MENBLDPOGIC
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  OBJAKFLDHENGI
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  PMINHEOJCLDBA
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  CFEDKABPLOJI
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  PFEHOKABJIM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  HIGAKCEMJOBPF
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  NGFCLPBMJDIH
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  CGODFMEIHNK
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  CPBHOKMFJNL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  JAGFELNOMD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  AMBEPHCGLJND
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+21
+Evaluated individual:  KHCOLAGPBNJE
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  HDLCJEFAGPB
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BEIAKHGMLDCJ
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  BNGEDPMOIACL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  JLADPECHBOM
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+22
+Evaluated individual:  BNEOMGPAJFL
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+Evaluated individual:  MOAFJHBLNCD
+
+
+----------------------------------------------------
+
+Evaluated branches during solution definition with Genetic Guide in UGP: 
+20
+
+ON 100 TESTS WITH INDIVIDUAL CREATED BY UGP, THE FINAL EVALUATION IS: 
+-- IDEAL SITUATION:  88 %  NOT IDEAL SITUATION:  12 % --
+AVERAGE EVALUATED BRANCHES WITH A*+GG ARE  20.61  AGAINST  21  EVALUATED BRANCHES TAKEN BY A* ALONE.
+
+
+
+ON 100 TEST WITH THE TWO GG METHODS, THE FINAL EVALUATION,CONFRONTING EACH OTHER, IS: 
+---------- DEAP -----------
+-- IDEAL SITUATION:  86 %  NOT IDEAL SITUATION:  14 % --
+---------- UGP -----------
+-- IDEAL SITUATION:  88 %  NOT IDEAL SITUATION:  12 % --
+AVERAGE EVALUATED BRANCHES WITH DEAP ARE  20.73  AGAINST  20.61  EVALUATED BRANCHES WITH UGP.
