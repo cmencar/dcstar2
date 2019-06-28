@@ -64,13 +64,16 @@ problem:Problem = GraphProblem(state_list, adiacent_list, distance_list, "A", "L
 
 # stampa della soluzione e delle altre informazioni
 # sull'esecuzione effettuata
+solution_path = list()
 print("Current path solution: ")
 for state in solution:
-    print(state[0])
+    solution_path.append(state[0])
+
+print(solution_path)
 
 print("Evaluated branches during solution definition: ")
 print(n_branches)
-
+print("\n----------------------------------------------------\n\n")
 
 # definizione della dimensione iniziale della popolazione
 population_size = 100
@@ -120,7 +123,6 @@ for i in range(valutations):
 
     # stampa della soluzione e delle altre informazioni
     # sull'esecuzione effettuata
-    print("\n\n----------------------------------------------------\n")
     print("Evaluated branches during solution definition with Genetic Guide in DEAP: ")
     print(n_branches_gg)
     
@@ -130,6 +132,7 @@ for i in range(valutations):
         not_ideal_deap += 1
         
     total_eval_branches = total_eval_branches + n_branches_gg
+    print("\n----------------------------------------------------\n\n")
 
 average_deap = total_eval_branches / valutations
 print("\nON", valutations, "TESTS WITH INDIVIDUAL CREATED BY UGP, THE FINAL EVALUATION IS: ")
@@ -160,7 +163,6 @@ for i in range(valutations):
 
     # stampa della soluzione e delle altre informazioni
     # sull'esecuzione effettuata
-    print("\n\n----------------------------------------------------\n")
     print("Evaluated branches during solution definition with Genetic Guide in UGP: ")
     print(n_branches_gg)
     
@@ -170,6 +172,7 @@ for i in range(valutations):
         not_ideal_ugp += 1
         
     total_eval_branches = total_eval_branches + n_branches_gg
+    print("\n----------------------------------------------------\n\n")
 
 average_ugp = total_eval_branches / valutations
 
