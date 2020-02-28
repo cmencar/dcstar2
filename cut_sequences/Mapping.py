@@ -1,5 +1,5 @@
-import BinaryCuts as bc
-import SelectedCuts as sc
+import T_d_bin as bc
+import S_d as sc
 import numpy as np
 
 
