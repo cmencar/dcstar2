@@ -135,3 +135,7 @@ def generate_starting_binary_t_d(T_d):
 
     # return a BinaryCuts object using T_d_bin elements
     return bc.BinaryCuts(T_d_bin)
+
+
+def get_hyperboxes(points, S_d):
+    pass

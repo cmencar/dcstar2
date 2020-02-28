@@ -2,7 +2,7 @@ import numpy as np
 from Cuts import Cuts
 
 
-# Class for define cuts S_d in a logical way
+# Class for define cuts T_d
 class CutsSequence(Cuts):
 
     # Cuts class constructor method
