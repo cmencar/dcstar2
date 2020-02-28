@@ -1,6 +1,8 @@
 import T_d_bin as bc
 import S_d as sc
+import HyperboxesSet as hb
 import numpy as np
+import itertools as itool
 
 
 # Function for converting a logical cut sequence to
@@ -137,5 +139,39 @@ def generate_starting_binary_t_d(T_d):
     return bc.BinaryCuts(T_d_bin)
 
 
-def get_hyperboxes(points, S_d):
-    pass
+def S_d_to_hyperboxes(S_d):
+
+    hyperboxes = hb.HyperboxesSet()
+
+    # TODO inserisci m_d e M_d
+
+    intervals = list()
+
+    for dimension_index in range(1, S_d.get_dimensions_number() + 1):
+
+        dimension = S_d.get_dimension(dimension_index)
+        n_element = S_d.get_dimension_size(dimension_index)
+
+        dimension_intervals = list()
+
+        if n_element > 1:
+            for x in range(0, n_element-1):
+                dimension_intervals.append((dimension[x], dimension[x+1]))
+
+        intervals.append(dimension_intervals)
+
+    interr = list()
+
+    for i in intervals:
+        if i:
+            interr.append(i)
+
+
+    #cartesio = itool.product(*interr)
+
+    for element in itool.product(*interr):
+        print(element)
+
+    #print(cartesio)
+
+    return hyperboxes
