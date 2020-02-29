@@ -1,12 +1,12 @@
+from cut_sequences.cuts import Cuts
 import numpy as np
-from Cuts import Cuts
 
 
-# Class for define cuts T_d
-class CutsSequence(Cuts):
+# Class defining selected cuts sequence S_d
+class SelectedCutsSequence(Cuts):
 
     # Cuts class constructor method
-    # @dimensions: number of dimensions of the T_d sequence to initialize as empty lists
+    # @dimensions: number of dimensions of the S_d sequence to initialize as empty lists
     # @cuts_list: list of cuts for each dimension
     def __init__(self, cuts_list=None):
 
@@ -21,15 +21,11 @@ class CutsSequence(Cuts):
             # if passed cuts' list is configured as a list of NumPy array,
             # set the single dimension with that array. Otherwise,
             # convert the passed list of list in a list of NumPy array.
+            # before the initialization, every dimension is sorted
             if isinstance(cuts_list, np.ndarray):
                 for dim in cuts_list:
-                    if isinstance(dim, np.ndarray):
-                        np.sort(dim, kind='mergesort')
-                        self.elementlist.append(dim)
-                    else:
-                        npdim = np.array(dim)
-                        np.sort(npdim)
-                        self.elementlist.append(npdim)
+                    np.sort(dim, kind='mergesort')
+                    self.elementlist.append(dim)
             else:
                 for dim in cuts_list:
                     npdim = np.array(dim)
@@ -47,7 +43,7 @@ class CutsSequence(Cuts):
             # if inserted dimension refer to a not-existent dimension
             # then insert a new NumPy array
             if len(self.elementlist) < dimension:
-                self.elementlist.insert(dimension, np.array([]))
+                self.elementlist.insert(dimension - 1, np.array([]))
 
             # if passed cuts is configured as a NumPy array,
             # set the single dimension with that array. Otherwise,
@@ -57,7 +53,7 @@ class CutsSequence(Cuts):
                 self.elementlist[dimension - 1] = cuts
             else:
                 npcuts = np.array(cuts)
-                np.sort(npcuts, kind='mergesort')
+                np.sort(cuts, kind='mergesort')
                 self.elementlist[dimension - 1] = npcuts
 
         except IndexError:

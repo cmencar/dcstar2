@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import numpy as np
 
 
 # abstract class for cuts sequence
@@ -33,7 +32,7 @@ class Cuts(ABC):
     def get_dimensions_number(self):
 
         # return the size of list
-        return np.size(self.elementlist)
+        return len(self.elementlist)
 
 
     # Method for returning the value of the size of single dimension
@@ -43,7 +42,7 @@ class Cuts(ABC):
         try:
 
             # return the size of NumPy array
-            return np.size(self.elementlist[dimension - 1])
+            return len(self.elementlist[dimension - 1])
 
         except IndexError:
 

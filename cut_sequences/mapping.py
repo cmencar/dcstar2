@@ -1,8 +1,7 @@
-import T_d_bin as bc
-import S_d as sc
-import HyperboxesSet as hb
+from cut_sequences.selected_cuts_sequence_bin import SelectedCutsSequenceBin
+from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
+from cut_sequences.hyperboxes_set import HyperboxesSet
 import numpy as np
-import itertools as itool
 
 
 # Function for converting a logical cut sequence to
@@ -12,7 +11,7 @@ import itertools as itool
 def from_logical_to_point(T_d, S_d_bin):
 
     # definition of a new S_d sequence of selected cuts
-    S_d = sc.SelectedCuts()
+    S_d = SelectedCutsSequence()
 
     # if logical cut sequence is empty then return an empty S_d
     if S_d_bin.get_dimensions_number() < 1:
@@ -59,7 +58,7 @@ def from_logical_to_point(T_d, S_d_bin):
 def from_point_to_logical(T_d, S_d):
 
     # definition of a new S_d sequence of selected cuts
-    S_d_bin = bc.BinaryCuts()
+    S_d_bin = SelectedCutsSequenceBin()
 
     # if cut sequence is empty then return an S_d_bin
     # with every logical value set to False
@@ -136,42 +135,60 @@ def generate_starting_binary_t_d(T_d):
         T_d_bin.insert(dimension_index, dimension)
 
     # return a BinaryCuts object using T_d_bin elements
-    return bc.BinaryCuts(T_d_bin)
+    return SelectedCutsSequenceBin(T_d_bin)
 
 
-def S_d_to_hyperboxes(S_d):
+# Function for generate an hyperboxes set starting
+# from any S_d sequence of cuts
+# @S_d: sequence of cuts to be acquired
+def generate_hyperboxes_from_s_d(S_d, point_list):
 
-    hyperboxes = hb.HyperboxesSet()
-
-    # TODO inserisci m_d e M_d
-
+    # initialization of a list of intervals
     intervals = list()
 
+    # for each dimension in S_d sequence
     for dimension_index in range(1, S_d.get_dimensions_number() + 1):
 
+        # get the evaluated dimension and the number of cuts in it
         dimension = S_d.get_dimension(dimension_index)
-        n_element = S_d.get_dimension_size(dimension_index)
+        dimension_size = S_d.get_dimension_size(dimension_index)
 
+        # initialization of a list of intervals for
+        # the evaluated dimension
         dimension_intervals = list()
 
-        if n_element > 1:
-            for x in range(0, n_element-1):
-                dimension_intervals.append((dimension[x], dimension[x+1]))
+        # if the evaluated dimension has at least one cut
+        if dimension_size > 0:
 
+            # set the m_d cut, the leftmost cut of dimension
+            dimension_intervals.append((-np.inf, dimension[0]))
+
+            # for each cut in evaluate dimension, insert it into
+            # the list of intervals for that dimension
+            for cut_index in range(0, dimension_size - 1):
+                dimension_intervals.append((dimension[cut_index], dimension[cut_index+1]))
+
+            # set the M_d cut, the rightmost cut of dimension
+            dimension_intervals.append((dimension[dimension_size-1], np.inf))
+
+        # if the evaluate dimension doesn't have a cut, then set
+        # only m_d and M_d cuts
+        else:
+            dimension_intervals.append((-np.inf, np.inf))
+
+        # insert the list of interval for evaluate dimension into
+        # the S_d interval list
         intervals.append(dimension_intervals)
 
-    interr = list()
+    # initialization of a list of valid intervals, used for
+    # saving not-empty lists
+    valid_intervals = list()
 
-    for i in intervals:
-        if i:
-            interr.append(i)
+    # inserting into valid_intervals list only the not-empty sublists
+    [valid_intervals.append(interval) for interval in intervals if interval]
 
+    # creation of hyperboxes set
+    hyperboxes = HyperboxesSet(point_list, valid_intervals)
 
-    #cartesio = itool.product(*interr)
-
-    for element in itool.product(*interr):
-        print(element)
-
-    #print(cartesio)
-
+    # return the set of hyperboxes
     return hyperboxes

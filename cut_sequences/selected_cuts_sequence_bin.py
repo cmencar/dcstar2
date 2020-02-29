@@ -1,9 +1,9 @@
+from cut_sequences.cuts import Cuts
 import numpy as np
-from Cuts import Cuts
 
 
 # Class for define selected cuts S_d in a logical way
-class BinaryCuts(Cuts):
+class SelectedCutsSequenceBin(Cuts):
 
     # SelectedCuts class constructor method
     # @cuts_list: list of cuts (defined in a logical way) for each dimension
