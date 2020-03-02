@@ -195,7 +195,7 @@ class GraphProblem(Problem):
                 if node.state == state:
                 
                     # aggiunta di uno stato adiacente al nodo preso in esame
-                    node.add_adiacent(adiacent_list[state])
+                    node.add_adjacent(adiacent_list[state])
 
 
     

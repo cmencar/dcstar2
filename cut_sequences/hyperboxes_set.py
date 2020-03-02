@@ -1,37 +1,5 @@
+from cut_sequences.hyperbox_search_graph import HyperboxSearchGraph
 import itertools as itool
-
-
-# Class for defining the node for the hyperboxes' search graph
-class HyperboxSearchGraphNode:
-
-    # Class constructor
-    # @value: value related to node
-    def __init__(self, value):
-        self.value = value
-        self.adiacents = list()
-
-
-    # Method for insert a new adiacent node
-    # @adiacent: node to be added
-    def add_adiacent(self, adiacent):
-        self.adiacents.append(adiacent)
-
-
-    # Method for acquire adiacents nodes
-    def get_adiacents(self):
-        return self.adiacents
-
-
-    # Method for set node value
-    # @value: value related to node
-    def set_value(self, value):
-        self.value = value
-
-
-    # Method for acquire node value
-    def get_value(self):
-        return self.value
-
 
 
 # Class for defining a single hyperbox using
@@ -160,50 +128,27 @@ class HyperboxesSet:
     # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
 
-        start = HyperboxSearchGraphNode(None)
+        hyperbox_search_graph = HyperboxSearchGraph(self.intervals)
 
-        in_d = len(self.intervals)
-        nodes = list()
-        nodes.append(list([start]))
-
-        for i in range(0, in_d):
-
-            dim_int = len(self.intervals[i])
-            nodes_dim = list()
-            for j in range(0, dim_int):
-                nodes_dim.append(HyperboxSearchGraphNode(self.intervals[i][j]))
-            nodes.append(nodes_dim)
-
-        i = 0
-        j = 1
-        while i < in_d and j < in_d + 1:
-            for node in nodes[i]:
-                for child in nodes[j]:
-                    node.add_adiacent(child)
-            i = i + 1
-            j = j + 1
-
-        evaluated_point = nodes[0][0]
-        level = 1
+        coordinate_index = 1
         result = list()
-        contatore = 0
-        while evaluated_point.get_adiacents():
-            adiacents = evaluated_point.get_adiacents()
-            n_adiacents = len(adiacents)
+
+        while hyperbox_search_graph.get_evaluated_point().get_adjacents():
+            adjacents = hyperbox_search_graph.get_adjacent_of_evaluated_point()
+            n_adiacents = len(adjacents)
             idx = 0
             cicla = True
             while cicla and idx < n_adiacents:
-                contatore = contatore + 1
-                if adiacents[idx].get_value()[0] <= point.get_coordinate(level) <= adiacents[idx].get_value()[1]:
-                    evaluated_point = adiacents[idx]
-                    level = level + 1
-                    result.append(adiacents[idx].get_value())
+                if adjacents[idx].get_value()[0] <= point.get_coordinate(coordinate_index) <= adjacents[idx].get_value()[1]:
+                    hyperbox_search_graph.set_evaluated_point(adjacents[idx])
+                    coordinate_index = coordinate_index + 1
+                    result.append(adjacents[idx].get_value())
                     cicla = False
                 else:
                     idx = idx + 1
 
-        print("confronti: ", contatore)
         return self.B.get(tuple(result))
+
 
     # Method for checking if a given hyperbox is impure
     # @hyperbox: given hyperbox
