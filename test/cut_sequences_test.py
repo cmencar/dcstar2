@@ -59,6 +59,7 @@ point_list_1 = list([point_A, point_B, point_C, point_D, point_E, point_F])
 hyperboxes = mp.generate_hyperboxes_from_s_d(S_d_1, point_list_1)
 hb = hyperboxes.get_hyperbox_by_point(point_A)
 
+# calculating impure hyperboxes
 S_d_2 = SelectedCutsSequence()
 S_d_2.set_dimension(2, list([1, 2]))
 S_d_2.set_dimension(1, list([1, 2]))

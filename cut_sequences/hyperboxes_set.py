@@ -100,21 +100,31 @@ class Hyperbox:
         return self.points
 
 
+    # Method for checking if a given point is in the hyperbox
     def has_point(self, point):
         return [True if point in self.points else False]
 
 
+    # Method for checking if the hyperbox is impure
     def is_impure(self):
 
+        # initialization of service variables
         is_impure = False
         point_label = None
         point_index = 0
 
+        # while the hyperbox is not impure and there are points to examinate
         while not is_impure and point_index < len(self.points):
+
+            # if there isn't a fixed label take the one of the examinated point
+            # else check if the label of the examinated point is different
+            # from the fixed one, if so, set is_impure to True
             if point_label is None:
                 point_label = self.points[point_index].get_label()
             elif self.points[point_index].get_label() != point_label:
                 is_impure = True
+
+            # increment point index
             point_index = point_index + 1
 
         return is_impure
@@ -195,20 +205,40 @@ class HyperboxesSet:
         print("confronti: ", contatore)
         return self.B.get(tuple(result))
 
+    # Method for checking if a given hyperbox is impure
+    # @hyperbox: given hyperbox
     def is_impure_hyperbox(self, hyperbox):
         hb = self.B.get(hyperbox.value)
         return hb.is_impure()
 
+
+    # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
+
+        # initialization of number of impures
         num = 0
+
+        # for each couple (key and corresponding hyperbox)
         for key, hb in self.B.items():
+
+            # check if given hyperbox is impure
             if hb.is_impure():
                 num = num + 1
+
         return num
 
+
+    # Method for acquiring all impure hyperboxes
     def get_impure_hyperboxes(self):
+
+        # initialization impures list
         impure_hbs = list()
+
+        # for each couple (key and corresponding hyperbox)
         for key, hb in self.B.items():
+
+            # check if given hyperbox is impure, if so, add it to impure list
             if hb.is_impure() is True:
                 impure_hbs.append(hb)
+
         return impure_hbs
