@@ -68,18 +68,29 @@ class Hyperbox:
         # defining dimensions number
         dimensions = len(self.boundaries)
 
-        # for each point into point_list
+        # for each point into point_list evaluate
+        # its presence into hyperbox
         for point in point_list:
 
+            # initialize dimension_index and belonging flag for point
             dimension_index = 0
             belonging = True
 
+            # for each dimension of hyperbox it must evaluate
+            # the possibly presence of point.
+            # The presence of the point is determined as follows:
+            # if all the coordinates of the point (evaluating dimension
+            # by dimension) are included between all the boundaries of the
+            # hyperbox then it is part of the Hyperbox itself. If, on the other hand,
+            # even one coordinate is not included between the boundaries of the hyperbox
+            # then the point is not part of the hyperbox and the checking stop.
             while dimension_index < dimensions and belonging:
                 if self.boundaries[dimension_index][0] <= point.get_coordinate(dimension_index + 1) <= self.boundaries[dimension_index][1]:
                     dimension_index = dimension_index + 1
                 else:
                     belonging = False
 
+            # if evaluated point belong to hyperbox then insert it into points' list
             if belonging:
                 self.points.append(point)
 
@@ -122,20 +133,25 @@ class HyperboxesSet:
         # initialization of list of points
         self.points_list = points
 
+        # initialization of S_d (here named intervals)
+        # which is based on hyperboxes_set
         self.intervals = valid_intervals
 
         # defining Cartesian product for creating hyperboxes set
+        # and passing points list for defining included points
+        # into particular hyperbox
         for cartesian_product in itool.product(*self.intervals):
             hyperbox = Hyperbox(cartesian_product)
             hyperbox.set_belonging_points(self.points_list)
             self.B.__setitem__(hyperbox.get_boundaries(), hyperbox)
 
 
+    # Method for acquiring particular hyperbox starting by point
+    # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
 
         start = HyperboxSearchGraphNode(None)
 
-        hyperboxes_number = len(self.B)
         in_d = len(self.intervals)
         nodes = list()
         nodes.append(list([start]))
