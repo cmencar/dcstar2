@@ -80,17 +80,18 @@ class Hyperbox:
 
     def is_impure(self):
 
-        is_pure = True
+        is_impure = False
         point_label = None
         point_index = 0
 
-        while is_pure and point_index < len(self.points):
+        while not is_impure and point_index < len(self.points):
             if point_label is None:
                 point_label = self.points[point_index].get_label()
             elif self.points[point_index].get_label() != point_label:
-                is_pure = False
+                is_impure = True
+            point_index = point_index + 1
 
-        return is_pure
+        return is_impure
 
 
 
@@ -166,19 +167,20 @@ class HyperboxesSet:
         print("confronti: ", contatore)
         return self.B.get(tuple(result))
 
-
-
     def is_impure_hyperbox(self, hyperbox):
-        # TODO si potrebbe usare get_hyperbox_by_point per ogni punto in self.points_list e
-        #  vedere se ci sono altri punti per tale HB: se ce n'è almeno uno allora è impuro
-        #  e la funzione termina (in alternativa se si salva il calcolo della purezza
-        #  in insert_hyperboxes allora si può ricorrere semplicemente ad accedere al valore
-        #  di purezza dell'HB salvato)
-        pass
+        hb = self.B.get(hyperbox.value)
+        return hb.is_impure()
 
     def get_impure_hyperboxes_number(self):
-        # TODO si passa il numero di HB impuri
-        pass
+        num = 0
+        for key, hb in self.B.items():
+            if hb.is_impure():
+                num = num + 1
+        return num
 
     def get_impure_hyperboxes(self):
-        pass
+        impure_hbs = list()
+        for key, hb in self.B.items():
+            if hb.is_impure() is True:
+                impure_hbs.append(hb)
+        return impure_hbs
