@@ -128,25 +128,45 @@ class HyperboxesSet:
     # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
 
+        # contruction of the research graph
         hyperbox_search_graph = HyperboxSearchGraph(self.intervals)
 
+        # initializing service variables along with the index of the first node
         coordinate_index = 1
         result = list()
 
-        while hyperbox_search_graph.get_evaluated_point().get_adjacents():
-            adjacents = hyperbox_search_graph.get_adjacent_of_evaluated_point()
+        # for each node that has adjacents (so not in the final level)
+        while hyperbox_search_graph.get_evaluated_node().get_adjacents():
+
+            # take his adjacents and count them
+            adjacents = hyperbox_search_graph.get_adjacents()
             n_adiacents = len(adjacents)
+
+            # beginning of index
             idx = 0
-            cicla = True
-            while cicla and idx < n_adiacents:
+            looping = True
+
+            # while there are still adjacents to evaluate
+            while looping and idx < n_adiacents:
+
+                # if the point coordinates are between the boundaries of that dimension
                 if adjacents[idx].get_value()[0] <= point.get_coordinate(coordinate_index) <= adjacents[idx].get_value()[1]:
-                    hyperbox_search_graph.set_evaluated_point(adjacents[idx])
+
+                    # set the evaluated node with the current adjacent one,
+                    # incrementing the coordinate index and saving the result
+                    hyperbox_search_graph.set_evaluated_node(adjacents[idx])
                     coordinate_index = coordinate_index + 1
                     result.append(adjacents[idx].get_value())
-                    cicla = False
+
+                    # set the looping flag to false
+                    looping = False
+
+                # if the evaluated adjacent node has not his point between the boundaries,
+                # then switch to the next adjacent
                 else:
                     idx = idx + 1
 
+        # return the coordinates of the hyperbox
         return self.B.get(tuple(result))
 
 
