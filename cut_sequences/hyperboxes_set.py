@@ -1,67 +1,81 @@
-
 import itertools as itool
 
-class Node:
 
-    def __init__(self, value, label = None, ):
+# Class for defining the node for the hyperboxes' search graph
+class HyperboxSearchGraphNode:
+
+    # Class constructor
+    # @value: value related to node
+    def __init__(self, value):
         self.value = value
-        self.label = label
-        self.children = list()
+        self.adiacents = list()
 
-    def add_child(self, child):
-        self.children.append(child)
 
-    def remove_child(self, child):
-        self.children.remove(child)
+    # Method for insert a new adiacent node
+    # @adiacent: node to be added
+    def add_adiacent(self, adiacent):
+        self.adiacents.append(adiacent)
 
-    def get_child(self, order):
-        if order < len(self.children):
-            return self.children[order]
 
-    def get_childer(self):
-        return self.children
+    # Method for acquire adiacents nodes
+    def get_adiacents(self):
+        return self.adiacents
 
-    def get_value(self):
-        return self.value
 
-    def get_label(self):
-        return self.label
-
+    # Method for set node value
+    # @value: value related to node
     def set_value(self, value):
         self.value = value
 
-    def set_label(self, label):
-        self.label = label
+
+    # Method for acquire node value
+    def get_value(self):
+        return self.value
 
 
+
+# Class for defining a single hyperbox using
+# a particular set of intervals
 class Hyperbox:
 
+    # Class constructor. Needs set of intervals
+    # made by tuple of tuples
+    # @hyperbox_tuple: set of intervals
     def __init__(self, hyperbox_tuple):
 
-        self.value = tuple()
-
+        # initializing boundaries and points structure
+        self.boundaries = tuple()
         self.points = list()
 
         # if passed hyperbox is a tuple of tuples then
         # append it into hyperboxes set, else raise an
         # error based on passed wrong type
         if isinstance(hyperbox_tuple, tuple):
-            self.value = hyperbox_tuple
+            self.boundaries = hyperbox_tuple
         else:
             raise TypeError("Impossible to create hyperbox. Passed a non tuple parameter")
 
 
+    # Method for acquiring hyperbox boundaries for each dimension
+    def get_boundaries(self):
+        return self.boundaries
+
+
+    # Method for setting belonging points of hyperbox
+    # @point_list: list of all points into space
     def set_belonging_points(self, point_list):
 
-        dimensions = len(self.value)
+        # defining dimensions number
+        dimensions = len(self.boundaries)
 
+        # for each point into point_list
         for point in point_list:
 
             dimension_index = 0
             belonging = True
 
             while dimension_index < dimensions and belonging:
-                if self.value[dimension_index][0] <= point.get_coordinate(dimension_index + 1) <= self.value[dimension_index][1]:
+                if self.boundaries[dimension_index][0] <= point.get_coordinate(dimension_index + 1) <= self.boundaries[dimension_index][1]:
                     dimension_index = dimension_index + 1
                 else:
                     belonging = False
@@ -70,6 +84,7 @@ class Hyperbox:
                 self.points.append(point)
 
 
+    # Method for acquiring belonging points of hyperbox
     def get_belonging_points(self):
         return self.points
 
@@ -101,7 +116,6 @@ class HyperboxesSet:
     def __init__(self, points, valid_intervals):
 
         # inizialization of hyperboxes set
-        #self.B = list()
         self.B = dict()
 
         # initialization of list of points
@@ -113,13 +127,12 @@ class HyperboxesSet:
         for cartesian_product in itool.product(*self.intervals):
             hyperbox = Hyperbox(cartesian_product)
             hyperbox.set_belonging_points(self.points_list)
-            #self.B.append(hyperbox)
-            self.B.__setitem__(hyperbox.value, hyperbox)
+            self.B.__setitem__(hyperbox.get_boundaries(), hyperbox)
 
 
     def get_hyperbox_by_point(self, point):
 
-        start = Node((), "Start")
+        start = HyperboxSearchGraphNode(None)
 
         hyperboxes_number = len(self.B)
         in_d = len(self.intervals)
@@ -131,7 +144,7 @@ class HyperboxesSet:
             dim_int = len(self.intervals[i])
             nodes_dim = list()
             for j in range(0, dim_int):
-                nodes_dim.append(Node(self.intervals[i][j]))
+                nodes_dim.append(HyperboxSearchGraphNode(self.intervals[i][j]))
             nodes.append(nodes_dim)
 
         i = 0
@@ -139,7 +152,7 @@ class HyperboxesSet:
         while i < in_d and j < in_d + 1:
             for node in nodes[i]:
                 for child in nodes[j]:
-                    node.add_child(child)
+                    node.add_adiacent(child)
             i = i + 1
             j = j + 1
 
@@ -147,8 +160,8 @@ class HyperboxesSet:
         level = 1
         result = list()
         contatore = 0
-        while evaluated_point.get_childer():
-            adiacents = evaluated_point.get_childer()
+        while evaluated_point.get_adiacents():
+            adiacents = evaluated_point.get_adiacents()
             n_adiacents = len(adiacents)
             idx = 0
             cicla = True
@@ -161,7 +174,6 @@ class HyperboxesSet:
                     cicla = False
                 else:
                     idx = idx + 1
-
 
         print("confronti: ", contatore)
         return self.B.get(tuple(result))
