@@ -161,20 +161,21 @@ def generate_hyperboxes_from_s_d(S_d, point_list, m_d, M_d):
         if dimension_size > 0:
 
             # set the m_d cut, the leftmost cut of dimension
-            dimension_intervals.append((m_d, dimension[0]))
+            dimension_intervals.append(m_d)
 
             # for each cut in evaluate dimension, insert it into
             # the list of intervals for that dimension
-            for cut_index in range(0, dimension_size - 1):
-                dimension_intervals.append((dimension[cut_index], dimension[cut_index+1]))
+            for cut_index in range(0, dimension_size):
+                dimension_intervals.append(dimension[cut_index])
 
             # set the M_d cut, the rightmost cut of dimension
-            dimension_intervals.append((dimension[dimension_size-1], M_d))
+            dimension_intervals.append(M_d)
 
         # if the evaluate dimension doesn't have a cut, then set
         # only m_d and M_d cuts
         else:
-            dimension_intervals.append((m_d, M_d))
+            dimension_intervals.append(m_d)
+            dimension_intervals.append(M_d)
 
         # insert the list of interval for evaluate dimension into
         # the S_d interval list

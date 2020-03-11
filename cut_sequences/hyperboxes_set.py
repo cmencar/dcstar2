@@ -32,6 +32,9 @@ class Hyperbox:
     # @point_list: list of all points into space
     def set_belonging_points(self, point_list):
 
+        self.points.append(point_list)
+
+    '''
         # defining dimensions number
         dimensions = len(self.boundaries)
 
@@ -60,6 +63,7 @@ class Hyperbox:
             # if evaluated point belong to hyperbox then insert it into points' list
             if belonging:
                 self.points.append(point)
+    '''
 
 
     # Method for acquiring belonging points of hyperbox
@@ -117,16 +121,19 @@ class HyperboxesSet:
         # defining Cartesian product for creating hyperboxes set
         # and passing points list for defining included points
         # into particular hyperbox
-        for cartesian_product in itool.product(*self.intervals):
-            pass
-            #hyperbox = Hyperbox(cartesian_product) # <--- TODO modifica salvataggio hyperbox
-            #hyperbox.set_belonging_points(self.points_list) # <--- TODO modifica salvataggio hyperbox
-            #self.B.__setitem__(hyperbox.get_boundaries(), hyperbox) # <--- TODO modifica salvataggio hyperbox
+        for point in self.points_list:
+
+            if self.B.get(self.set_hyperbox_by_point(point)):
+                self.B.get(self.set_hyperbox_by_point(point)).set_belonging_points(point)
+            else:
+                hyperbox = Hyperbox(self.set_hyperbox_by_point(point))
+                hyperbox.set_belonging_points(point)
+                self.B.__setitem__(hyperbox.get_boundaries(), hyperbox)
 
 
     # Method for acquiring particular hyperbox starting by point
     # @point: point associated with the hyperbox to find
-    def get_hyperbox_by_point(self, point):
+    def set_hyperbox_by_point(self, point):
 
         # per ogni d, devo prendere il piu piccolo taglio che ha valore maggiore
         # della coordinata del punto in d per determinare il taglio a destra.
@@ -142,7 +149,7 @@ class HyperboxesSet:
             found = False
             interval_index = 0
 
-            while found is False and interval_index <= len(self.intervals):
+            while found is False and interval_index <= len(dimension):
 
                 interval = dimension[interval_index]
 
@@ -156,50 +163,13 @@ class HyperboxesSet:
 
             dimension_index = dimension_index + 1
 
-        return hb_list
+        return tuple(hb_list)
 
-        '''
-        # contruction of the research graph
-        hyperbox_search_graph = HyperboxSearchGraph(self.intervals)
 
-        # initializing service variables along with the index of the first node
-        coordinate_index = 1
-        result = list()
+    def get_hyperbox_by_point(self, point):
 
-        # for each node that has adjacents (so not in the final level)
-        while hyperbox_search_graph.get_evaluated_node().get_adjacents():
-
-            # take his adjacents and count them
-            adjacents = hyperbox_search_graph.get_adjacents()
-            n_adiacents = len(adjacents)
-
-            # beginning of index
-            idx = 0
-            looping = True
-
-            # while there are still adjacents to evaluate
-            while looping and idx < n_adiacents:
-
-                # if the point coordinates are between the boundaries of that dimension
-                if adjacents[idx].get_value()[0] <= point.get_coordinate(coordinate_index) <= adjacents[idx].get_value()[1]:
-
-                    # set the evaluated node with the current adjacent one,
-                    # incrementing the coordinate index and saving the result
-                    hyperbox_search_graph.set_evaluated_node(adjacents[idx])
-                    coordinate_index = coordinate_index + 1
-                    result.append(adjacents[idx].get_value())
-
-                    # set the looping flag to false
-                    looping = False
-
-                # if the evaluated adjacent node has not his point between the boundaries,
-                # then switch to the next adjacent
-                else:
-                    idx = idx + 1
-
-        # return the coordinates of the hyperbox
-        return self.B.get(tuple(result))
-        '''
+        hb_key = self.set_hyperbox_by_point(point)
+        return self.B.get(hb_key)
 
 
     # Method for checking if a given hyperbox is impure
