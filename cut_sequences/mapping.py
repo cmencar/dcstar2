@@ -141,7 +141,7 @@ def generate_starting_binary_t_d(T_d):
 # Function for generate an hyperboxes set starting
 # from any S_d sequence of cuts
 # @S_d: sequence of cuts to be acquired
-def generate_hyperboxes_from_s_d(S_d, point_list, m_d, M_d):
+def generate_hyperboxes_from_s_d(S_d, point_list, m_d = 0, M_d = 1):
 
     # initialization of a list of intervals
     intervals = list()

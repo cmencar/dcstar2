@@ -1,5 +1,3 @@
-import itertools as itool
-
 
 # Class for defining a single hyperbox using
 # a particular set of intervals
@@ -28,42 +26,10 @@ class Hyperbox:
         return self.boundaries
 
 
-    # Method for setting belonging points of hyperbox
-    # @point_list: list of all points into space
-    def set_belonging_points(self, point_list):
-
-        self.points.append(point_list)
-
-    '''
-        # defining dimensions number
-        dimensions = len(self.boundaries)
-
-        # for each point into point_list evaluate
-        # its presence into hyperbox
-        for point in point_list:
-
-            # initialize dimension_index and belonging flag for point
-            dimension_index = 0
-            belonging = True
-
-            # for each dimension of hyperbox it must evaluate
-            # the possibly presence of point.
-            # The presence of the point is determined as follows:
-            # if all the coordinates of the point (evaluating dimension
-            # by dimension) are included between all the boundaries of the
-            # hyperbox then it is part of the Hyperbox itself. If, on the other hand,
-            # even one coordinate is not included between the boundaries of the hyperbox
-            # then the point is not part of the hyperbox and the checking stop.
-            while dimension_index < dimensions and belonging:
-                if self.boundaries[dimension_index][0] <= point.get_coordinate(dimension_index + 1) <= self.boundaries[dimension_index][1]:
-                    dimension_index = dimension_index + 1
-                else:
-                    belonging = False
-
-            # if evaluated point belong to hyperbox then insert it into points' list
-            if belonging:
-                self.points.append(point)
-    '''
+    # Method for setting belonging point of hyperbox
+    # @point_list: single points, part of hyperbox
+    def set_belonging_point(self, point):
+        self.points.append(point)
 
 
     # Method for acquiring belonging points of hyperbox
@@ -106,7 +72,7 @@ class Hyperbox:
 class HyperboxesSet:
 
     # class constructor
-    def __init__(self, points, valid_intervals):
+    def __init__(self, points, cuts):
 
         # inizialization of hyperboxes set
         self.B = dict()
@@ -114,58 +80,72 @@ class HyperboxesSet:
         # initialization of list of points
         self.points_list = points
 
-        # initialization of S_d (here named intervals)
+        # initialization of S_d cuts
         # which is based on hyperboxes_set
-        self.intervals = valid_intervals
+        self.dimensions_cuts = cuts
 
-        # defining Cartesian product for creating hyperboxes set
-        # and passing points list for defining included points
-        # into particular hyperbox
+        # for each point in passed points list, if that point
+        # is part of an existing hyperbox then insert it as
+        # one of its belonging points. If that point is not part
+        # of an existing hyperbox then create a new hyperbox
+        # and insert that point into its belonging points.
         for point in self.points_list:
 
             if self.B.get(self.set_hyperbox_by_point(point)):
-                self.B.get(self.set_hyperbox_by_point(point)).set_belonging_points(point)
+                self.B.get(self.set_hyperbox_by_point(point)).set_belonging_point(point)
+
             else:
                 hyperbox = Hyperbox(self.set_hyperbox_by_point(point))
-                hyperbox.set_belonging_points(point)
+                hyperbox.set_belonging_point(point)
                 self.B.__setitem__(hyperbox.get_boundaries(), hyperbox)
+
+
+    # Method for defining particular hyperbox starting by point
+    # @point: point associated with the hyperbox to find
+    def set_hyperbox_by_point(self, point):
+
+        # initializing point coordinate dimension's index
+        dimension_index = 1
+
+        # definition of hyperbox's boundaries
+        hyperbox_boundaries = list()
+
+        # for each dimension in passed S_d
+        for dimension in self.dimensions_cuts:
+
+            # initializing found flag and
+            # dimension cut's index
+            found = False
+            cut_index = 0
+
+            # get the evaluated point coordinate
+            coordinate = point.get_coordinate(dimension_index)
+
+            # while the smallest cut with greater value than
+            # point coordinate is not found
+            while found is False and cut_index <= len(dimension):
+
+                # get the evaluated cut
+                cut = dimension[cut_index]
+
+                # if cut value is greater than point coordinate value
+                # then insert that cut and previous cut in the
+                # dimensional order as one of hyperbox dimensional boundaries
+                if coordinate <= cut:
+                    hyperbox_boundaries.append((dimension[cut_index-1], cut))
+                    found = True
+
+                # increment cut index
+                cut_index = cut_index + 1
+
+            # increment point coordinate dimension index
+            dimension_index = dimension_index + 1
+
+        return tuple(hyperbox_boundaries)
 
 
     # Method for acquiring particular hyperbox starting by point
     # @point: point associated with the hyperbox to find
-    def set_hyperbox_by_point(self, point):
-
-        # per ogni d, devo prendere il piu piccolo taglio che ha valore maggiore
-        # della coordinata del punto in d per determinare il taglio a destra.
-        # per determinare quello a sinistra si prende il taglio immediatamente
-        # precedente al taglio preso in questione
-
-        dimension_index = 1
-
-        hb_list = list()
-
-        for dimension in self.intervals:
-
-            found = False
-            interval_index = 0
-
-            while found is False and interval_index <= len(dimension):
-
-                interval = dimension[interval_index]
-
-                coord = point.get_coordinate(dimension_index)
-
-                if coord <= interval:
-                    hb_list.append((dimension[interval_index-1], interval))
-                    found = True
-
-                interval_index = interval_index + 1
-
-            dimension_index = dimension_index + 1
-
-        return tuple(hb_list)
-
-
     def get_hyperbox_by_point(self, point):
 
         hb_key = self.set_hyperbox_by_point(point)
