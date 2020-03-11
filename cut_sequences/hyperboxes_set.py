@@ -119,15 +119,47 @@ class HyperboxesSet:
         # and passing points list for defining included points
         # into particular hyperbox
         for cartesian_product in itool.product(*self.intervals):
-            hyperbox = Hyperbox(cartesian_product)
-            hyperbox.set_belonging_points(self.points_list)
-            self.B.__setitem__(hyperbox.get_boundaries(), hyperbox)
+            pass
+            #hyperbox = Hyperbox(cartesian_product) # <--- TODO modifica salvataggio hyperbox
+            #hyperbox.set_belonging_points(self.points_list) # <--- TODO modifica salvataggio hyperbox
+            #self.B.__setitem__(hyperbox.get_boundaries(), hyperbox) # <--- TODO modifica salvataggio hyperbox
 
 
     # Method for acquiring particular hyperbox starting by point
     # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
 
+        # per ogni d, devo prendere il piu piccolo taglio che ha valore maggiore
+        # della coordinata del punto in d per determinare il taglio a destra.
+        # per determinare quello a sinistra si prende il taglio immediatamente
+        # precedente al taglio preso in questione
+
+        dimension_index = 1
+
+        hb_list = list()
+
+        for dimension in self.intervals:
+
+            found = False
+            interval_index = 0
+
+            while found is False and interval_index <= len(self.intervals):
+
+                interval = dimension[interval_index]
+
+                coord = point.get_coordinate(dimension_index)
+
+                if coord <= interval:
+                    hb_list.append((dimension[interval_index-1], interval))
+                    found = True
+
+                interval_index = interval_index + 1
+
+            dimension_index = dimension_index + 1
+
+        return hb_list
+
+        '''
         # contruction of the research graph
         hyperbox_search_graph = HyperboxSearchGraph(self.intervals)
 
@@ -168,6 +200,7 @@ class HyperboxesSet:
 
         # return the coordinates of the hyperbox
         return self.B.get(tuple(result))
+        '''
 
 
     # Method for checking if a given hyperbox is impure
