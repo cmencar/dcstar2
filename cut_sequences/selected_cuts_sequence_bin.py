@@ -94,21 +94,6 @@ class SelectedCutsSequenceBin(Cuts):
             print("Dimension not found, impossible to initialize")
 
 
-    # Method for returning the values of a single dimension
-    # @dimension: index of the dimension to be get
-    # @return the NumPy array for the passed dimension
-    def get_dimension(self, dimension):
-
-        try:
-
-            return self.elementlist[dimension - 1]
-
-        except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found, impossible to initialize")
-
-
     # Method for returning the value of a single cut of single dimension
     # @dimension: index of the dimension to be get
     # @cut_index: index of the cut to be get

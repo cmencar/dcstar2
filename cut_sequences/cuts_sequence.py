@@ -64,22 +64,3 @@ class CutsSequence(Cuts):
 
             # print an error message if the index refers to a non-existent dimension
             print("Dimension not found, impossible to initialize")
-
-
-    # Method for returning the values of a single dimension
-    # @dimension: index of the dimension to be get
-    # @return the NumPy array for the passed dimension
-    def get_dimension(self, dimension):
-
-        try:
-
-            # return the NumPy array of the dimension
-            return self.elementlist[dimension - 1]
-
-        except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found, returned None")
-
-            # return a None value
-            return None
