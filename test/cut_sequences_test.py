@@ -54,7 +54,7 @@ points_set = list([point_A, point_B, point_C, point_D, point_E, point_F, point_G
 
 # calculating hyperboxes given a selected cuts sequence
 eval_point = point_B
-hyperboxes = mp.generate_hyperboxes_from_s_d(S_d_for_hb_eval, points_set, m_d=0, M_d=1)
+hyperboxes = mp.generate_hyperboxes_set_from_s_d(S_d_for_hb_eval, points_set, m_d=0, M_d=1)
 hb = hyperboxes.get_hyperbox_by_point(eval_point)
 print("\n\nHyperbox of point '", eval_point.get_name(), "'. impure: ", hb.is_impure())
 
