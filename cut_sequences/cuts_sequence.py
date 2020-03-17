@@ -28,7 +28,7 @@ class CutsSequence(Cuts):
                         self.elementlist.append(dim)
                     else:
                         npdim = np.array(dim)
-                        np.sort(npdim)
+                        np.sort(npdim, kind='mergesort')
                         self.elementlist.append(npdim)
             else:
                 for dim in cuts_list:
@@ -44,7 +44,7 @@ class CutsSequence(Cuts):
 
         try:
 
-            # if inserted dimension refer to a not-existent dimension
+            # if inserted dimension refers to a not-existent dimension
             # then insert a new NumPy array
             if len(self.elementlist) < dimension:
                 self.elementlist.insert(dimension, np.array([]))
