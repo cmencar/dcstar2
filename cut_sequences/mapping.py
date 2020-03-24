@@ -34,7 +34,7 @@ def from_logical_to_point(T_d, S_d_bin):
                 dimension_element_index = 0
 
                 # for each element in dimension referred by dimension_index
-                for element_index in range(1, S_d_bin.get_dimension_size(dimension_index) + 1):
+                for element_index in range(S_d_bin.get_dimension_size(dimension_index)):
 
                     # if cut logical value set in dimension referred by dimension_index at
                     # position referred by element_index is True, then insert into the
@@ -150,7 +150,7 @@ def generate_hyperboxes_set_from_s_d(S_d, point_list, m_d = 0, M_d = 1):
     intervals = list()
 
     # for each dimension in S_d sequence
-    for dimension_index in range(1, S_d.get_dimensions_number() + 1):
+    for dimension_index in range(S_d.get_dimensions_number()):
 
         # get the evaluated dimension and the number of cuts in it
         dimension = S_d.get_dimension(dimension_index)
