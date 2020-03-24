@@ -1,3 +1,4 @@
+from cut_sequences.selected_cuts_sequence_bin import SelectedCutsSequenceBin
 from cut_sequences.cuts import Cuts
 import numpy as np
 
@@ -36,30 +37,39 @@ class CutsSequence(Cuts):
                     self.elementlist.append(npdim)
 
 
-    # Method for setting a single dimension
-    # @dimension: index of the dimension to be set
-    # @cuts: cut sequence to be defined
-    def set_dimension(self, dimension, cuts):
+    # Function for converting a general cut sequence to
+    # a logical cut sequence, where each element (corresponding
+    # an element of T_d) is a False logical value
+    # @T_d: general cut sequence
+    def generate_starting_binary(self):
 
-        try:
+        empty_S_d = list()
 
-            # if inserted dimension refers to a not-existent dimension
-            # then insert a new NumPy array
-            if len(self.elementlist) < dimension:
-                self.elementlist.insert(dimension, np.array([]))
+        for dimension in self.elementlist:
+            empty_S_d.append(np.ndarray([]))
 
-            # if passed cuts is configured as a NumPy array,
-            # set the single dimension with that array. Otherwise,
-            # convert the passed list in a NumPy array.
-            if isinstance(cuts, np.ndarray):
-                np.sort(cuts, kind='mergesort')
-                self.elementlist[dimension - 1] = cuts
-            else:
-                npcuts = np.array(cuts)
-                np.sort(npcuts, kind='mergesort')
-                self.elementlist[dimension - 1] = npcuts
+        return SelectedCutsSequenceBin(empty_S_d, self.elementlist)
 
-        except IndexError:
+        '''
+        # definition of a new list of logical value
+        T_d_bin = list()
 
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found, impossible to initialize")
+        # for each dimension of T_d sequence cut
+        for dimension_index in range(T_d.get_dimensions_number()):
+
+            # definition of a list of logical value for referred dimension
+            dimension = list()
+
+            # for each element in dimension referred by dimension_index
+            # insert a False logical value
+            for element in T_d.get_dimension(dimension_index):
+                dimension.append(False)
+
+            # insert the logical value cut dimension's list
+            # into T_d_bin
+            T_d_bin.insert(dimension_index, dimension)
+
+        # return a BinaryCuts object using T_d_bin elements
+        # return SelectedCutsSequenceBin(T_d_bin)
+        return SelectedCutsSequenceBin(None, T_d)
+        '''

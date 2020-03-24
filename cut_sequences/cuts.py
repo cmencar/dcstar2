@@ -11,14 +11,6 @@ class Cuts(ABC):
         self.elementlist = list()
 
 
-    # Method for setting a single dimension
-    # @dimension: index of the dimension to be set
-    # @cuts: cut sequence to be defined
-    @abstractmethod
-    def set_dimension(self, dimension, cuts):
-        pass
-
-
     # Method for returning the values of a single dimension
     # @dimension: index of the dimension to be get
     # @return the NumPy array for the passed dimension
