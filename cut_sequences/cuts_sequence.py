@@ -37,39 +37,18 @@ class CutsSequence(Cuts):
                     self.elementlist.append(npdim)
 
 
-    # Function for converting a general cut sequence to
-    # a logical cut sequence, where each element (corresponding
+    # Function for creating a general cut sequence to
+    # a logical cut sequence, where each element (corresponding to
     # an element of T_d) is a False logical value
-    # @T_d: general cut sequence
     def generate_starting_binary(self):
 
+        # initialize an empty list for the creation
+        # of a dummy S_d cuts sequence
         empty_S_d = list()
 
-        for dimension in self.elementlist:
-            empty_S_d.append(np.ndarray([]))
+        # insert an empty NumPy array for each dimension of T_d
+        [ empty_S_d.append(np.ndarray([])) for dimension in self.elementlist ]
 
+        # creating a SelectedCutsSequenceBin using the dummy S_d
+        # for defining the absence of cuts
         return SelectedCutsSequenceBin(empty_S_d, self.elementlist)
-
-        '''
-        # definition of a new list of logical value
-        T_d_bin = list()
-
-        # for each dimension of T_d sequence cut
-        for dimension_index in range(T_d.get_dimensions_number()):
-
-            # definition of a list of logical value for referred dimension
-            dimension = list()
-
-            # for each element in dimension referred by dimension_index
-            # insert a False logical value
-            for element in T_d.get_dimension(dimension_index):
-                dimension.append(False)
-
-            # insert the logical value cut dimension's list
-            # into T_d_bin
-            T_d_bin.insert(dimension_index, dimension)
-
-        # return a BinaryCuts object using T_d_bin elements
-        # return SelectedCutsSequenceBin(T_d_bin)
-        return SelectedCutsSequenceBin(None, T_d)
-        '''

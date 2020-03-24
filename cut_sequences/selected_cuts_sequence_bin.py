@@ -6,13 +6,16 @@ import numpy as np
 class SelectedCutsSequenceBin(Cuts):
 
     # SelectedCuts class constructor method
-    # @
-    # @
+    # @S_d: selected cuts to be converted in logical sequence
+    # @T_d: general cuts sequence
     def __init__(self, S_d, T_d):
 
         # calling superclass constructor
         super().__init__()
 
+        # control for define if the passed parameters are iterable objects
+        # If parameters aren't iterable objects then the constructor fail and
+        # show an error message
         try:
             _ = (element for element in S_d)
             _ = (element for element in T_d)
@@ -20,36 +23,19 @@ class SelectedCutsSequenceBin(Cuts):
             print("Error in creating SelectedCutsSequenceBin. Passed non-iterable parameter")
             return
 
-        for dimension_td, dimension_sd in zip(T_d, S_d):
+        # evaluate T_d and S_d dimension in parallel
+        for T_d_dimension, S_d_dimension in zip(T_d, S_d):
+
+            # defining an empty list which represents the presence of cuts
+            # in the evaluated S_d dimension (in a logical way)
             binary_array = list()
-            [ binary_array.append(True) if cut in dimension_sd else binary_array.append(False)
-              for cut in dimension_td ]
+
+            # for every cut in evaluated T_d dimension, if that cut is in S_d dimension then
+            # set the corresponding value to true into the binary array, elsewhere set it to False
+            [ binary_array.append(True) if cut in S_d_dimension else binary_array.append(False) for cut in T_d_dimension ]
+
+            # inserting the binary array (casted into a NumPy array) in the elementlist
             self.elementlist.append(np.array(binary_array))
-
-    '''
-        for dimension_index in range(T_d.get_dimensions_number()):
-            binary_array = list()
-            [ binary_array.append(True) if T_d.get_dimension(dimension_index)[cut_index] in S_d.get_dimension(dimension_index) else binary_array.append(False)
-              for cut_index in range(T_d.get_dimension_size(dimension_index)) ]
-            self.elementlist.append(np.array(binary_array))
-    '''
-
-
-    # Method for setting a single dimension
-    # @dimension: index of the dimension to be set
-    # @cut_index: cut sequence's index to be set
-    # @value: cut value to be set
-    def set_cut(self, dimension, cut_index, value):
-
-        try:
-
-            # Set the single cut of dimension with a boolean element
-            self.elementlist[dimension][cut_index] = value
-
-        except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found, impossible to initialize")
 
 
     # Method for returning the value of a single cut of single dimension
