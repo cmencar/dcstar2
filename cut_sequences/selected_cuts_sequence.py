@@ -41,13 +41,7 @@ class SelectedCutsSequence(Cuts):
     # @S_d_bin: logical cut sequence
     def from_binary(self, T_d, S_d_bin):
 
-        # definition of a new S_d sequence of selected cuts
-        #S_d = SelectedCutsSequence()
-
-        # if logical cut sequence is empty then return an empty S_d
-        #if S_d_bin.get_dimensions_number() < 1:
-        #    return
-        #else:
+        # clear all previous elements into elementlist
         self.elementlist.clear()
 
         # for each dimension of S_d_bin logical sequence cut
@@ -56,7 +50,6 @@ class SelectedCutsSequence(Cuts):
             # if dimension referred by dimension_index is empty then
             # set an empty NumPy array
             if S_d_bin.get_dimension_size(dimension_index) < 1:
-                #S_d.set_dimension(dimension_index, np.array([]))
                 self.elementlist.append(np.array([]))
             else:
 
@@ -74,13 +67,12 @@ class SelectedCutsSequence(Cuts):
                     # temporary element's list the corrisponding point-based value of
                     # T_d cut sequence
                     if S_d_bin.get_cut(dimension_index, element_index):
-                        dimension_elements.insert(dimension_element_index,
-                                                  T_d.get_dimension(dimension_index)[element_index])
+                        dimension_elements.insert(dimension_element_index, T_d.get_dimension(dimension_index)[element_index])
                         dimension_element_index = dimension_element_index + 1
 
                 # insert a new dimension in S_d structure
-                #S_d.set_dimension(dimension_index, dimension_elements)
                 self.elementlist.append(dimension_elements)
+
 
     # Function for creating a logical cut sequence from the comparison
     # between a general cut sequence and a selected cut sequence
@@ -91,8 +83,7 @@ class SelectedCutsSequence(Cuts):
 
         # for each dimension in the general cuts sequence,
         # append the whole dimension into the list
-        for dimension_index in range(T_d.get_dimensions_number()):
-            T_d_converted.append(T_d.get_dimension(dimension_index))
+        [ T_d_converted.append(T_d.get_dimension(dimension_index)) for dimension_index in range(T_d.get_dimensions_number()) ]
 
         # return the logical cut sequence using SelectedCutsSequenceBin constructor
         # passing the converted general cuts list and selected cuts sequence's elementlist
@@ -104,7 +95,7 @@ class SelectedCutsSequence(Cuts):
     # @point_list: list of prototype points
     # @m_d: smallest boundary cut of dimension d
     # @M_d: greatest boundary cut of dimension d
-    def generate_hyperboxes_set(self, point_list, m_d=0, M_d=1):
+    def generate_hyperboxes_set(self, point_list, m_d = 0, M_d = 1):
 
         # initialization of a list of intervals
         intervals = list()

@@ -8,30 +8,27 @@ class HyperboxesSet:
     # @cuts: S_d cuts sequence used to calculate HyperboxesSet
     def __init__(self, points, cuts):
 
-        # inizialization of hyperboxes set
-        self.hyperboxes = dict()
-
-        # initialization of list of points
-        self.points_list = points
+        # initialization of dictionary of points
+        self.points = dict()
 
         # initialization of S_d cuts
         # which is based on hyperboxes_set
         self.dimensions_cuts = cuts
 
-        # for each point in passed points list, if that point
-        # is part of an existing hyperbox then insert it as
-        # one of its belonging points. If that point is not part
-        # of an existing hyperbox then create a new hyperbox
-        # and insert that point into its belonging points.
-        for point in self.points_list:
+        # for each point in passed points list, create its hyperbox.
+        # If there is already a point that use an hyperbox defined with
+        # the created hyperbox boundaries then use that hyperbox for the point
+        for point in points:
 
-            if self.hyperboxes.get(self.set_hyperbox_by_point(point)):
-                self.hyperboxes.get(self.set_hyperbox_by_point(point)).set_belonging_point(point)
+            hyperbox_boundaries = self.set_hyperbox_by_point(point)
+            hyperbox = Hyperbox(hyperbox_boundaries)
 
-            else:
-                hyperbox = Hyperbox(self.set_hyperbox_by_point(point))
-                hyperbox.set_belonging_point(point)
-                self.hyperboxes.__setitem__(hyperbox.get_boundaries(), hyperbox)
+            for point_key, hb in self.points.items():
+                if hb.get_boundaries() == hyperbox_boundaries:
+                    hyperbox = hb
+
+            hyperbox.set_belonging_point(point)
+            self.points.__setitem__(point, hyperbox)
 
 
     # Method for defining particular hyperbox starting by point
@@ -82,8 +79,9 @@ class HyperboxesSet:
     # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
 
-        hb_key = self.set_hyperbox_by_point(point)
-        return self.hyperboxes.get(hb_key)
+        #hb_key = self.set_hyperbox_by_point(point)
+        #return self.hyperboxes.get(hb_key)
+        return self.points.get(point)
 
 
     # Method for checking if a given hyperbox is impure

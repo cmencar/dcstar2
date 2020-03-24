@@ -47,23 +47,18 @@ class Hyperbox:
 
         # initialization of service variables
         is_impure = False
-        point_label = None
-        point_index = 0
+        point_label = self.points[0].get_label()
+        point_index = 1
 
         # while the hyperbox is not impure and there are points to examinate
         while not is_impure and point_index < len(self.points):
 
-            # if there isn't a fixed label take the one of the examinated point
-            # else check if the label of the examinated point is different
+            # check if the label of the examinated point is different
             # from the fixed one, if so, set is_impure to True
-            if point_label is None:
-                point_label = self.points[point_index].get_label()
-            elif self.points[point_index].get_label() != point_label:
+            if self.points[point_index].get_label() != point_label:
                 is_impure = True
 
             # increment point index
             point_index = point_index + 1
 
         return is_impure
-
-
