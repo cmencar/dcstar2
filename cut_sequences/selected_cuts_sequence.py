@@ -82,14 +82,20 @@ class SelectedCutsSequence(Cuts):
                 #S_d.set_dimension(dimension_index, dimension_elements)
                 self.elementlist.append(dimension_elements)
 
-
+    # Function for creating a logical cut sequence from the comparison
+    # between a general cut sequence and a selected cut sequence
     def get_binary(self, T_d):
 
+        # initializing empty list of generic cuts
         T_d_converted = list()
 
+        # for each dimension in the general cuts sequence,
+        # append the whole dimension into the list
         for dimension_index in range(T_d.get_dimensions_number()):
             T_d_converted.append(T_d.get_dimension(dimension_index))
 
+        # return the logical cut sequence using SelectedCutsSequenceBin constructor
+        # passing the converted general cuts list and selected cuts sequence's elementlist
         return SelectedCutsSequenceBin(self.elementlist, T_d_converted)
 
 
