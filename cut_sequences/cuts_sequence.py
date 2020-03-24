@@ -6,7 +6,6 @@ import numpy as np
 class CutsSequence(Cuts):
 
     # Cuts class constructor method
-    # @dimensions: number of dimensions of the T_d sequence to initialize as empty lists
     # @cuts_list: list of cuts for each dimension
     def __init__(self, cuts_list=None):
 

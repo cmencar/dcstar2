@@ -6,6 +6,9 @@ import numpy as np
 class Point:
 
     # Class constructor
+    # @coordinates_array: points' coordinates for every dimension
+    # label: point label
+    # name: point name
     def __init__(self, coordinates_array = None, label = None, name = None):
 
         # if coordinates' array is not empty

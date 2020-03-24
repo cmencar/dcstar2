@@ -26,7 +26,7 @@ class Cuts(ABC):
 
         try:
 
-            return self.elementlist[dimension - 1]
+            return self.elementlist[dimension]
 
         except IndexError:
 
@@ -49,7 +49,7 @@ class Cuts(ABC):
         try:
 
             # return the size of NumPy array
-            return len(self.elementlist[dimension - 1])
+            return len(self.elementlist[dimension])
 
         except IndexError:
 
