@@ -50,7 +50,7 @@ def from_logical_to_point(T_d, S_d_bin):
         # return complete S_d structure
         return S_d
 
-
+'''
 # Function for converting a point-based cut sequence to
 # a logical cut sequence to
 # @T_d: general cut sequence
@@ -108,7 +108,7 @@ def from_point_to_logical(T_d, S_d):
 
     # return complete S_d_bin structure
     return S_d_bin
-
+'''
 
 # Function for converting a general cut sequence to
 # a logical cut sequence, where each element (corresponding

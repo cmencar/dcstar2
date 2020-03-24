@@ -12,13 +12,6 @@ T_d.set_dimension(3, [1.2])
 T_d.set_dimension(4, [-8.9, 9.0, 9.3, 9.5, 9.8])
 T_d.set_dimension(5, [-0.1, 6.6])
 
-# example definition S_d_bin
-S_d_bin = SelectedCutsSequenceBin([[True, False, False],
-                              [False, False],
-                              [True],
-                              [False, True, True, False, True],
-                              [False, True]])
-
 # example definition S_d
 S_d = SelectedCutsSequence()
 S_d.set_dimension(1, [-1.5, 4.1])
@@ -27,10 +20,13 @@ S_d.set_dimension(3, [1.2])
 S_d.set_dimension(4, [9.3, 9.8])
 S_d.set_dimension(5, [6.6])
 
+# example definition S_d_bin
+S_d_bin = SelectedCutsSequenceBin(S_d, T_d)
+
 # example calculating different cut structures
 print("\n----- from_point_to_logical -----\n")
-from_point_to_logical = mp.from_point_to_logical(T_d, S_d)
-from_point_to_logical.debug_print()
+#from_point_to_logical = mp.from_point_to_logical(T_d, S_d)
+#from_point_to_logical.debug_print()
 print("\n----- from_logical_to_point -----\n")
 from_logical_to_point = mp.from_logical_to_point(T_d, S_d_bin)
 from_logical_to_point.debug_print()

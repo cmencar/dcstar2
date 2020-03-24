@@ -6,49 +6,19 @@ import numpy as np
 class SelectedCutsSequenceBin(Cuts):
 
     # SelectedCuts class constructor method
-    # @cuts_list: list of cuts (defined in a logical way) for each dimension
-    def __init__(self, cuts_list=None):
+    # @
+    # @
+    def __init__(self, S_d, T_d):
 
         # calling superclass constructor
         super().__init__()
 
-        # initialize the error flag
-        error = False
+        for dimension_index in range(T_d.get_dimensions_number()):
+            binary_array = list()
+            [ binary_array.append(True) if T_d.get_dimension(dimension_index)[cut_index] in S_d.get_dimension(dimension_index) else binary_array.append(True)
+              for cut_index in range(T_d.get_dimension_size(dimension_index)) ]
+            self.elementlist.append(np.array(binary_array))
 
-        try:
-
-            # if cuts' list has a content then
-            # check if every cut is a binary element
-            if cuts_list is not None:
-                for cuts_dimension in cuts_list:
-                    for cut in cuts_dimension:
-                        assert cut is True or cut is False
-
-        except AssertionError:
-
-            # print an error message if the assertion fails and
-            # initialize the size to a default value and set the error flag
-            print("Error in constructing a new BinaryCuts object (passed a non-binary element).")
-            error = True
-
-        finally:
-
-            # set cuts_list correct structure
-            if cuts_list is None:
-                cuts_list = list()
-
-            # if there isn't an error in asserting list content
-            if error is not True:
-
-                # if passed logic cuts' list is configured as a list of NumPy array,
-                # set the single dimension with that array. Otherwise,
-                # convert the passed list of list in a list of NumPy array.
-                if isinstance(cuts_list, np.ndarray):
-                    for dimension in cuts_list:
-                        self.elementlist.append(dimension)
-                else:
-                    for dimension in cuts_list:
-                        self.elementlist.append(np.array(dimension))
 
 
     # Method for setting a single dimension

@@ -4,6 +4,8 @@ from cut_sequences.hyperbox import Hyperbox
 class HyperboxesSet:
 
     # class constructor
+    # @points: prototypes point list
+    # @cuts: S_d cuts sequence used to calculate HyperboxesSet
     def __init__(self, points, cuts):
 
         # inizialization of hyperboxes set
