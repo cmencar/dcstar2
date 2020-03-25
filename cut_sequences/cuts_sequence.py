@@ -26,9 +26,9 @@ class CutsSequence(DimensionalSequence):
         # and convert that list in a NumPy array. Finally, insert
         # the newly created NumPy array in elementlist
         for dimension in cuts_list:
-            cuts = list()
-            [ cuts.append(cut) for cut in dimension ]
-            self.elementlist.append(np.array(cuts))
+            formatted_cuts_list = list()
+            [ formatted_cuts_list.append(cut) for cut in dimension ]
+            self.elementlist.append(np.array(formatted_cuts_list))
 
 
     # Function for creating a general cut sequence to

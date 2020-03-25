@@ -28,14 +28,14 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
             # defining an empty list which represents the presence of cuts
             # in the evaluated S_d dimension (in a logical way)
-            binary_array = list()
+            binary_list = list()
 
             # for every cut in evaluated T_d dimension, if that cut is in S_d dimension then
             # set the corresponding value to true into the binary array, elsewhere set it to False
-            [ binary_array.append(True) if cut in S_d_dimension else binary_array.append(False) for cut in T_d_dimension ]
+            [ binary_list.append(True) if cut in S_d_dimension else binary_list.append(False) for cut in T_d_dimension ]
 
             # inserting the binary array (casted into a NumPy array) in the elementlist
-            self.elementlist.append(np.array(binary_array))
+            self.elementlist.append(np.array(binary_list))
 
 
     # Method for returning the value of a single cut of single dimension
@@ -54,3 +54,19 @@ class DimensionalSequenceBinary(DimensionalSequence):
             # print an error message if the index refers to a non-existent dimension
             print("Dimension not found, impossible to initialize")
 
+
+    # Method for setting a single dimension
+    # @dimension: index of the dimension to be set
+    # @cut_index: cut sequence's index to be set
+    # @value: cut value to be set
+    def set_cut(self, dimension, cut_index, value):
+
+        try:
+
+            # Set the single cut of dimension with a boolean element
+            self.elementlist[dimension][cut_index] = value
+
+        except IndexError:
+
+            # print an error message if the index refers to a non-existent dimension
+            print("Dimension not found, impossible to initialize")

@@ -8,9 +8,8 @@ import numpy as np
 class SelectedCutsSequence(DimensionalSequence):
 
     # Cuts class constructor method
-    # @dimensions: number of dimensions of the S_d sequence to initialize as empty lists
     # @cuts_list: list of cuts for each dimension
-    def __init__(self, cuts_list=None):
+    def __init__(self, cuts_list = []):
 
         # calling superclass constructor
         super().__init__()
@@ -28,9 +27,9 @@ class SelectedCutsSequence(DimensionalSequence):
         # and convert that list in a NumPy array. Finally, insert
         # the newly created NumPy array in elementlist
         for dimension in cuts_list:
-            cuts = list()
-            [ cuts.append(cut) for cut in dimension ]
-            self.elementlist.append(np.array(cuts))
+            formatted_cuts_list = list()
+            [ formatted_cuts_list.append(cut) for cut in dimension ]
+            self.elementlist.append(np.array(formatted_cuts_list))
 
 
     # Function for converting a logical cut sequence to
@@ -117,15 +116,8 @@ class SelectedCutsSequence(DimensionalSequence):
             # the S_d interval list
             intervals.append(dimension_intervals)
 
-        # initialization of a list of valid intervals, used for
-        # saving not-empty lists
-        valid_intervals = list()
-
-        # inserting into valid_intervals list only the not-empty sublists
-        [ valid_intervals.append(interval) for interval in intervals if interval ]
-
         # creation of hyperboxes set
-        hyperboxes = HyperboxesSet(point_list, valid_intervals)
+        hyperboxes = HyperboxesSet(point_list, intervals)
 
         # return the set of hyperboxes
         return hyperboxes

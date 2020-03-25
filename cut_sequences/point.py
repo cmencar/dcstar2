@@ -57,17 +57,7 @@ class Point:
         return self.label
 
 
-    # Method for setting point label
-    def set_label(self, label):
-        self.label = label
-
-
     # Method for acquiring point associated name
     def get_name(self):
         return self.name
-
-
-    # Method for setting point associated name
-    def set_name(self, name):
-        self.name = name
 
