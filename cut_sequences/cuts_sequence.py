@@ -1,40 +1,34 @@
-from cut_sequences.selected_cuts_sequence_bin import SelectedCutsSequenceBin
-from cut_sequences.cuts import Cuts
+from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
+from cut_sequences.dimensional_sequence import DimensionalSequence
 import numpy as np
 
 
 # Class for define cuts sequence T_d
-class CutsSequence(Cuts):
+class CutsSequence(DimensionalSequence):
 
     # Cuts class constructor method
     # @cuts_list: list of cuts for each dimension
-    def __init__(self, cuts_list=None):
+    def __init__(self, cuts_list = None):
 
         # calling superclass constructor
         super().__init__()
 
-        # if passed cuts' list is empty
-        if cuts_list is None:
-            self.elementlist.append(np.array([]))
-        else:
+        # control for define if the passed parameter is an iterable object
+        # If parameter isn't iterable object then the constructor fail and
+        # show an error message
+        try:
+            _ = (element for element in cuts_list)
+        except TypeError:
+            print("Error in creating CutsSequence. Passed non-iterable parameter")
+            return
 
-            # if passed cuts' list is configured as a list of NumPy array,
-            # set the single dimension with that array. Otherwise,
-            # convert the passed list of list in a list of NumPy array.
-            if isinstance(cuts_list, np.ndarray):
-                for dim in cuts_list:
-                    if isinstance(dim, np.ndarray):
-                        np.sort(dim, kind='mergesort')
-                        self.elementlist.append(dim)
-                    else:
-                        npdim = np.array(dim)
-                        np.sort(npdim, kind='mergesort')
-                        self.elementlist.append(npdim)
-            else:
-                for dim in cuts_list:
-                    npdim = np.array(dim)
-                    np.sort(npdim, kind='mergesort')
-                    self.elementlist.append(npdim)
+        # for each dimension take its cuts, insert them in a list
+        # and convert that list in a NumPy array. Finally, insert
+        # the newly created NumPy array in elementlist
+        for dimension in cuts_list:
+            cuts = list()
+            [ cuts.append(cut) for cut in dimension ]
+            self.elementlist.append(np.array(cuts))
 
 
     # Function for creating a general cut sequence to
@@ -51,4 +45,4 @@ class CutsSequence(Cuts):
 
         # creating a SelectedCutsSequenceBin using the dummy S_d
         # for defining the absence of cuts
-        return SelectedCutsSequenceBin(empty_S_d, self.elementlist)
+        return DimensionalSequenceBinary(empty_S_d, self.elementlist)

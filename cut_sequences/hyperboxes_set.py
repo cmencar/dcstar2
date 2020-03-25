@@ -1,6 +1,6 @@
 from cut_sequences.hyperbox import Hyperbox
 
-# Class for define set of hyperboxes B
+# Class for define set of hyperboxes
 class HyperboxesSet:
 
     # class constructor
@@ -36,7 +36,7 @@ class HyperboxesSet:
     def set_hyperbox_by_point(self, point):
 
         # initializing point coordinate dimension's index
-        dimension_index = 1
+        dimension_index = 0
 
         # definition of hyperbox's boundaries
         hyperbox_boundaries = list()
@@ -78,17 +78,20 @@ class HyperboxesSet:
     # Method for acquiring particular hyperbox starting by point
     # @point: point associated with the hyperbox to find
     def get_hyperbox_by_point(self, point):
-
-        #hb_key = self.set_hyperbox_by_point(point)
-        #return self.hyperboxes.get(hb_key)
         return self.points.get(point)
 
 
     # Method for checking if a given hyperbox is impure
     # @hyperbox: given hyperbox
     def is_impure_hyperbox(self, hyperbox):
-        hb = self.hyperboxes.get(hyperbox.value)
-        return hb.is_impure()
+
+        # for each couple point-hyperbox
+        for point, hb in self.points.items():
+
+            # if is found the given hyperbox return the logical value
+            # of hyperbox impurity
+            if hb.get_boundaries() == hyperbox.get_boundaries():
+                return hb.is_impure()
 
 
     # Method for counting impure hyperboxes
@@ -97,8 +100,8 @@ class HyperboxesSet:
         # initialization of number of impures
         num = 0
 
-        # for each couple (key and corresponding hyperbox)
-        for key, hb in self.hyperboxes.items():
+        # for each couple point-hyperbox
+        for point, hb in self.points.items():
 
             # check if given hyperbox is impure
             if hb.is_impure():
@@ -110,14 +113,14 @@ class HyperboxesSet:
     # Method for acquiring all impure hyperboxes
     def get_impure_hyperboxes(self):
 
-        # initialization impures list
-        impure_hbs = list()
+        # initialization impures hyperboxes list
+        impure_hyperboxes = list()
 
-        # for each couple (key and corresponding hyperbox)
-        for key, hb in self.hyperboxes.items():
+        # for each couple point-hyperbox
+        for point, hb in self.points.items():
 
-            # check if given hyperbox is impure, if so, add it to impure list
+            # check if given hyperbox is impure. If so, add it to impure list
             if hb.is_impure() is True:
-                impure_hbs.append(hb)
+                impure_hyperboxes.append(hb)
 
-        return impure_hbs
+        return impure_hyperboxes

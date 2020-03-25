@@ -9,16 +9,13 @@ class Hyperbox:
     def __init__(self, hyperbox_boundaries):
 
         # initializing boundaries and points structure
-        self.boundaries = tuple()
         self.points = list()
 
-        # if passed hyperbox is a tuple of tuples then
-        # append it into hyperboxes set, else raise an
-        # error based on passed wrong type
-        if isinstance(hyperbox_boundaries, tuple):
-            self.boundaries = hyperbox_boundaries
-        else:
-            raise TypeError("Impossible to create hyperbox. Passed a non tuple parameter")
+        # acquire every dimensional boundaries, insert them in a list
+        # (as a list of tuples) and convert the list into a tuple
+        boundaries_list = list()
+        [ boundaries_list.append(tuple(dimensional_boundaries)) for dimensional_boundaries in hyperbox_boundaries ]
+        self.boundaries = tuple(boundaries_list)
 
 
     # Method for acquiring hyperbox boundaries for each dimension
@@ -39,7 +36,7 @@ class Hyperbox:
 
     # Method for checking if a given point is in the hyperbox
     def has_point(self, point):
-        return [True if point in self.points else False]
+        return [ True if point in self.points else False ]
 
 
     # Method for checking if the hyperbox is impure

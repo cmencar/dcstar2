@@ -29,10 +29,10 @@ point_D = Point(list([.45235, .00009, .141]), label="prototype_1", name="point_D
 point_E = Point(list([.9, .5444, .25434]), label="prototype_1", name="point_E")
 point_F = Point(list([.999, .4, .7714]), label="prototype_2", name="point_F")
 point_G = Point(list([.799, .24, .1114]), label="prototype_1", name="point_G")
-points_set = list([point_A, point_B, point_C, point_D, point_E, point_F, point_G])
+point_list = list([point_A, point_B, point_C, point_D, point_E, point_F, point_G])
 
 # calculating hyperboxes given a selected cuts sequence
-eval_point = point_B
-hyperboxes = S_d_for_hb_eval.generate_hyperboxes_set(points_set, m_d=0, M_d=1)
-hb = hyperboxes.get_hyperbox_by_point(eval_point)
-print("\n\nHyperbox of point '", eval_point.get_name(), "'. impure: ", hb.is_impure())
+evaluated_point = point_B
+hyperboxes = S_d_for_hb_eval.generate_hyperboxes_set(point_list, m_d = 0, M_d = 1)
+hb = hyperboxes.get_hyperbox_by_point(evaluated_point)
+print("\n\nHyperbox of point '", evaluated_point.get_name(), "'. impure: ", hb.is_impure())

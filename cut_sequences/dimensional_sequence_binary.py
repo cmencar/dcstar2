@@ -1,9 +1,9 @@
-from cut_sequences.cuts import Cuts
+from cut_sequences.dimensional_sequence import DimensionalSequence
 import numpy as np
 
 
 # Class for define selected cuts S_d in a logical way
-class SelectedCutsSequenceBin(Cuts):
+class DimensionalSequenceBinary(DimensionalSequence):
 
     # SelectedCuts class constructor method
     # @S_d: selected cuts to be converted in logical sequence
@@ -20,7 +20,7 @@ class SelectedCutsSequenceBin(Cuts):
             _ = (element for element in S_d)
             _ = (element for element in T_d)
         except TypeError:
-            print("Error in creating SelectedCutsSequenceBin. Passed non-iterable parameter")
+            print("Error in creating DimensionalSequenceBinary. Passed non-iterable parameter")
             return
 
         # evaluate T_d and S_d dimension in parallel

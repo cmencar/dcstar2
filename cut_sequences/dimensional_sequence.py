@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 # abstract class for cuts sequence
-class Cuts(ABC):
+class DimensionalSequence(ABC):
 
     # Class constructor
     def __init__(self):
