@@ -29,3 +29,4 @@ heuristic_search/__pycache__/astar.cpython-37.pyc
 heuristic_search/__pycache__/__init__.cpython-37.pyc
 test/__pycache__/GraphProblem.cpython-37.pyc
 heuristic_search/__pycache__/Problem.cpython-37.pyc
+*.pyc
