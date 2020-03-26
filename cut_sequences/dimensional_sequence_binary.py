@@ -84,3 +84,35 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
             # print an error message if the index refers to a non-existent dimension
             print("Dimension not found, impossible to initialize")
+
+
+    # Method for creating successors of S_d_bin (in binary form)
+    def get_successors(self):
+
+        successors = list()
+
+        dimension_index = 0
+
+        for dimension in self.elementlist:
+
+            cut_index = 0
+
+            for cut in dimension:
+
+                if not cut:
+
+                    new_elementlist = [ np.array([ cut for cut in array ]) for array in self.elementlist ]
+
+                    new_elementlist[dimension_index][cut_index] = True
+
+                    successor = DimensionalSequenceBinary()
+
+                    successor.from_binary(new_elementlist)
+
+                    successors.append(successor)
+
+                cut_index = cut_index + 1
+
+            dimension_index = dimension_index + 1
+
+        return successors

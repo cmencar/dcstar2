@@ -56,3 +56,11 @@ evaluated_point = point_list.pop(1)
 #   hyperboxes_set.is_impure_hyperbox(hyperboxes_set.get_hyperbox_by_point(evaluated_point))
 hyperboxes = hyperboxes_set.get_hyperbox_by_point(evaluated_point)
 print("\n\nHyperbox of point '", evaluated_point.get_name(), "'. Is impure: ", hyperboxes.is_impure())
+
+successors = S_d_bin.get_successors(T_d)
+S_d_successors_list = list()
+for successor in successors:
+    S_d_successor = SelectedCutsSequence()
+    S_d_successor.from_binary(T_d, successor)
+    S_d_successors_list.append(S_d_successor)
+pass
