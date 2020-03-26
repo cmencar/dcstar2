@@ -113,14 +113,6 @@ class HyperboxesSet:
     # Method for acquiring all impure hyperboxes
     def get_impure_hyperboxes(self):
 
-        # initialization impures hyperboxes list
-        impure_hyperboxes = list()
-
-        # for each couple point-hyperbox
-        for point, hb in self.points.items():
-
-            # check if given hyperbox is impure. If so, add it to impure list
-            if hb.is_impure() is True:
-                impure_hyperboxes.append(hb)
-
-        return impure_hyperboxes
+        # for each couple point-hyperbox check if given hyperbox is impure.
+        # If so, add it to impure set. Finally, convert the set in a list
+        return [ { hb for point, hb in self.points.items() if hb.is_impure() is True } ]

@@ -25,10 +25,7 @@ class CutsSequence(DimensionalSequence):
         # for each dimension take its cuts, insert them in a list
         # and convert that list in a NumPy array. Finally, insert
         # the newly created NumPy array in elementlist
-        for dimension in cuts_list:
-            formatted_cuts_list = list()
-            [ formatted_cuts_list.append(cut) for cut in dimension ]
-            self.elementlist.append(np.array(formatted_cuts_list))
+        self.elementlist = [ np.array([ cut for cut in dimension ]) for dimension in cuts_list ]
 
 
     # Function for creating a general cut sequence to
@@ -36,12 +33,9 @@ class CutsSequence(DimensionalSequence):
     # an element of T_d) is a False logical value
     def generate_starting_binary(self):
 
-        # initialize an empty list for the creation
-        # of a dummy S_d cuts sequence
-        empty_S_d = list()
-
-        # insert an empty NumPy array for each dimension of T_d
-        [ empty_S_d.append(np.ndarray([])) for dimension in self.elementlist ]
+        # initialize an empty list for the creation of a dummy S_d cuts sequence
+        # and insert an empty NumPy array for each dimension of T_d
+        empty_S_d = [ np.ndarray([]) for dimension in self.elementlist ]
 
         # creating a SelectedCutsSequenceBin using the dummy S_d
         # for defining the absence of cuts

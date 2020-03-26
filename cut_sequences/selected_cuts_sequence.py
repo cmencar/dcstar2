@@ -23,13 +23,9 @@ class SelectedCutsSequence(DimensionalSequence):
             print("Error in creating SelectedCutsSequence. Passed non-iterable parameter")
             return
 
-        # for each dimension take its cuts, insert them in a list
-        # and convert that list in a NumPy array. Finally, insert
-        # the newly created NumPy array in elementlist
-        for dimension in cuts_list:
-            formatted_cuts_list = list()
-            [ formatted_cuts_list.append(cut) for cut in dimension ]
-            self.elementlist.append(np.array(formatted_cuts_list))
+        # define a list of element composed by NumPy array (one of each dimension of S_d)
+        # where its elements are the same cuts passed in cuts_list structure
+        self.elementlist = [ np.array([ cut for cut in dimension ]) for dimension in cuts_list ]
 
 
     # Function for converting a logical cut sequence to
@@ -44,25 +40,15 @@ class SelectedCutsSequence(DimensionalSequence):
         # for each dimension of S_d_bin logical sequence cut
         for dimension_index in range(S_d_bin.get_dimensions_number()):
 
-            # definition of a temporary element's list for the evaluated dimension
-            dimension_elements = list()
-
-            # definition of an index for the temporary element's list
-            dimension_element_index = 0
-
-            # for each element in dimension referred by dimension_index
-            for element_index in range(S_d_bin.get_dimension_size(dimension_index)):
-
-                # if cut logical value set in dimension referred by dimension_index at
-                # position referred by element_index is True, then insert into the
-                # temporary element's list the corrisponding point-based value of
-                # T_d cut sequence
-                if S_d_bin.get_cut(dimension_index, element_index):
-                    dimension_elements.insert(dimension_element_index, T_d.get_dimension(dimension_index)[element_index])
-                    dimension_element_index = dimension_element_index + 1
+            # definition of a temporary cuts' list for the evaluated dimension.
+            # The list contain numerical values of cuts for the evaluated dimension,
+            # presents in T_d, where the corresponding value in S_d_bin is True
+            dimension_cuts = [ T_d.get_dimension(dimension_index)[cut_index]
+                               for cut_index in range(S_d_bin.get_dimension_size(dimension_index))
+                               if S_d_bin.get_cut(dimension_index, cut_index) ]
 
             # insert a new dimension in S_d structure
-            self.elementlist.append(dimension_elements)
+            self.elementlist.append(np.array(dimension_cuts))
 
 
     # Function for creating a logical cut sequence from the comparison
@@ -70,12 +56,10 @@ class SelectedCutsSequence(DimensionalSequence):
     # @T_d: general cut sequence
     def get_binary(self, T_d):
 
-        # initializing empty list of generic cuts
-        T_d_converted = list()
-
-        # for each dimension in the general cuts sequence,
-        # append the whole dimension into the list
-        [ T_d_converted.append(T_d.get_dimension(dimension_index)) for dimension_index in range(T_d.get_dimensions_number()) ]
+        # definition of T_d cuts sequence taken from T_d.
+        # The list is made evaluating each dimension of DimensionalSequence object
+        # and putting them into the 'T_d_converted' list (the T_d dimensions are NumPy arrays)
+        T_d_converted = [ T_d.get_dimension(dimension_index) for dimension_index in range(T_d.get_dimensions_number()) ]
 
         # return the logical cut sequence using SelectedCutsSequenceBin constructor
         # passing the converted general cuts list and selected cuts sequence's elementlist
@@ -107,7 +91,8 @@ class SelectedCutsSequence(DimensionalSequence):
 
             # for each cut in evaluate dimension, insert it into
             # the list of intervals for that dimension
-            [ dimension_intervals.append(dimension[cut_index]) for cut_index in range(dimension_size) ]
+            for cut_index in range(dimension_size):
+                dimension_intervals.append(dimension[cut_index])
 
             # set the M_d cut, the rightmost cut of dimension
             dimension_intervals.append(M_d)

@@ -22,9 +22,7 @@ class Point:
 
         # acquire every coordinate, insert them in a list
         # and convert the list into a NumPy array
-        coordinate_list = list()
-        [ coordinate_list.append(coordinate) for coordinate in coordinates ]
-        self.coordinates = np.array(coordinate_list)
+        self.coordinates = np.array([ coordinate for coordinate in coordinates ])
 
         # initialize label information
         self.label = label

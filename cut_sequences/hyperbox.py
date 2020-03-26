@@ -13,9 +13,7 @@ class Hyperbox:
 
         # acquire every dimensional boundaries, insert them in a list
         # (as a list of tuples) and convert the list into a tuple
-        boundaries_list = list()
-        [ boundaries_list.append(tuple(dimensional_boundaries)) for dimensional_boundaries in hyperbox_boundaries ]
-        self.boundaries = tuple(boundaries_list)
+        self.boundaries = tuple([ tuple(dimensional_boundaries) for dimensional_boundaries in hyperbox_boundaries ])
 
 
     # Method for acquiring hyperbox boundaries for each dimension
