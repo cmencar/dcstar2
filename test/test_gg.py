@@ -2,6 +2,8 @@
 import random
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
+from cut_sequences.cuts_sequence import CutsSequence
+from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
 import sys
 sys.path.append('../')
 
@@ -12,6 +14,15 @@ sys.path.append('../')
 # Inizializzatore dei numeri casuali
 random.seed()
 
+# Creazione della sequenza di tagli T_d
+T_d = CutsSequence([[1, 2, 3], [4, 5], [6, 7, 8, 9], [10]])
+T_d.debug_print()
+T_d_b = T_d.generate_starting_binary()
+T_d_b.debug_print()
+# Memorizzazione grandezza dimensioni T_d
+prof_dim = list()
+for dimension in range(T_d.get_dimensions_number()):
+    prof_dim.append(len(T_d.get_dimension(dimension)))
 
 # Funzione di generazione dell'individuo.
 # L'individuo sarà composto da una lista di cifre di dimensione
@@ -20,34 +31,42 @@ random.seed()
 # della sequenza sono posti in modo casuale all'interno della
 # lista. L'individuo, pertanto, segue la forma:
 # [False, True, False, True, True, False, True, False]
-def generate(individual_class, individual_dim):
+def generate(individual_class, individual_dimensions):
     # definizione del genoma dell'individuo
     genome = list()
 
     # settaggio iniziale del genoma con
-    # i geni tutti a zero
-    for i in range(individual_dim):
-        genome.append(False)
+    # i geni tutti a False per ogni dimensione
+    for i in range(len(individual_dimensions)):
+        dimension = list()
+        for j in range(0, individual_dimensions[i]):
+            dimension.append(False)
+        genome.append(dimension)
 
     # definizione di un numero casuale di geni impostati
     # secondo la sequenza
-    random_set_genes = random.randint(2, individual_dim)
+    max_genes = 0
+    for num_elements in individual_dimensions:
+        max_genes += num_elements
+    random_set_genes = random.randint(1, max_genes - 1)
 
     # per ogni elemento nella sequenza
     for sequence_number in range(random_set_genes):
 
         # definizione di un indice casuale dove inserire
         # il gene della sequenza
-        random_index = random.randint(0, individual_dim - 1)
+        random_dimension = random.randint(0, len(individual_dimensions) - 1)
+        random_index = random.randint(0, individual_dimensions[random_dimension] - 1)
 
-        # se all'indice determinato esiste gia un elemento
-        # si definisce un nuovo indice
-        while genome[random_index] != 0:
-            random_index = random.randint(0, individual_dim - 1)
+        # se all'indice e dimensione determinate esiste gia un elemento
+        # si definisce un nuovo indice e/o una nuova dimesnione
+        while genome[random_dimension][random_index]:
+            random_dimension = random.randint(0, len(individual_dimensions) - 1)
+            random_index = random.randint(0, individual_dimensions[random_dimension] - 1)
 
         # definizione del valore del gene dell'individuo
         # all'indice valutato
-        genome[random_index] = True
+        genome[random_dimension][random_index] = True
 
     print("\nINDIVIDUAL GENERATED: \n", genome)
 
@@ -55,6 +74,9 @@ def generate(individual_class, individual_dim):
     return individual_class(genome)
 
 
+obj = generate(SelectedCutsSequence, prof_dim)
+
+'''
 # Funzione di valutazione dell'individuo
 def evaluate(individual):
     # definizione della variabile di valutazione
@@ -68,9 +90,9 @@ def evaluate(individual):
             valutation = valutation + 1
 
     # restituisce la valutazione finale
-    return valutation / len(individual),
-
-
+    return valutation / len(individual)
+'''
+'''
 # Numero di attributi dell'individuo
 individual_size = 20
 
@@ -116,3 +138,4 @@ for individual in best_individuals:
     print("\nFINAL INDIVIDUAL: \n", individual)
 
 
+'''
