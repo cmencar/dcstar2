@@ -19,7 +19,7 @@ random.seed()
 # e individual_dim) seguono una sequenza ordinata. Gli elementi
 # della sequenza sono posti in modo casuale all'interno della
 # lista. L'individuo, pertanto, segue la forma:
-# [5, 3, 0, 2, 4, 0, 6, 0, 7, 1]
+# [False, True, False, True, True, False, True, False]
 def generate(individual_class, individual_dim):
     # definizione del genoma dell'individuo
     genome = list()
@@ -27,7 +27,7 @@ def generate(individual_class, individual_dim):
     # settaggio iniziale del genoma con
     # i geni tutti a zero
     for i in range(individual_dim):
-        genome.append(0)
+        genome.append(False)
 
     # definizione di un numero casuale di geni impostati
     # secondo la sequenza
@@ -47,7 +47,7 @@ def generate(individual_class, individual_dim):
 
         # definizione del valore del gene dell'individuo
         # all'indice valutato
-        genome[random_index] = sequence_number
+        genome[random_index] = True
 
     print("\nINDIVIDUAL GENERATED: \n", genome)
 
@@ -64,7 +64,7 @@ def evaluate(individual):
     for gene in individual:
 
         # se è diverso da zero aumenta la valutazione
-        if gene != 0:
+        if not gene:
             valutation = valutation + 1
 
     # restituisce la valutazione finale
