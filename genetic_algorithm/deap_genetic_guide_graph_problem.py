@@ -133,78 +133,7 @@ class Individual():
                 valutation = valutation + 1
 
         # restituisce la valutazione finale
-        return valutation
-
-    '''
-    # Funzione di generazione dell'individuo.
-    # L'individuo sarà composto da una lista di cifre di dimensione
-    # individual_dim in cui N elementi (dove N è scelto casualmente tra 1
-    # e individual_dim) seguono una sequenza ordinata. Gli elementi
-    # della sequenza sono posti in modo casuale all'interno della
-    # lista. L'individuo, pertanto, segue la forma:
-    # [False, True, False, True, True, False, True, False]
-    def generate(self, individual_class, individual_dim):
-        # definizione del genoma dell'individuo
-        genome = list()
-
-        # settaggio iniziale del genoma con
-        # i geni tutti a False per ogni dimensione
-        for i in range(len(individual_dim)):
-            dimension = list()
-            for j in range(0, individual_dim[i]):
-                dimension.append(False)
-            genome.append(dimension)
-
-        # definizione di un numero casuale di geni impostati
-        # secondo la sequenza
-        max_genes = 0
-        for num_elements in individual_dim:
-            max_genes += num_elements
-        random_set_genes = random.randint(1, max_genes - 1)
-
-        # per ogni elemento nella sequenza
-        for sequence_number in range(random_set_genes):
-
-            # definizione di un indice casuale dove inserire
-            # il gene della sequenza
-            random_dimension = random.randint(0, len(individual_dim) - 1)
-            random_index = random.randint(0, individual_dim[random_dimension] - 1)
-
-            # se all'indice e dimensione determinate esiste gia un elemento
-            # si definisce un nuovo indice e/o una nuova dimesnione
-            while genome[random_dimension][random_index]:
-                random_dimension = random.randint(0, len(individual_dim) - 1)
-                random_index = random.randint(0, individual_dim[random_dimension] - 1)
-
-            # definizione del valore del gene dell'individuo
-            # all'indice valutato
-            genome[random_dimension][random_index] = True
-
-        print("\nINDIVIDUAL GENERATED: \n", genome)
-
-        # ritorna il genoma dal quale definire l'individuo
-        return individual_class(genome)
-
-    # Funzione di valutazione dell'individuo
-    def evaluate(self, individual):
-        # definizione della variabile di valutazione
-        valutation = 0
-
-        # per ogni attributo dell'individuo
-        for dimension_index in range(individual.get_dimensions_number()):
-            for gene_index in range(individual.get_dimension_size(dimension_index)):
-                # se è diverso da False aumenta la valutazione
-                if individual.get_cut(dimension_index, gene_index):
-                    valutation = valutation + 1
-
-        # calcolo del numero di attributi dell'individuo
-        mass = 0
-        for dimension_index in range(individual.get_dimensions_number()):
-            mass += individual.get_dimension_size(dimension_index)
-
-        # restituisce la valutazione finale
-        return valutation / mass
-    '''
+        return valutation / len(individual)
 
     # Funzione per la creazione degli individui
     # Restituisce il genome dell'individuo ottimali
