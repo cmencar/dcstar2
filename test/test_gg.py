@@ -2,6 +2,7 @@
 import random
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
+from genetic_algorithm.deap_genetic_guide_graph_problem import DeapGeneticGuideGraphProblem, Individual
 from cut_sequences.cuts_sequence import CutsSequence
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 import sys
@@ -24,76 +25,124 @@ individual_dims = list()
 for dimension in range(T_d.get_dimensions_number()):
     individual_dims.append(len(T_d.get_dimension(dimension)))
 
+'''
+# Classe per la definizione di un individuo utilizzato per il confronto
+# e la valutazione della euristica di secondo livello.
+# L'individuo viene creato utilizzando la classe
+# DeapGeneticGuide
+class Individual():
 
-# Funzione di generazione dell'individuo.
-# L'individuo sarà composto da una lista di cifre di dimensione
-# individual_dim in cui N elementi (dove N è scelto casualmente tra 1
-# e individual_dim) seguono una sequenza ordinata. Gli elementi
-# della sequenza sono posti in modo casuale all'interno della
-# lista. L'individuo, pertanto, segue la forma:
-# [False, True, False, True, True, False, True, False]
-def generate(individual_dimensions):
-    # definizione del genoma dell'individuo
-    genome = list()
+    # costruttore della classe
+    def __init__(self, individual_dim, population_size,
+                 generations, mutation_rate, mating_rate,
+                 selected_for_tournament, selected_best):
 
-    # settaggio iniziale del genoma con
-    # i geni tutti a False per ogni dimensione
-    for i in range(len(individual_dimensions)):
-        dimension = list()
-        for j in range(0, individual_dimensions[i]):
-            dimension.append(False)
-        genome.append(dimension)
+        # definizione del genoma (l'individuo vero e proprio)
+        self.genome = None
 
-    # definizione di un numero casuale di geni impostati
-    # secondo la sequenza
-    max_genes = 0
-    for num_elements in individual_dimensions:
-        max_genes += num_elements
-    random_set_genes = random.randint(1, max_genes - 1)
+        # inizializzazione dei numeri pseudocasuali
+        random.seed()
 
-    # per ogni elemento nella sequenza
-    for sequence_number in range(random_set_genes):
+        # creazione dell'individuo
+        self.create(individual_dim,
+                    population_size,
+                    generations,
+                    mutation_rate,
+                    mating_rate,
+                    selected_for_tournament,
+                    selected_best)
 
-        # definizione di un indice casuale dove inserire
-        # il gene della sequenza
-        random_dimension = random.randint(0, len(individual_dimensions) - 1)
-        random_index = random.randint(0, individual_dimensions[random_dimension] - 1)
+    # Funzione di generazione dell'individuo.
+    # L'individuo sarà composto da una lista di cifre di dimensione
+    # individual_dim in cui N elementi (dove N è scelto casualmente tra 1
+    # e individual_dim) seguono una sequenza ordinata. Gli elementi
+    # della sequenza sono posti in modo casuale all'interno della
+    # lista. L'individuo, pertanto, segue la forma:
+    # [False, True, False, True, True, False, True, False]
+    def generate(self, individual_dim):
+        # definizione del genoma dell'individuo
+        genome = list()
 
-        # se all'indice e dimensione determinate esiste gia un elemento
-        # si definisce un nuovo indice e/o una nuova dimesnione
-        while genome[random_dimension][random_index]:
-            random_dimension = random.randint(0, len(individual_dimensions) - 1)
-            random_index = random.randint(0, individual_dimensions[random_dimension] - 1)
+        # settaggio iniziale del genoma con
+        # i geni tutti a False per ogni dimensione
+        for i in range(len(individual_dim)):
+            dimension = list()
+            for j in range(0, individual_dim[i]):
+                dimension.append(False)
+            genome.append(dimension)
 
-        # definizione del valore del gene dell'individuo
-        # all'indice valutato
-        genome[random_dimension][random_index] = True
+        # definizione di un numero casuale di geni impostati
+        # secondo la sequenza
+        max_genes = 0
+        for num_elements in individual_dim:
+            max_genes += num_elements
+        random_set_genes = random.randint(1, max_genes - 1)
 
-    print("\nINDIVIDUAL GENERATED: \n", genome)
+        # per ogni elemento nella sequenza
+        for sequence_number in range(random_set_genes):
 
-    # ritorna il genoma dal quale definire l'individuo
-    return genome
+            # definizione di un indice casuale dove inserire
+            # il gene della sequenza
+            random_dimension = random.randint(0, len(individual_dim) - 1)
+            random_index = random.randint(0, individual_dim[random_dimension] - 1)
+
+            # se all'indice e dimensione determinate esiste gia un elemento
+            # si definisce un nuovo indice e/o una nuova dimesnione
+            while genome[random_dimension][random_index]:
+                random_dimension = random.randint(0, len(individual_dim) - 1)
+                random_index = random.randint(0, individual_dim[random_dimension] - 1)
+
+            # definizione del valore del gene dell'individuo
+            # all'indice valutato
+            genome[random_dimension][random_index] = True
+
+        print("\nINDIVIDUAL GENERATED: \n", genome)
+
+        # ritorna il genoma dal quale definire l'individuo
+        return genome
+
+    # Funzione di valutazione dell'individuo
+    def evaluate(self, individual):
+        # definizione della variabile di valutazione
+        valutation = 0
+
+        # per ogni attributo dell'individuo
+        for dimension_index in range(individual.get_dimensions_number()):
+            for gene_index in range(individual.get_dimension_size(dimension_index)):
+                # se è diverso da False aumenta la valutazione
+                if individual.get_cut(dimension_index, gene_index):
+                    valutation = valutation + 1
+
+        # calcolo del numero di attributi dell'individuo
+        mass = 0
+        for dimension_index in range(individual.get_dimensions_number()):
+            mass += individual.get_dimension_size(dimension_index)
+
+        # restituisce la valutazione finale
+        return valutation / mass
+
+    # Funzione per la creazione degli individui
+    # Restituisce il genome dell'individuo ottimali
+    def create(self, individual_dim, population_size, generations,
+               mutation_rate, mating_rate, selected_for_tournament,
+               selected_best):
+
+        # definizione di un oggetto per la creazione della guida genetica
+        genetic_guide: GeneticEvolution = DeapGeneticGuide(self.evaluate,
+                                                           self.generate,
+                                                           individual_dim,
+                                                           mutation_rate,
+                                                           mating_rate,
+                                                           selected_for_tournament)
+
+        # evoluzione e acquisizione dell'individuo migliore dalla guida genetica
+        self.genome = genetic_guide.evolve(population_size,
+                                           generations,
+                                           selected_best)[0]
 
 
-# Funzione di valutazione dell'individuo
-def evaluate(individual):
-    # definizione della variabile di valutazione
-    valutation = 0
 
-    # per ogni attributo dell'individuo
-    for dimension_index in range(individual.get_dimensions_number()):
-        for gene_index in range(individual.get_dimension_size(dimension_index)):
-            # se è diverso da False aumenta la valutazione
-            if individual.get_cut(dimension_index, gene_index):
-                valutation = valutation + 1
 
-    # calcolo del numero di attributi dell'individuo
-    mass = 0
-    for dimension_index in range(individual.get_dimensions_number()):
-        mass += individual.get_dimension_size(dimension_index)
-
-    # restituisce la valutazione finale
-    return valutation / mass
 
 
 S_d_b.from_binary(generate(individual_dims))
@@ -101,8 +150,9 @@ value = evaluate(S_d_b)
 print(value)
 # print("gay")
 '''
+
 # Numero di attributi dell'individuo
-individual_size = 20
+individual_size = individual_dims
 
 # Numero di individui selezionati per la
 # selezione per torneo
@@ -126,10 +176,12 @@ mating_rate = 0.5
 # numero di individui finali acquisiti
 selected_best = 10
 
+individual = Individual(individual_dims, population_size, generations, mutation_rate, mating_rate,
+                        selected_for_tournament, selected_best)
+
+'''
 # definizione di un oggetto per la creazione della guida genetica
-genetic_guide: GeneticEvolution = DeapGeneticGuide(evaluate,
-                                                   generate,
-                                                   individual_size,
+genetic_guide: GeneticEvolution = DeapGeneticGuide(evaluate, generate, individual_size,
                                                    mutation_rate,
                                                    mating_rate,
                                                    selected_for_tournament)
@@ -145,4 +197,3 @@ print("\n---------------------------------------------------------")
 for individual in best_individuals:
     print("\nFINAL INDIVIDUAL: \n", individual)
 '''
-
