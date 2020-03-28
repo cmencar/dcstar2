@@ -16,7 +16,7 @@ sys.path.append('../')
 random.seed()
 
 # Creazione della sequenza di tagli T_d
-T_d = CutsSequence([[1, 2, 3], [4, 5], [6, 7, 8, 9], [10]])
+T_d = CutsSequence([[1, 2, 3], [4, 5], [6, 7, 8], [9, 10]])
 T_d.debug_print()
 S_d_b = T_d.generate_starting_binary()
 S_d_b.debug_print()
@@ -148,11 +148,13 @@ class Individual():
 S_d_b.from_binary(generate(individual_dims))
 value = evaluate(S_d_b)
 print(value)
-# print("gay")
+# print("ok")
 '''
 
 # Numero di attributi dell'individuo
-individual_size = individual_dims
+individual_size = 0
+for i in individual_dims:
+    individual_size += i
 
 # Numero di individui selezionati per la
 # selezione per torneo
@@ -176,8 +178,9 @@ mating_rate = 0.5
 # numero di individui finali acquisiti
 selected_best = 10
 
-individual = Individual(individual_dims, population_size, generations, mutation_rate, mating_rate,
+individual = Individual(individual_size, population_size, generations, mutation_rate, mating_rate,
                         selected_for_tournament, selected_best)
+print("ok")
 
 '''
 # definizione di un oggetto per la creazione della guida genetica

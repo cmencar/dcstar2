@@ -80,7 +80,7 @@ class Individual():
                     selected_for_tournament,
                     selected_best)
 
-    '''
+
     # Metodo di generazione dell'individuo
     # La funzione viene acquisita ed utilizzata
     # all'interno dell'istanza della classe DeapGeneticGuide
@@ -92,7 +92,7 @@ class Individual():
         # settaggio iniziale del genoma con
         # i geni tutti a zero
         for i in range(individual_dim):
-            genome.append(0)
+            genome.append(False)
 
         # definizione di un numero casuale di geni impostati
         # secondo la sequenza
@@ -107,7 +107,7 @@ class Individual():
 
             # se all'indice determinato esiste gia un elemento
             # si definisce un nuovo indice
-            while genome[random_index] != 0:
+            while genome[random_index]:
                 random_index = random.randint(0, individual_dim - 1)
 
             # definizione del valore del gene dell'individuo
@@ -129,13 +129,13 @@ class Individual():
         for gene in individual:
 
             # se è diverso da zero aumenta la valutazione
-            if gene != 0:
+            if gene:
                 valutation = valutation + 1
 
         # restituisce la valutazione finale
-        return valutation,
-    '''
+        return valutation
 
+    '''
     # Funzione di generazione dell'individuo.
     # L'individuo sarà composto da una lista di cifre di dimensione
     # individual_dim in cui N elementi (dove N è scelto casualmente tra 1
@@ -204,6 +204,7 @@ class Individual():
 
         # restituisce la valutazione finale
         return valutation / mass
+    '''
 
     # Funzione per la creazione degli individui
     # Restituisce il genome dell'individuo ottimali
