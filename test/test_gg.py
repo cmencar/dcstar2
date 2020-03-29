@@ -18,9 +18,9 @@ random.seed()
 
 # Creazione della sequenza di tagli T_d
 T_d = CutsSequence([[1, 2, 3], [4, 5], [6, 7, 8], [9, 10]])
-T_d.debug_print()
+# T_d.debug_print()
 S_d_b = T_d.generate_starting_binary()
-S_d_b.debug_print()
+# S_d_b.debug_print()
 # Memorizzazione grandezza dimensioni T_d
 individual_elements_per_dimension = list()
 for dimension in range(T_d.get_dimensions_number()):
@@ -62,7 +62,7 @@ def generate(individual_class, individual_dim):
         # all'indice valutato
         genome[random_index] = True
 
-    print("\nINDIVIDUAL GENERATED: \n", genome)
+    # print("\nINDIVIDUAL GENERATED: \n", genome)
 
     # ritorna il genoma dal quale definire l'individuo
     return individual_class(genome)
@@ -126,7 +126,28 @@ best_individuals = genetic_guide.evolve(population_size,
                                         generations,
                                         selected_best)
 
+list_of_sequence = list()
+sequence = list()
+dimension = list()
+for individual in best_individuals:
+    print(individual)
+    sequence.clear()
+    offset = 0
+    i = 0
+    for num_elem in individual_elements_per_dimension:
+        dimension.clear()
+        offset = offset + num_elem
+        while i < offset:
+            dimension.append(individual[i])
+            i += 1
+        sequence.append(dimension.copy())
+    print(sequence)
+    list_of_sequence.append(sequence.copy())
+
+
+'''
 # stampa a video di ogni individuo
 print("\n---------------------------------------------------------")
 for individual in best_individuals:
     print("\nFINAL INDIVIDUAL: \n", individual)
+'''
