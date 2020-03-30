@@ -3,6 +3,9 @@
 from deap import creator, base, tools, algorithms
 
 from genetic_algorithm.genetic_evolution import GeneticEvolution
+from cut_sequences.cuts_sequence import CutsSequence
+from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
+from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 
 
 # Classe per l'uso della soluzione genetica inerente
@@ -18,7 +21,7 @@ class DeapGeneticGuide(GeneticEvolution):
     # il numero di individui selezionati nella fase di selezione
     # degli individui migliori (selezione per torneo)
     def __init__(self, evaluate_fun, generate_fun, individual_size,
-                 mutation_rate, mating_rate, selected_individuals):
+                 mutation_rate, mating_rate, selected_individuals, cuts_sequence, points_list):
 
         # definizione della probabitlià di mutazione dell'individuo
         self.mutation_rate = mutation_rate
@@ -63,6 +66,9 @@ class DeapGeneticGuide(GeneticEvolution):
         # specificatamente da un tipo di problem
         self.toolbox.register("evaluate", evaluate_fun)
 
+        self.T_d = cuts_sequence
+        self.points_list = points_list
+
     # Metodo per la valutazione dell'individuo
     def evaluate(self, individual):
         pass
@@ -73,7 +79,7 @@ class DeapGeneticGuide(GeneticEvolution):
 
     # Metodo per la generazione e la restituzione dei migliori individui
     # secondo l'algoritmo genetico
-    def evolve(self, population_size, generations, selected_best):
+    def evolve(self, population_size, generations, selected_best, T_d):
 
         # definisce l'insieme degli indivdui invocando il metodo population.
         # Tale metodo crea un insieme di individui la cui quantità è pari
@@ -95,7 +101,7 @@ class DeapGeneticGuide(GeneticEvolution):
                                           self.toolbox,
                                           self.mating_rate,
                                           self.mutation_rate)
-
+            '''  -- NON SO SE SERVE MA CREDO DI NO
             # per ogni figlio nella progenie si valuta se possiede dei geni
             # ripetuti che possono compromettere il risultato finale
             for son in offspring:
@@ -115,15 +121,19 @@ class DeapGeneticGuide(GeneticEvolution):
                     # altrimenti essa è definita come una ridondanza e
                     # sarà epurata dal figlio rivalutato
                     else:
-                        revaluted_son.append(0)
+                        revaluted_son.append(False)
 
                 # il figlio rivalutato sarà parte della progenie da
                 # analizzare nella nuova generazione
                 son = revaluted_son
+            '''
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
-            fitness = self.toolbox.map(self.toolbox.evaluate, offspring)
+            son_fitness = list()
+            for son in offspring:
+                son_fitness.append(self.fitness(son, self.T_d, self.points_list))
+            fitness = self.toolbox.map(son_fitness, offspring)
 
             # definizione di una mappatura tra ogni individuo della
             # progenie e la sua valutazione
@@ -141,7 +151,23 @@ class DeapGeneticGuide(GeneticEvolution):
         # la cui fitness è in assoluto la migliore della popolazione
         return tools.selBest(population, selected_best, fit_attr="fitness.value")
 
+    def fitness(self, individual, T_d, points_list):
+        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual, T_d, points_list), 5)
 
+    # Funzione che deifince la purezza di un dato genoma
+    def pureness(self, individual, T_d, points_list, m_d=0, M_d=1):
+        # inizializzazione sequenze
+        S_d = SelectedCutsSequence()
+        S_d_b = DimensionalSequenceBinary()
 
+        # creazione della sequenza dimensionale binaria e relativa selezione di tagli dal genoma
+        S_d_b.from_binary(individual)
+        S_d.from_binary(T_d, S_d_b)
+
+        # creazione del set di hyperboxes
+        hyperboxes = S_d.generate_hyperboxes_set(points_list, m_d, M_d)
+
+        # calcolo del rapporto tra li numero di hyperbox puri e il numero complessivo di hyperbox
+        return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
 
 

@@ -94,6 +94,17 @@ class HyperboxesSet:
                 return hb.is_impure()
 
 
+    def get_hyperboxes_number(self):
+        # initialization of number of impures
+        num = 0
+
+        # for each couple point-hyperbox
+        for point, hb in self.points.items():
+            num = num + 1
+
+        return num
+
+
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
 
@@ -105,6 +116,19 @@ class HyperboxesSet:
 
             # check if given hyperbox is impure
             if hb.is_impure():
+                num = num + 1
+
+        return num
+
+
+    def get_pure_hyperboxes_number(self):
+        # initialization of number of impures
+        num = 0
+
+        # for each couple point-hyperbox
+        for point, hb in self.points.items():
+            # check if given hyperbox is impure
+            if not hb.is_impure():
                 num = num + 1
 
         return num
