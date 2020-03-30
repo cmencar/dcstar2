@@ -107,10 +107,21 @@ def pureness(individual, T_d, points_list, m_d=0, M_d=1):
 # Inizializzatore dei numeri casuali
 random.seed()
 
-# Creazione della sequenza di tagli T_d
-T_d = CutsSequence([[1, 2, 3], [4, 5], [6, 7, 8], [9, 10]])
+# definizione di prototipi
+points = [
+    Point(coordinates=[.2354, .34, .543], label="prototype_1", name="point_A"),
+    Point(coordinates=[.3345, .3421, .36897], label="prototype_1", name="point_B"),
+    Point(coordinates=[.351, .3453, .6423], label="prototype_2", name="point_C"),
+    Point(coordinates=[.45235, .00009, .141], label="prototype_1", name="point_D"),
+    Point(coordinates=[.9, .5444, .25434], label="prototype_1", name="point_E"),
+    Point(coordinates=[.999, .4, .7714], label="prototype_2", name="point_F"),
+    Point(coordinates=[.799, .24, .1114], label="prototype_1", name="point_G")
+]
 
-# Creazione dei prototipi
+# definizione di un T_d
+print("\n----- T_d -----\n")
+T_d = CutsSequence([[.2, .36, .56, .63, .87, .88, .94], [.11, .32, .34, .36, .712, .998], [.02, .47, 0.7111, .89]])
+T_d.debug_print()
 
 
 # Memorizzazione grandezza dimensioni T_d
