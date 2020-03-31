@@ -21,7 +21,7 @@ class DeapGeneticGuide(GeneticEvolution):
     # il numero di individui selezionati nella fase di selezione
     # degli individui migliori (selezione per torneo)
     def __init__(self, evaluate_fun, generate_fun, individual_size,
-                 mutation_rate, mating_rate, selected_individuals, cuts_sequence, points_list):
+                 mutation_rate, mating_rate, selected_individuals, cuts_sequence, points_list, elements_per_dimension):
 
         # definizione della probabitlià di mutazione dell'individuo
         self.mutation_rate = mutation_rate
@@ -68,6 +68,8 @@ class DeapGeneticGuide(GeneticEvolution):
 
         self.T_d = cuts_sequence
         self.points_list = points_list
+        self.individual_size = individual_size
+        self.elements_per_dimension = elements_per_dimension
 
     # Metodo per la valutazione dell'individuo
     def evaluate(self, individual):
@@ -79,13 +81,24 @@ class DeapGeneticGuide(GeneticEvolution):
 
     # Metodo per la generazione e la restituzione dei migliori individui
     # secondo l'algoritmo genetico
-    def evolve(self, population_size, generations, selected_best, T_d):
+    def evolve(self, population_size, generations, selected_best, T_d, individual_size):
 
         # definisce l'insieme degli indivdui invocando il metodo population.
         # Tale metodo crea un insieme di individui la cui quantità è pari
         # a population_size e vengono definiti secondo la generate_fun passata
         # in fase di creazione della classe
         population = self.toolbox.population(n=population_size)
+        '''
+        # conversione da sequenze dimensionali a liste monolitiche
+        converted_genome = list()
+        converted_population = list()
+        for genome_number in range(len(population)):
+            converted_genome.clear()
+            for dimension in population[genome_number]:
+                for gene in dimension:
+                    converted_genome.append(gene)
+            converted_population.append(converted_genome.copy())
+        '''
 
         # per ogni generazione
         for epoch in range(generations):
@@ -101,43 +114,17 @@ class DeapGeneticGuide(GeneticEvolution):
                                           self.toolbox,
                                           self.mating_rate,
                                           self.mutation_rate)
-            '''  -- NON SO SE SERVE MA CREDO DI NO
-            # per ogni figlio nella progenie si valuta se possiede dei geni
-            # ripetuti che possono compromettere il risultato finale
-            for son in offspring:
-
-                # il figlio rivalutato sarà colui che non possiede ridondanze
-                # tra gli attributi
-                revaluted_son = []
-
-                # per ogni attributo del figlio analizzato
-                for gene in son:
-
-                    # se l'attributo non è stato inserito nel
-                    # figlio rivalutato, allora non è una ridondanza
-                    if gene not in revaluted_son:
-                        revaluted_son.append(gene)
-
-                    # altrimenti essa è definita come una ridondanza e
-                    # sarà epurata dal figlio rivalutato
-                    else:
-                        revaluted_son.append(False)
-
-                # il figlio rivalutato sarà parte della progenie da
-                # analizzare nella nuova generazione
-                son = revaluted_son
-            '''
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
             son_fitness = list()
             for son in offspring:
                 son_fitness.append(self.fitness(son, self.T_d, self.points_list))
-            fitness = self.toolbox.map(son_fitness, offspring)
+            # fitness = self.toolbox.map(son_fitness, offspring)
 
             # definizione di una mappatura tra ogni individuo della
             # progenie e la sua valutazione
-            for fit, ind in zip(fitness, offspring):
+            for fit, ind in zip(son_fitness, offspring):
                 ind.fitness.value = fit
 
             # infine, si scelgono un'insieme di individui dalla
@@ -152,16 +139,20 @@ class DeapGeneticGuide(GeneticEvolution):
         return tools.selBest(population, selected_best, fit_attr="fitness.value")
 
     def fitness(self, individual, T_d, points_list):
-        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual, T_d, points_list), 5)
+        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual, T_d, points_list,
+                                                                           self.elements_per_dimension), 5)
 
     # Funzione che deifince la purezza di un dato genoma
-    def pureness(self, individual, T_d, points_list, m_d=0, M_d=1):
+    def pureness(self, individual, T_d, points_list, elements_per_dimension, m_d=0, M_d=1):
         # inizializzazione sequenze
         S_d = SelectedCutsSequence()
         S_d_b = DimensionalSequenceBinary()
 
+        # conversione da lista monolitica a sequenza
+        converted_individual = self.from_monolithic_pop_to_multidim_pop(individual, elements_per_dimension)
+
         # creazione della sequenza dimensionale binaria e relativa selezione di tagli dal genoma
-        S_d_b.from_binary(individual)
+        S_d_b.from_binary(converted_individual)
         S_d.from_binary(T_d, S_d_b)
 
         # creazione del set di hyperboxes
@@ -170,4 +161,44 @@ class DeapGeneticGuide(GeneticEvolution):
         # calcolo del rapporto tra li numero di hyperbox puri e il numero complessivo di hyperbox
         return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
 
+    def from_multidim_pop_to_monolithic_pop(self, population):
+        converted_genome = list()
+        converted_population = list()
+        for genome_number in range(len(population)):
+            converted_genome.clear()
+            for dimension in population[genome_number]:
+                for gene in dimension:
+                    converted_genome.append(gene)
+            converted_population.append(converted_genome.copy())
+        return converted_population
 
+    def from_monolithic_pop_to_multidim_pop(self, individual, individual_size):
+        # riconversione da lista monolitica a "sequenza di tagli dimensionali"
+        # list_of_sequences = list()
+        sequence = list()
+        dimension = list()
+        '''
+        for individual in population: -- LISTE MULTIDIMENSIONALI
+            sequence.clear()
+            offset = 0
+            i = 0
+            for num_elem in individual_size:
+                dimension.clear()
+                offset = offset + num_elem
+                while i < offset:
+                    dimension.append(individual[i])
+                    i += 1
+                sequence.append(dimension.copy())
+            list_of_sequences.append(sequence.copy())
+        return list_of_sequences
+        '''
+        offset = 0
+        i = 0
+        for num_elem in individual_size:
+            dimension.clear()
+            offset = offset + num_elem
+            while i < offset:
+                dimension.append(individual[i])
+                i += 1
+            sequence.append(dimension.copy())
+        return sequence
