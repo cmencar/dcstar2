@@ -116,3 +116,13 @@ class HyperboxesSet:
         # for each couple point-hyperbox check if given hyperbox is impure.
         # If so, add it to impure set. Finally, convert the set in a list
         return [ { hb for point, hb in self.points.items() if hb.is_impure() is True } ]
+
+
+
+    # TODO temporaneo
+    def get_hyperboxes_number(self):
+        return len({ hb for point, hb in self.points.items() })
+
+    # TODO temporaneo
+    def get_hyperboxes(self):
+        return list({ hb for point, hb in self.points.items() })

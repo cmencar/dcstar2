@@ -57,3 +57,24 @@ class Hyperbox:
             point_index = point_index + 1
 
         return is_impure
+
+
+    #TODO provvisorio
+    def get_different_classes_number(self):
+
+        set_p = set()
+        for point in self.points:
+            set_p.add(point.get_label())
+
+        return len(set_p)
+
+    #TODO provvisorio
+    def is_connected(self, hyperbox):
+
+        passed_hb_boundaries = hyperbox.get_boundaries()
+
+        for dimension, passed_hb_boundaries_dimension in zip(self.boundaries, passed_hb_boundaries):
+            if dimension == passed_hb_boundaries_dimension:
+                return True
+
+        return False

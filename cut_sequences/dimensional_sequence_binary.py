@@ -48,8 +48,10 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # clear the previous written data
         self.elementlist.clear()
 
+        x = np.array(S_d_bin[0])
+
         # converting each dimension
-        [ self.elementlist.append(np.array(dimension)) for dimension in S_d_bin ]
+        self.elementlist = [ np.array(dimension) for dimension in S_d_bin ]
 
 
     # Method for returning the value of a single cut of single dimension
@@ -101,6 +103,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
                 if not cut:
 
+                    # copy every logical cut value from elementlist
                     new_elementlist = [ np.array([ cut for cut in array ]) for array in self.elementlist ]
 
                     new_elementlist[dimension_index][cut_index] = True
@@ -116,3 +119,12 @@ class DimensionalSequenceBinary(DimensionalSequence):
             dimension_index = dimension_index + 1
 
         return successors
+
+
+
+    def __eq__(self, sequence):
+        for array, passed_array in zip(self.elementlist, sequence.elementlist):
+            for array_element, passed_array_element in zip(array, passed_array):
+                if array_element != passed_array_element:
+                    return False
+        return True

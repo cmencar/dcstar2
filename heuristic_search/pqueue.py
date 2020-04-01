@@ -40,19 +40,23 @@ class PriorityQueue:
     # della pila (e rimuovendolo da esso) per il quale il valore 
     # del campo valid sia true.
     def get(self):
+
+        try:
+            (node, valid) = H.heappop(self.heap)
         
-        (node, valid) = H.heappop(self.heap)
-        
-        if not valid:
-            return self.get()
-        else:
-            return node
+            if not valid:
+                return self.get()
+            else:
+                return node
+        except IndexError:
+            print("IndexError:")
 
 
     # La funzione find ricerca un nodo in base allo stato definito. 
     # Scandendo tutti gli elementi di heap si valuta se il valore di valid
     # sia true e se lo stato inserito viene trovato allora ritorna il valore del nodo. 
     # Se non trova nulla allora ritorna None.
+    '''
     def find(self, state):
         
         for (estimated_node, valid) in self.heap:
@@ -61,7 +65,15 @@ class PriorityQueue:
                 return estimated_node
         
         return None
+    '''
+    def find(self, node):
 
+        for (estimated_node, valid) in self.heap:
+
+            if valid and estimated_node.get_state() == node.get_state():
+                return estimated_node
+
+        return None
 
     # La funzione remove rimuove un nodo in base a quello inserito. 
     # Per rimozione si intende il settaggio del valore di verità 
