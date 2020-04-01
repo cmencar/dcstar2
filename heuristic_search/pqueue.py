@@ -41,15 +41,12 @@ class PriorityQueue:
     # del campo valid sia true.
     def get(self):
 
-        try:
-            (node, valid) = H.heappop(self.heap)
+        (node, valid) = H.heappop(self.heap)
         
-            if not valid:
-                return self.get()
-            else:
-                return node
-        except IndexError:
-            print("IndexError:")
+        if not valid:
+            return self.get()
+        else:
+            return node
 
 
     # La funzione find ricerca un nodo in base allo stato definito. 
