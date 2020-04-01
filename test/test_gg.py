@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 import random
-# from genetic_algorithm.genetic_evolution import GeneticEvolution
+import matplotlib.pyplot as plt
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
-# from genetic_algorithm.deap_genetic_guide_graph_problem import DeapGeneticGuideGraphProblem, Individual
 from cut_sequences.cuts_sequence import CutsSequence
 from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
-# from cut_sequences.hyperboxes_set import HyperboxesSet
 from cut_sequences.point import Point
 import sys
 sys.path.append('../')
 
 
-# TEST EFFETTUATO SULL'USO DELLA CLASSE DEAPGENETICGUIDE
-# NELL'USO DELLA GUIDA GENETICA (INDIPENDENTEMENTE DA A*)
+# TESTING CLASS DEAPGENETICGUIDE (WITHOUT A*)
 
 def generate(individual_class, individual_dim):
     # definizione del genoma dell'individuo
@@ -45,7 +42,7 @@ def generate(individual_class, individual_dim):
         # all'indice valutato
         genome[random_index] = True
 
-    print("\nINDIVIDUAL GENERATED: \n", genome)
+    # print("\nINDIVIDUAL GENERATED: \n", genome)
 
     # ritorna il genoma dal quale definire l'individuo
     return individual_class(genome)
@@ -150,7 +147,9 @@ def pureness(individual, T_d, points_list, m_d=0, M_d=1):
 # Inizializzatore dei numeri casuali
 random.seed()
 
+'''
 # definizione di prototipi
+print("\n----- prototypes -----\n")
 points = [
     Point(coordinates=[.2354, .34, .543], label="prototype_1", name="point_A"),
     Point(coordinates=[.3345, .3421, .36897], label="prototype_1", name="point_B"),
@@ -160,17 +159,27 @@ points = [
     Point(coordinates=[.999, .4, .7714], label="prototype_2", name="point_F"),
     Point(coordinates=[.799, .24, .1114], label="prototype_1", name="point_G")
 ]
-
+print(points)
 # definizione di un T_d
 print("\n----- T_d -----\n")
 T_d = CutsSequence([[.2, .36, .56, .63, .87, .88, .94], [.11, .32, .34, .36, .712, .998], [.02, .47, 0.7111, .89]])
 T_d.debug_print()
-
+'''
+points1 = [
+    Point(coordinates=[.2354, .34], label="prototype_1", name="point_A"),
+    Point(coordinates=[.3345, .3421], label="prototype_1", name="point_B"),
+    Point(coordinates=[.351, .3453], label="prototype_2", name="point_C"),
+    Point(coordinates=[.45235, .00009], label="prototype_1", name="point_D"),
+    Point(coordinates=[.9, .5444], label="prototype_1", name="point_E"),
+    Point(coordinates=[.999, .4], label="prototype_2", name="point_F"),
+    Point(coordinates=[.799, .24], label="prototype_1", name="point_G")
+]
+T_d_1 = CutsSequence([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437, .37265, .4722]])
 
 # Memorizzazione grandezza dimensioni T_d
 genes_per_dimension = list()
-for dimension in range(T_d.get_dimensions_number()):
-    genes_per_dimension.append(len(T_d.get_dimension(dimension)))
+for dimension in range(T_d_1.get_dimensions_number()):
+    genes_per_dimension.append(len(T_d_1.get_dimension(dimension)))
 
 # Numero totale di geni dell'individuo
 genes_number = 0
@@ -208,14 +217,14 @@ selected_best = 10
 
 # definizione di un oggetto per la creazione della guida genetica con liste monolitiche
 genetic_guide = DeapGeneticGuide(evaluate, generate, genes_number, mutation_rate, mating_rate, selected_for_tournament,
-                                 T_d, points, genes_per_dimension)
+                                 T_d_1, points1, genes_per_dimension)
 
 # evoluzione e acquisizione degli individui migliori dalla guida genetica con liste multidimensionali
 # best_individuals = genetic_guide.evolve(population_size, generations, selected_best, T_d,
 #                                        individual_elements_per_dimension)
 
 # evoluzione e acquisizione degli individui migliori dalla guida genetica con liste monolitiche
-best_individuals = genetic_guide.evolve(population_size, generations, selected_best, T_d,
+best_individuals = genetic_guide.evolve(population_size, generations, selected_best, T_d_1,
                                         genes_per_dimension)
 
 # riconversione da lista monolitica a "sequenza di tagli dimensionali"
@@ -240,11 +249,32 @@ S_d_b = DimensionalSequenceBinary()
 
 # stampa a video di ogni individuo
 print("\n---------------------------------------------------------")
+no_pure = True
 for individual in list_of_sequences:
-    # print("\nFINAL INDIVIDUAL: \n", individual)
-
     S_d_b.from_binary(individual)
-    S_d.from_binary(T_d, S_d_b)
-    hyperboxes = S_d.generate_hyperboxes_set(points, 0, 1)
+    S_d.from_binary(T_d_1, S_d_b)
+    hyperboxes = S_d.generate_hyperboxes_set(points1, 0, 1)
     if hyperboxes.get_impure_hyperboxes_number() == 0:
         print("\nPURE INDIVIDUAL: \n", individual)
+
+        no_pure = False
+
+        '''
+        for cut in S_d.get_dimension(0):
+            plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
+
+        for cut in S_d.get_dimension(1):
+            plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
+
+        for point in points1:
+            if point.get_label() == "prototype_1":
+                color = 'ro'
+            elif point.get_label() == "prototype_2":
+                color = 'bo'
+
+            plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
+
+        plt.show()
+        '''
+if no_pure:
+     print("\nNONE OF THE GENERATED INDIVIDUALS HAS PURE HYPERBOXES")
