@@ -70,16 +70,19 @@ points_example = [
 ]
 T_d_example = CutsSequence([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437, .37265,
                                                                               .4722]])
+print("------------------------Prototypes------------------------")
 for point in points_example:
-    print("\nPoint coordinates: ", point.get_coordinates(), "\nPoint label: ", point.get_label(), "\nPoint name: ",
-          point.get_name())
+    print("Point coordinates: ", point.get_coordinates(),
+          "\nPoint label: ", point.get_label(),
+          "\nPoint name: ", point.get_name())
+print("---------------------Cuts sequence T_d--------------------")
 T_d_example.debug_print()
 
 # calculate the size of each dimension of cuts sequence
 genes_per_dimension = list()
 for dimension in range(T_d_example.get_dimensions_number()):
     genes_per_dimension.append(len(T_d_example.get_dimension(dimension)))
-    print("\nCuts in dimension ", dimension, ":", len(T_d_example.get_dimension(dimension)))
+    print("Cuts in dimension ", dimension + 1, ":", len(T_d_example.get_dimension(dimension)))
 
 # calculate the total number of genes that the genome will have
 genes_number = 0
@@ -106,9 +109,11 @@ mating_rate = 0.7
 # set number of best individuals to retrieve
 selected_best = 10
 
-print("\nIndividual dimension: ", genes_number,
+print("------------------------Parameters------------------------",
+      "\nIndividual dimension: ", genes_number,
       "\nNumber of individuals for tournament selection: ", selected_for_tournament,
       "\nPopulation size: ", population_size,
+      "\nGenerations to create: ", generations,
       "\nMutation rate: ", mutation_rate,
       "\nMating rate: ", mating_rate,
       "\nNumber of best individuals to choose from: ", selected_best)
