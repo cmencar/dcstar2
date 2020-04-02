@@ -1,5 +1,5 @@
-from cut_sequences.cuts_sequence import CutsSequence
-from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
+from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
+from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from heuristic_search.pqueue import PriorityQueue
 import sys
 
@@ -20,7 +20,7 @@ class DCStarNode:
         self.cost = cost
 
     def successors(self):
-        return [ DCStarNode(successor, 0) for successor in self.state.get_successors() ]
+        return [ DCStarNode(successor, (0, 0, 0)) for successor in self.state.get_successors() ]
 
     def __lt__(self, node):
         return self.cost < node.get_cost()
@@ -86,15 +86,15 @@ class DCStar:
 
                 for successor in successors:
 
-                    if self.closed.find(successor) is None and self.open.find(successor) is None:
+                    #if self.closed.find(successor) is None and self.open.find(successor) is None:
 
-                        first_level_priority = self.__get_first_level_priority(successor)
-                        second_level_priority = self.__get_second_level_priority(successor, most_promising_node)
-                        third_level_priority = self.__get_third_level_priority(successor)
+                    first_level_priority = self.__get_first_level_priority(successor)
+                    second_level_priority = self.__get_second_level_priority(successor, most_promising_node)
+                    third_level_priority = self.__get_third_level_priority(successor)
 
-                        successor.set_cost((first_level_priority, second_level_priority, third_level_priority))
+                    successor.set_cost((first_level_priority, second_level_priority, third_level_priority))
 
-                        self.open.put(successor)
+                    self.open.put(successor)
 
 
         return most_promising_node.get_state(), branches_taken
@@ -115,7 +115,7 @@ class DCStar:
     #
     def __h(self, node):
 
-        S_d = SelectedCutsSequence()
+        S_d = SelectedDimensionalSequenceNumeric()
         S_d.from_binary(self.T_d, node.get_state())
 
         hyperboxes_set = S_d.generate_hyperboxes_set(self.points_list, m_d = self.boundary_points[0], M_d = self.boundary_points[1])
@@ -146,7 +146,7 @@ class DCStar:
     #
     def __goal(self, node):
 
-        S_d = SelectedCutsSequence()
+        S_d = SelectedDimensionalSequenceNumeric()
         S_d.from_binary(self.T_d, node.get_state())
 
         hyperboxes_set = S_d.generate_hyperboxes_set(self.points_list)
@@ -192,7 +192,7 @@ class DCStar:
 
             res.append(cuts_in_d)
 
-        return CutsSequence(res)
+        return DimensionalSequenceNumeric(res)
 
 
     #
