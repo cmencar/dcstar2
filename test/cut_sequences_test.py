@@ -1,6 +1,6 @@
 from cut_sequences.point import Point
-from cut_sequences.cuts_sequence import CutsSequence
-from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
+from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
+from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 
 # example definition prototype points
 point_list = [
@@ -15,7 +15,7 @@ point_list = [
 
 # example definition T_d
 print("\n----- T_d -----\n")
-T_d = CutsSequence([[.2, .36, .56, .63, .87, .88, .94], [.11, .32, .34, .36, .712, .998], [.02, .47, 0.7111, .89]])
+T_d = DimensionalSequenceNumeric([[.2, .36, .56, .63, .87, .88, .94], [.11, .32, .34, .36, .712, .998], [.02, .47, 0.7111, .89]])
 T_d.debug_print()
 
 # example definition S_d_bin as T_d_bin
@@ -41,7 +41,7 @@ S_d_bin.debug_print()
 
 # example calculating S_d
 print("\n----- S_d -----\n")
-S_d = SelectedCutsSequence()
+S_d = SelectedDimensionalSequenceNumeric()
 S_d.from_binary(T_d, S_d_bin)
 S_d.debug_print()
 
@@ -60,7 +60,7 @@ print("\n\nHyperbox of point '", evaluated_point.get_name(), "'. Is impure: ", h
 successors = S_d_bin.get_successors(T_d)
 S_d_successors_list = list()
 for successor in successors:
-    S_d_successor = SelectedCutsSequence()
+    S_d_successor = SelectedDimensionalSequenceNumeric()
     S_d_successor.from_binary(T_d, successor)
     S_d_successors_list.append(S_d_successor)
 pass
