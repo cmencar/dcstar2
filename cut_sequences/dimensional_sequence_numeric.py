@@ -4,7 +4,7 @@ import numpy as np
 
 
 # Class for define cuts sequence T_d
-class CutsSequence(DimensionalSequence):
+class DimensionalSequenceNumeric(DimensionalSequence):
 
     # Cuts class constructor method
     # @cuts_list: list of cuts for each dimension

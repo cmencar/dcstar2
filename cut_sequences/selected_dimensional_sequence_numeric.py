@@ -5,7 +5,7 @@ import numpy as np
 
 
 # Class defining selected cuts sequence S_d
-class SelectedCutsSequence(DimensionalSequence):
+class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
     # Cuts class constructor method
     # @cuts_list: list of cuts for each dimension
