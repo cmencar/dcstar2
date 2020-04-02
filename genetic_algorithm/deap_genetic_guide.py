@@ -2,7 +2,6 @@
 
 from deap import creator, base, tools, algorithms
 from genetic_algorithm.genetic_evolution import GeneticEvolution
-from cut_sequences.cuts_sequence import CutsSequence
 from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 
@@ -104,8 +103,75 @@ class DeapGeneticGuide(GeneticEvolution):
             # the selection is defined on a "selected_individual" number of offsprings
             population = self.toolbox.select(offsprings, k=len(population))
 
-        # return a selection of "selected_best" number of individuals with the highest fitness value
-        return tools.selBest(population, selected_best, fit_attr="fitness.value")
+        # select the "selected_best" number of best individuals with the highest fitness value
+        best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
+
+        # initialize list of sequences (multidimensional individuals) and other support lists
+        converted_best_individuals = list()
+
+        # for each individual in the selected best
+        for individual in best_individuals:
+            # convert individual from monodimensional list to "binary cuts sequence"
+            converted_best_individuals.append(self.from_monodim_ind_to_multidim_ind(individual,
+                                                                                    self.elements_per_dimension))
+        # create selected cuts sequence and binary dimensional sequence objects
+        S_d = SelectedCutsSequence()
+        S_d_b = DimensionalSequenceBinary()
+
+        # define pure individuals list
+        best_pure_individuals = list()
+
+        # for each individual in the best individuals generated
+        for individual in converted_best_individuals:
+            # generate binary sequence from the individual
+            S_d_b.from_binary(individual)
+
+            # generate selected cuts sequence from cuts sequence and newly generated binary sequence
+            S_d.from_binary(self.T_d, S_d_b)
+
+            # create set of hyperboxes from selected cuts sequence, points list, m_d and M_d
+            hyperboxes = S_d.generate_hyperboxes_set(self.points_list, 0, 1)
+
+            # if all of the hyperboxes generated are pure
+            if hyperboxes.get_impure_hyperboxes_number() == 0:
+                # append the evaluated individual into the list of pure individuals
+                best_pure_individuals.append(individual.copy())
+
+        # if is found a pure individual at least
+        if len(best_pure_individuals) != 0:
+            # create a list of numbers of "active cuts" for each individual
+            individuals_active_cuts = list()
+
+            # for each pure individual
+            for individual in best_pure_individuals:
+                # initialize counter of active cuts
+                num_active_cuts = 0
+
+                # for each dimension of the evaluated individual
+                for dimension in individual:
+                    # increment the counter of active cuts
+                    num_active_cuts += dimension.count(True)
+
+                # append into the list of active cuts the counter of evaluated individual
+                individuals_active_cuts.append(num_active_cuts)
+
+            # initialize "best of the best" individual with his number of active cuts
+            best_of_the_best = best_pure_individuals[0].copy()
+            best_num_active_cuts = individuals_active_cuts[0]
+
+            # for each pure individual
+            for individual_index in range(len(best_pure_individuals)):
+                # if the number of evaluated individual's active cuts is less than the "best of the best"
+                if individuals_active_cuts[individual_index] < best_num_active_cuts:
+                    # the evaluated individual is the new "best of the best" with his minor number of active cuts
+                    best_of_the_best.clear()
+                    best_of_the_best = best_pure_individuals[individual_index].copy()
+
+            # return the "best of the best"
+            return best_of_the_best
+        else:
+            # return the "worst case scenario"
+            return self.worst_case_scenario(self.elements_per_dimension)
 
     # Method defining the fitness value of an individual
     # @individual: individual's genome
@@ -156,5 +222,25 @@ class DeapGeneticGuide(GeneticEvolution):
             while i < offset:
                 dimension.append(individual[i])
                 i += 1
+            sequence.append(dimension.copy())
+        return sequence
+
+    # Method for the worst case scenario, generates a sequence with all the possible cuts active
+    # @elements_per_dimension: number of cuts per dimension in reference T_d
+    def worst_case_scenario(self, elements_per_dimension):
+        # create support lists
+        sequence = list()
+        dimension = list()
+
+        #for each dimension
+        for dim in range(len(elements_per_dimension)):
+            # clear the "dimension" support list
+            dimension.clear()
+
+            # for each element in given dimension
+            for num in range(elements_per_dimension[dim]):
+                # append True into dimension
+                dimension.append(True)
+            # append a copy of the newly created dimension into sequence
             sequence.append(dimension.copy())
         return sequence

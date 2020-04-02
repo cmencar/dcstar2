@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
-# import matplotlib.pyplot as plt
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 from cut_sequences.cuts_sequence import CutsSequence
-from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
-from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 from cut_sequences.point import Point
 import sys
 sys.path.append('../')
@@ -57,6 +54,7 @@ def evaluate(individual):
     # returns the ratio
     return valutation / total_genes
 
+
 # initialize the seed for random numbers
 random.seed()
 
@@ -70,12 +68,18 @@ points_example = [
     Point(coordinates=[.999, .4], label="prototype_2", name="point_F"),
     Point(coordinates=[.799, .24], label="prototype_1", name="point_G")
 ]
-T_d_example = CutsSequence([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437, .37265, .4722]])
+T_d_example = CutsSequence([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437, .37265,
+                                                                              .4722]])
+for point in points_example:
+    print("\nPoint coordinates: ", point.get_coordinates(), "\nPoint label: ", point.get_label(), "\nPoint name: ",
+          point.get_name())
+T_d_example.debug_print()
 
 # calculate the size of each dimension of cuts sequence
 genes_per_dimension = list()
 for dimension in range(T_d_example.get_dimensions_number()):
     genes_per_dimension.append(len(T_d_example.get_dimension(dimension)))
+    print("\nCuts in dimension ", dimension, ":", len(T_d_example.get_dimension(dimension)))
 
 # calculate the total number of genes that the genome will have
 genes_number = 0
@@ -102,74 +106,19 @@ mating_rate = 0.7
 # set number of best individuals to retrieve
 selected_best = 10
 
+print("\nIndividual dimension: ", genes_number,
+      "\nNumber of individuals for tournament selection: ", selected_for_tournament,
+      "\nPopulation size: ", population_size,
+      "\nMutation rate: ", mutation_rate,
+      "\nMating rate: ", mating_rate,
+      "\nNumber of best individuals to choose from: ", selected_best)
+
 # define DGG object to create the genetic guide with monodimensional lists
 genetic_guide = DeapGeneticGuide(evaluate, generate, genes_number, mutation_rate, mating_rate, selected_for_tournament,
                                  T_d_example, points_example, genes_per_dimension)
 
-# evolution and acquisition of best individuals from genetic guide with monodimensional lists
-best_individuals = genetic_guide.evolve(population_size, generations, selected_best)
+# evolution and acquisition of the best individual from genetic guide with monodimensional lists
+best_individual = genetic_guide.evolve(population_size, generations, selected_best)
 
-# convert from monodimensional list to binary cuts sequence
-# initialize list of sequences (multidimensional individuals) and other support lists
-list_of_sequences = list()
-sequence = list()
-dimension = list()
-# for each individual in the best's list
-for individual in best_individuals:
-    # initialize index, offset for keeping track of the dimensions to create and clear support sequence list
-    sequence.clear()
-    offset = 0
-    i = 0
-    # for each number of genes of the dimension that is going to be created
-    for num_elem in genes_per_dimension:
-        # clear "dimension" support list
-        dimension.clear()
-        # increment offset by the number of elements that are going into the evaluated dimension
-        offset = offset + num_elem
-        # while there are genes
-        while i < offset:
-            # append into "dimension" support list the evaluated gene and increment index
-            dimension.append(individual[i])
-            i += 1
-        # append a copy of created "dimension" into "sequence" support list
-        sequence.append(dimension.copy())
-    # append a copy of created "sequence" into the list of sequences
-    list_of_sequences.append(sequence.copy())
-
-# create selected cuts sequence and binary dimensional sequence objects
-S_d = SelectedCutsSequence()
-S_d_b = DimensionalSequenceBinary()
-
-# show every "pure" individual or a "not found" message
-print("\n---------------------------------------------------------")
-# set flag to "pure individual not found"
-no_pure = True
-# for each individual in the list of sequences
-for individual in list_of_sequences:
-    # generate binary sequence from the individual
-    S_d_b.from_binary(individual)
-    # generate selected cuts sequence from cuts sequence and newly generated binary sequence
-    S_d.from_binary(T_d_example, S_d_b)
-    # create set of hyperboxes from selected cuts sequence, points list, m_d and M_d
-    hyperboxes = S_d.generate_hyperboxes_set(points_example, 0, 1)
-    # if all of the hyperboxes generated are pure
-    if hyperboxes.get_impure_hyperboxes_number() == 0:
-        # print the pure individual and set flag to False
-        print("\nPURE INDIVIDUAL: \n", individual)
-        no_pure = False
-        '''
-        for cut in S_d.get_dimension(0):
-            plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
-        for cut in S_d.get_dimension(1):
-            plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
-        for point in points1:
-            if point.get_label() == "prototype_1":
-                color = 'ro'
-            elif point.get_label() == "prototype_2":
-                color = 'bo'
-            plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
-        plt.show()
-        '''
-# if none of the individuals generated has all pure hyperboxes show a message
-if no_pure:
-    print("\nNONE OF THE GENERATED INDIVIDUALS HAS PURE HYPERBOXES")
+# print the best possible individual
+print("\nBEST POSSIBLE PURE INDIVIDUAL: \n", best_individual)
