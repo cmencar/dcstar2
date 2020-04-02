@@ -27,8 +27,8 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # First of all, for doing this, it must evaluate T_d and S_d dimension in parallel.
         # Later, for every cut in evaluated T_d dimension, if that cut is in S_d dimension then
         # set the corresponding value into the binary array to True, elsewhere set it to False
-        self.elementlist = [ np.array([ True if cut in S_d_dimension else False for cut in T_d_dimension ])
-                             for T_d_dimension, S_d_dimension in zip(T_d, S_d) ]
+        self.__elements = [np.array([True if cut in S_d_dimension else False for cut in T_d_dimension])
+                           for T_d_dimension, S_d_dimension in zip(T_d, S_d)]
 
 
     # Method for creating binary sequence cut from a
@@ -46,12 +46,11 @@ class DimensionalSequenceBinary(DimensionalSequence):
             return
 
         # clear the previous written data
-        self.elementlist.clear()
+        self.__elements.clear()
 
-        x = np.array(S_d_bin[0])
-
-        # converting each dimension
-        self.elementlist = [ np.array(dimension) for dimension in S_d_bin ]
+        # converting each dimension from a list form
+        # to a NumPy array form
+        self.__elements = [np.array(dimension) for dimension in S_d_bin]
 
 
     # Method for returning the value of a single cut of single dimension
@@ -60,15 +59,12 @@ class DimensionalSequenceBinary(DimensionalSequence):
     # @return the boolean for the passed cut of passed dimension
     def get_cut(self, dimension, cut_index):
 
+        # if the indexes refers to a non-existent element then print an error message,
+        # elsewhere return the correct value
         try:
-
-            # return the boolean element for the cut
-            return self.elementlist[dimension][cut_index]
-
+            return self.__elements[dimension][cut_index]
         except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found, impossible to initialize")
+            print("Cut not found, impossible to get")
 
 
     # Method for setting a single dimension
@@ -77,25 +73,22 @@ class DimensionalSequenceBinary(DimensionalSequence):
     # @value: cut value to be set
     def set_cut(self, dimension, cut_index, value):
 
+        # if the indexes refers to a non-existent element then print an error message,
+        # elsewhere set the passed value
         try:
-
-            # Set the single cut of dimension with a boolean element
-            self.elementlist[dimension][cut_index] = value
-
+            self.__elements[dimension][cut_index] = value
         except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
             print("Dimension not found, impossible to initialize")
 
 
-    # Method for creating successors of S_d_bin (in binary form)
+    # Method for creating successors of S_d_bin in binary form
     def get_successors(self):
 
         successors = list()
 
         dimension_index = 0
 
-        for dimension in self.elementlist:
+        for dimension in self.__elements:
 
             cut_index = 0
 
@@ -104,7 +97,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
                 if not cut:
 
                     # copy every logical cut value from elementlist
-                    new_elementlist = [ np.array([ cut for cut in array ]) for array in self.elementlist ]
+                    new_elementlist = [np.array([ cut for cut in array ]) for array in self.__elements]
 
                     new_elementlist[dimension_index][cut_index] = True
 
@@ -121,10 +114,15 @@ class DimensionalSequenceBinary(DimensionalSequence):
         return successors
 
 
-
+    #
     def __eq__(self, sequence):
-        for array, passed_array in zip(self.elementlist, sequence.elementlist):
+
+        for array, passed_array in zip(self.__elements, sequence.elementlist):
+
             for array_element, passed_array_element in zip(array, passed_array):
+
                 if array_element != passed_array_element:
+
                     return False
+
         return True

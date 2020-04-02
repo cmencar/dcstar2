@@ -25,7 +25,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
         # define a list of element composed by NumPy array (one of each dimension of S_d)
         # where its elements are the same cuts passed in cuts_list structure
-        self.elementlist = [ np.array([ cut for cut in dimension ]) for dimension in cuts_list ]
+        self.__elements = [np.array([cut for cut in dimension]) for dimension in cuts_list]
 
 
     # Function for converting a logical cut sequence to
@@ -35,7 +35,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
     def from_binary(self, T_d, S_d_bin):
 
         # clear all previous elements into elementlist
-        self.elementlist.clear()
+        self.__elements.clear()
 
         # for each dimension of S_d_bin logical sequence cut
         for dimension_index in range(S_d_bin.get_dimensions_number()):
@@ -48,7 +48,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
                                if S_d_bin.get_cut(dimension_index, cut_index) ]
 
             # insert a new dimension in S_d structure
-            self.elementlist.append(np.array(dimension_cuts))
+            self.__elements.append(np.array(dimension_cuts))
 
 
     # Function for creating a logical cut sequence from the comparison
@@ -63,7 +63,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
         # return the logical cut sequence using SelectedCutsSequenceBin constructor
         # passing the converted general cuts list and selected cuts sequence's elementlist
-        return DimensionalSequenceBinary(self.elementlist, T_d_converted)
+        return DimensionalSequenceBinary(self.__elements, T_d_converted)
 
 
     # Function for generate an hyperboxes set starting
@@ -77,7 +77,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
         intervals = list()
 
         # for each dimension in S_d sequence
-        for dimension in self.elementlist:
+        for dimension in self.__elements:
 
             # get the evaluated dimension and the number of cuts in it
             dimension_size = len(dimension)

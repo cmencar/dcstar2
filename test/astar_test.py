@@ -1,8 +1,6 @@
-from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
-from cut_sequences.point import Point
-from cut_sequences.prototypes_creator import PrototypesCreator, PrototypesLoader
+from heuristic_search.prototypes_creator import PrototypesLoader
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
-from cut_sequences.dcstar import DCStar
+from heuristic_search.dcstar import DCStar
 import matplotlib.pyplot as plt
 
 

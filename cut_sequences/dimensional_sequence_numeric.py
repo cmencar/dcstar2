@@ -25,7 +25,7 @@ class DimensionalSequenceNumeric(DimensionalSequence):
         # for each dimension take its cuts, insert them in a list
         # and convert that list in a NumPy array. Finally, insert
         # the newly created NumPy array in elementlist
-        self.elementlist = [ np.array([ cut for cut in dimension ]) for dimension in cuts_list ]
+        self.__elements = [np.array([cut for cut in dimension]) for dimension in cuts_list]
 
 
     # Function for creating a general cut sequence to
@@ -35,8 +35,8 @@ class DimensionalSequenceNumeric(DimensionalSequence):
 
         # initialize an empty list for the creation of a dummy S_d cuts sequence
         # and insert an empty NumPy array for each dimension of T_d
-        empty_S_d = [ np.ndarray([]) for dimension in self.elementlist ]
+        empty_S_d = [np.ndarray([]) for dimension in self.__elements]
 
         # creating a SelectedCutsSequenceBin using the dummy S_d
         # for defining the absence of cuts
-        return DimensionalSequenceBinary(empty_S_d, self.elementlist)
+        return DimensionalSequenceBinary(empty_S_d, self.__elements)
