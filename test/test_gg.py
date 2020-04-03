@@ -84,6 +84,11 @@ for dimension in range(T_d_example.get_dimensions_number()):
     genes_per_dimension.append(len(T_d_example.get_dimension(dimension)))
     print("Cuts in dimension ", dimension + 1, ":", len(T_d_example.get_dimension(dimension)))
 
+# set m_d and M_d limits
+m_d = 0
+M_d = 1
+print("----------------------Limits in S_d-----------------------",
+      "\nm_d: ", m_d, "   M_d: ", M_d)
 # calculate the total number of genes that the genome will have
 genes_number = 0
 for num in genes_per_dimension:
@@ -120,7 +125,7 @@ print("------------------------Parameters------------------------",
 
 # define DGG object to create the genetic guide with monodimensional lists
 genetic_guide = DeapGeneticGuide(evaluate, generate, genes_number, mutation_rate, mating_rate, selected_for_tournament,
-                                 T_d_example, points_example, genes_per_dimension)
+                                 T_d_example, points_example, genes_per_dimension, m_d, M_d)
 
 # evolution and acquisition of the best individual from genetic guide with monodimensional lists
 best_individual = genetic_guide.evolve(population_size, generations, selected_best)

@@ -21,8 +21,8 @@ class DeapGeneticGuide(GeneticEvolution):
     # @points_list: list of prototypes
     # @elements_per_dimension: number of elements per dimension of given cuts_sequence for convertion from list
     # to sequence
-    def __init__(self, evaluate_fun, generate_fun, individual_size,
-                 mutation_rate, mating_rate, selected_individuals, cuts_sequence, points_list, elements_per_dimension):
+    def __init__(self, evaluate_fun, generate_fun, individual_size, mutation_rate, mating_rate, selected_individuals,
+                 cuts_sequence, points_list, elements_per_dimension, min_cut, max_cut):
 
         # define mutation rate of individual
         self.mutation_rate = mutation_rate
@@ -63,6 +63,9 @@ class DeapGeneticGuide(GeneticEvolution):
         self.points_list = points_list
         self.individual_size = individual_size
         self.elements_per_dimension = elements_per_dimension
+        # save m_d and M_d limits to generate S_d sequence in "pureness" function
+        self.m_d = min_cut
+        self.M_d = max_cut
 
     # Individual evaluation method
     def evaluate(self, individual):
@@ -93,7 +96,7 @@ class DeapGeneticGuide(GeneticEvolution):
             # create a list of fitness values of the offsprings
             son_fitness = list()
             for son in offsprings:
-                son_fitness.append(self.fitness(son, self.T_d, self.points_list))
+                son_fitness.append(self.fitness(son))
 
             # map each fitness value to the corresponding offspring
             for fit, ind in zip(son_fitness, offsprings):
@@ -177,10 +180,9 @@ class DeapGeneticGuide(GeneticEvolution):
     # @individual: individual's genome
     # @T_d: reference cuts sequence
     # @points_list: list of prototypes
-    def fitness(self, individual, T_d, points_list):
+    def fitness(self, individual):
         # return the calculated fitness value
-        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual, T_d, points_list,
-                                                                           self.elements_per_dimension), 5)
+        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual), 5)
 
     # Method that calculates the pureness of a given individual's genome
     # @individual: individual's genome
@@ -189,21 +191,21 @@ class DeapGeneticGuide(GeneticEvolution):
     # @elements_per_dimension: number of elements in each dimension of reference T_d
     # @m_d: minimum cut for each dimension
     # @M_d: maximum cut for each dimension
-    def pureness(self, individual, T_d, points_list, elements_per_dimension, m_d=0, M_d=1):
+    def pureness(self, individual):
         # initializing selected cuts and binary cuts sequences
         S_d = SelectedCutsSequence()
         S_d_b = DimensionalSequenceBinary()
 
         # convert individual from monodimensional list to "multidimensional cut sequence"
-        converted_individual = self.from_monodim_ind_to_multidim_ind(individual, elements_per_dimension)
+        converted_individual = self.from_monodim_ind_to_multidim_ind(individual, self.elements_per_dimension)
 
         # create binary cuts sequence
         S_d_b.from_binary(converted_individual)
         # generate selected cuts sequence from reference T_d and binary cuts sequence
-        S_d.from_binary(T_d, S_d_b)
+        S_d.from_binary(self.T_d, S_d_b)
 
         # create set of hyperboxes
-        hyperboxes = S_d.generate_hyperboxes_set(points_list, m_d, M_d)
+        hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
 
         # return ratio between number of pure hyperboxes and total number of hyperboxes
         return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
