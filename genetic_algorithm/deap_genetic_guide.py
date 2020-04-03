@@ -152,19 +152,12 @@ class DeapGeneticGuide(GeneticEvolution):
 
     # Method defining the fitness value of an individual
     # @individual: individual's genome
-    # @T_d: reference cuts sequence
-    # @points_list: list of prototypes
     def fitness(self, individual):
         # return the calculated fitness value
         return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual), 5)
 
     # Method that calculates the pureness of a given individual's genome
     # @individual: individual's genome
-    # @T_d: reference cuts sequence
-    # @points_list: list of prototypes
-    # @elements_per_dimension: number of elements in each dimension of reference T_d
-    # @m_d: minimum cut for each dimension
-    # @M_d: maximum cut for each dimension
     def pureness(self, individual):
         # initializing selected cuts and binary cuts sequences
         S_d = SelectedCutsSequence()
