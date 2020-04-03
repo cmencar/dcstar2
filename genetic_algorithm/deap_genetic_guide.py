@@ -142,35 +142,9 @@ class DeapGeneticGuide(GeneticEvolution):
 
         # if is found a pure individual at least
         if len(best_pure_individuals) != 0:
-            # create a list of numbers of "active cuts" for each individual
-            individuals_active_cuts = list()
-
-            # for each pure individual
-            for individual in best_pure_individuals:
-                # initialize counter of active cuts
-                num_active_cuts = 0
-
-                # for each dimension of the evaluated individual
-                for dimension in individual:
-                    # increment the counter of active cuts
-                    num_active_cuts += dimension.count(True)
-
-                # append into the list of active cuts the counter of evaluated individual
-                individuals_active_cuts.append(num_active_cuts)
-
-            # initialize "best of the best" individual with his number of active cuts
-            best_of_the_best = best_pure_individuals[0].copy()
-            best_num_active_cuts = individuals_active_cuts[0]
-
-            # for each pure individual
-            for individual_index in range(len(best_pure_individuals)):
-                # if the number of evaluated individual's active cuts is less than the "best of the best"
-                if individuals_active_cuts[individual_index] < best_num_active_cuts:
-                    # the evaluated individual is the new "best of the best" with his minor number of active cuts
-                    best_of_the_best.clear()
-                    best_of_the_best = best_pure_individuals[individual_index].copy()
-
             # return the "best of the best"
+            best_of_the_best = list()
+            best_of_the_best.append(best_pure_individuals[0])
             return best_of_the_best
         else:
             # return the "worst case scenario"
