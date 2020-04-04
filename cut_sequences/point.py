@@ -40,15 +40,12 @@ class Point:
     # @dimension: dimension correlated to coordinate to be get
     def get_coordinate(self, dimension):
 
+        # if the indexes refers to a non-existent coordinate then print
+        # an error message, elsewhere return the correct value
         try:
-
-            # return the coordinates for specific dimension
             return self.__coordinates[dimension]
-
         except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found")
+            print("Coordinate not found, impossible to get")
 
 
     # Method for acquiring point label

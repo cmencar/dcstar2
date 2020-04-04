@@ -11,7 +11,7 @@ class PrototypesLoader:
         M_d = None
         point_list = None
 
-        with open(filename) as json_file:
+        with open(filename, 'r') as json_file:
 
             data = json.load(json_file)
             m_d = data['m_d']

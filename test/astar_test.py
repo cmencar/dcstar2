@@ -1,4 +1,4 @@
-from heuristic_search.prototypes_creator import PrototypesLoader
+from heuristic_search.prototypes_creators import PrototypesLoader
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from heuristic_search.dcstar import DCStar
 import matplotlib.pyplot as plt
@@ -12,8 +12,8 @@ point_list, m_d, M_d = loader.load("created point lists/point_list_1.json")
 astar = DCStar(point_list, m_d = m_d, M_d = M_d)
 T_d = astar.get_T_d()
 
-result, branches_taken = astar.find(in_debug=True)
-print("\nFound node in ", branches_taken, " evaluation.")
+result, branches_taken, time = astar.find(verbose=True)
+print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
 
 S_d = SelectedDimensionalSequenceNumeric()
 S_d.from_binary(T_d, result)

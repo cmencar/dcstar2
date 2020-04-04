@@ -27,8 +27,8 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # First of all, for doing this, it must evaluate T_d and S_d dimension in parallel.
         # Later, for every cut in evaluated T_d dimension, if that cut is in S_d dimension then
         # set the corresponding value into the binary array to True, elsewhere set it to False
-        self.__elements = [np.array([True if cut in S_d_dimension else False for cut in T_d_dimension])
-                           for T_d_dimension, S_d_dimension in zip(T_d, S_d)]
+        self.elements = [np.array([True if cut in S_d_dimension else False for cut in T_d_dimension])
+                         for T_d_dimension, S_d_dimension in zip(T_d, S_d)]
 
 
     # Method for creating binary sequence cut from a
@@ -46,11 +46,11 @@ class DimensionalSequenceBinary(DimensionalSequence):
             return
 
         # clear the previous written data
-        self.__elements.clear()
+        self.elements.clear()
 
         # converting each dimension from a list form
         # to a NumPy array form
-        self.__elements = [np.array(dimension) for dimension in S_d_bin]
+        self.elements = [np.array(dimension) for dimension in S_d_bin]
 
 
     # Method for returning the value of a single cut of single dimension
@@ -62,7 +62,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # if the indexes refers to a non-existent element then print an error message,
         # elsewhere return the correct value
         try:
-            return self.__elements[dimension][cut_index]
+            return self.elements[dimension][cut_index]
         except IndexError:
             print("Cut not found, impossible to get")
 
@@ -76,7 +76,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # if the indexes refers to a non-existent element then print an error message,
         # elsewhere set the passed value
         try:
-            self.__elements[dimension][cut_index] = value
+            self.elements[dimension][cut_index] = value
         except IndexError:
             print("Dimension not found, impossible to initialize")
 
@@ -84,45 +84,44 @@ class DimensionalSequenceBinary(DimensionalSequence):
     # Method for creating successors of S_d_bin in binary form
     def get_successors(self):
 
+        # initialize a successors empty list
         successors = list()
 
+        # initialize the index used to identify the specific dimension
+        # of the cut to be set to True (i.e. the cut that differentiates an
+        # S_d_bin element from his successor)
         dimension_index = 0
 
-        for dimension in self.__elements:
+        # each dimension is evaluated in order to analyze each possible editable cut
+        for dimension in self.elements:
 
+            # the index used to identify the specific cut to be set to True
             cut_index = 0
 
+            # for each cut in the evaluated dimension, if it is equal to False
+            # then it can be modified in order to create a successor.
             for cut in dimension:
 
+                # if the evaluated cut binary value is False
                 if not cut:
 
-                    # copy every logical cut value from elementlist
-                    new_elementlist = [np.array([ cut for cut in array ]) for array in self.__elements]
+                    # copy every logical cut value from S_d_bin and create
+                    # the successor binary structure. Then, set the specific
+                    # evaluated cut from False to True
+                    binary_successor = [np.array([cut for cut in dimension_array]) for dimension_array in self.elements]
+                    binary_successor[dimension_index][cut_index] = True
 
-                    new_elementlist[dimension_index][cut_index] = True
-
+                    # the logical raw sequence is used to create a
+                    # DimensionalSequenceBinary object. The object is
+                    # then added to successors' list
                     successor = DimensionalSequenceBinary()
-
-                    successor.from_binary(new_elementlist)
-
+                    successor.from_binary(binary_successor)
                     successors.append(successor)
 
-                cut_index = cut_index + 1
+                # increment the cut_index value
+                cut_index += 1
 
-            dimension_index = dimension_index + 1
+            # increment the dimension_index value
+            dimension_index += 1
 
         return successors
-
-
-    #
-    def __eq__(self, sequence):
-
-        for array, passed_array in zip(self.__elements, sequence.elementlist):
-
-            for array_element, passed_array_element in zip(array, passed_array):
-
-                if array_element != passed_array_element:
-
-                    return False
-
-        return True
