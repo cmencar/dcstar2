@@ -21,6 +21,8 @@ class DeapGeneticGuide(GeneticEvolution):
     # @points_list: list of prototypes
     # @elements_per_dimension: number of elements per dimension of given cuts_sequence for convertion from list
     # to sequence
+    # @min_cut: m_d cut that will go into S_d
+    # @max_cut: M_d cut that will go into S_d
     def __init__(self, evaluate_fun, generate_fun, individual_size, mutation_rate, mating_rate, selected_individuals,
                  cuts_sequence, points_list, elements_per_dimension, min_cut, max_cut):
 
