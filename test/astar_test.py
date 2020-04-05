@@ -4,49 +4,56 @@ from heuristic_search.dcstar import DCStar
 import matplotlib.pyplot as plt
 
 
-#creator = PrototypesCreator()
-#creator.create("created point lists/point_list_1.json", n_points=20, n_classes=3, n_dimensions=3, m_d=0, M_d=1)
+# loading of prototypes point list and dimensional boundaries
 loader = PrototypesLoader()
 point_list, m_d, M_d = loader.load("created point lists/point_list_1.json")
 
-astar = DCStar(point_list, m_d = m_d, M_d = M_d)
-T_d = astar.get_T_d()
+# creation of DCStar object for the clustering operation
+dcstar = DCStar(point_list, m_d = m_d, M_d = M_d)
 
-result, branches_taken, time = astar.find(verbose=True)
+# acquiring T_d created in DCStar object with passed points list
+T_d = dcstar.get_T_d()
+
+# execution of clustering with DCStar and acquiring of results
+result, branches_taken, time = dcstar.find(verbose = True)
 print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
 
+# creation of an S_d cuts sequence with found cuts sequence
 S_d = SelectedDimensionalSequenceNumeric()
 S_d.from_binary(T_d, result)
-hyperboxes_set = S_d.generate_hyperboxes_set(point_list, m_d=m_d, M_d=M_d)
-hyperboxes = hyperboxes_set.get_hyperboxes()
 
-for cut in T_d.get_dimension(0):
-    plt.plot([cut, cut], [0, 1], 'k', linestyle=':', color='grey')
+# if created T_d in in a bidimensional space then show
+# a plot with grafical view of found S_d cuts sequence
+if T_d.get_dimensions_number() == 2:
 
-for cut in T_d.get_dimension(1):
-    plt.plot([0, 1], [cut, cut], linestyle=':', color='grey')
+    # printing T_d cuts in the plot
+    for cut in T_d.get_dimension(0):
+        plt.plot([cut, cut], [0, 1], 'k', linestyle=':', color='grey')
+    for cut in T_d.get_dimension(1):
+        plt.plot([0, 1], [cut, cut], linestyle=':', color='grey')
 
-for cut in S_d.get_dimension(0):
-    plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
+    # printing S_d cuts in the plot
+    for cut in S_d.get_dimension(0):
+        plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
+    for cut in S_d.get_dimension(1):
+        plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
 
-for cut in S_d.get_dimension(1):
-    plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
-
-for point in point_list:
-    color = 'ko'
-    if point.get_label() == 1:
-        color = 'ro'
-    elif point.get_label() == 2:
-        color = 'bo'
-    elif point.get_label() == 3:
+    # printing points in the plot
+    for point in point_list:
         color = 'ko'
-    elif point.get_label() == 4:
-        color = 'yo'
-    elif point.get_label() == 5:
-        color = 'mo'
+        if point.get_label() == 1:
+            color = 'ro'
+        elif point.get_label() == 2:
+            color = 'bo'
+        elif point.get_label() == 3:
+            color = 'ko'
+        elif point.get_label() == 4:
+            color = 'yo'
+        elif point.get_label() == 5:
+            color = 'mo'
+        plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
 
-    plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
-
-plt.show()
+    # showing the plot to video
+    plt.show()
 
 pass
