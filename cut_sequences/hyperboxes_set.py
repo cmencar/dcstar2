@@ -14,6 +14,14 @@ class HyperboxesSet:
         # initialization of selected cuts sequences on which hyperboxes_set is based
         self.__selected_cuts_sequences = cuts
 
+        # initialization of hyperboxes
+        self.__set_hyperboxes(points)
+
+
+    # Method for defining all hyperboxes in hyperboxes set
+    # @points: points list passed to constructor
+    def __set_hyperboxes(self, points):
+
         # for each point in passed points list, create its hyperbox.
         # If there is already a point that use an hyperbox defined with
         # the created hyperbox boundaries then use that hyperbox for the point
