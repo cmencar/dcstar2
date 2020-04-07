@@ -30,22 +30,22 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
     # Function for converting a logical cut sequence to
     # a point-based cut sequence
-    # @cuts_list: general cut sequence
-    # @selected_binary_cuts_list: logical cut sequence
-    def from_binary(self, cuts_list, selected_binary_cuts_list):
+    # @cuts_sequences: general cut sequence
+    # @selected_binary_cuts_sequences: logical cut sequence
+    def from_binary(self, cuts_sequences, selected_binary_cuts_sequences):
 
         # clear all previous elements into elements
         self.elements.clear()
 
         # for each S_d_bin logical sequence cut
-        for dimension_index in range(selected_binary_cuts_list.get_dimensions_number()):
+        for dimension_index in range(selected_binary_cuts_sequences.get_dimensions_number()):
 
             # definition of a temporary cuts' list for the evaluated dimension.
             # The list contain numerical values of cuts for the evaluated dimension,
             # presents in T_d, where the corresponding value in S_d_bin is True
-            dimension_cuts = [cuts_list.get_dimension(dimension_index)[cut_index]
-                              for cut_index in range(selected_binary_cuts_list.get_dimension_size(dimension_index))
-                              if selected_binary_cuts_list.get_cut(dimension_index, cut_index)]
+            dimension_cuts = [cuts_sequences.get_dimension(dimension_index)[cut_index]
+                              for cut_index in range(selected_binary_cuts_sequences.get_dimension_size(dimension_index))
+                              if selected_binary_cuts_sequences.get_cut(dimension_index, cut_index)]
 
             # insert a new dimension in selected cuts sequences structure
             self.elements.append(np.array(dimension_cuts))
