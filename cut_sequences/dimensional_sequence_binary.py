@@ -2,13 +2,13 @@ from cut_sequences.dimensional_sequence import DimensionalSequence
 import numpy as np
 
 
-# Class for define selected cuts S_d in a logical way
+# Class for define selected cuts sequences in a logical way
 class DimensionalSequenceBinary(DimensionalSequence):
 
     # DimensionalSequenceBinary class constructor method
-    # @S_d: iterable structure for selected cuts to be converted in logical sequence
-    # @T_d: iterable structure for general cuts sequence
-    def __init__(self, S_d = [], T_d = []):
+    # @selected_cuts_list: iterable structure for selected cuts to be converted in logical sequences
+    # @cuts_list: iterable structure for general cuts sequences
+    def __init__(self, selected_cuts_list = [], cuts_list = []):
 
         # calling superclass constructor
         super().__init__()
@@ -17,8 +17,8 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # If parameters aren't iterable objects then the constructor fail and
         # show an error message
         try:
-            _ = (element for element in S_d)
-            _ = (element for element in T_d)
+            _ = (element for element in selected_cuts_list)
+            _ = (element for element in cuts_list)
         except TypeError:
             print("Error in creating DimensionalSequenceBinary. Passed non-iterable parameter")
             return
@@ -27,20 +27,21 @@ class DimensionalSequenceBinary(DimensionalSequence):
         # First of all, for doing this, it must evaluate T_d and S_d dimension in parallel.
         # Later, for every cut in evaluated T_d dimension, if that cut is in S_d dimension then
         # set the corresponding value into the binary array to True, elsewhere set it to False
-        self.elements = [np.array([True if cut in S_d_dimension else False for cut in T_d_dimension])
-                         for T_d_dimension, S_d_dimension in zip(T_d, S_d)]
+        self.elements = [np.array([True if cut in S_d else False for cut in T_d])
+                         for T_d, S_d in zip(cuts_list, selected_cuts_list)]
 
 
     # Method for creating binary sequence cut from a
     # structure that contains logical values
-    # @S_d_bin: iterable structure for logical selected cuts sequence
-    def from_binary(self, S_d_bin):
+    # @selected_binary_cuts_list: iterable structure for logical
+    #  selected cuts sequences
+    def from_binary(self, selected_binary_cuts_list):
 
         # control for define if the passed parameters are iterable objects
         # If parameters aren't iterable objects then the constructor fail and
         # show an error message
         try:
-            _ = (element for element in S_d_bin)
+            _ = (element for element in selected_binary_cuts_list)
         except TypeError:
             print("Error in creating DimensionalSequenceBinary. Passed non-iterable parameter")
             return
@@ -50,7 +51,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
         # converting each dimension from a list form
         # to a NumPy array form
-        self.elements = [np.array(dimension) for dimension in S_d_bin]
+        self.elements = [np.array(dimension) for dimension in selected_binary_cuts_list]
 
 
     # Method for returning the value of a single cut of single dimension
@@ -81,7 +82,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
             print("Dimension not found, impossible to initialize")
 
 
-    # Method for creating successors of S_d_bin in binary form
+    # Method for creating successors of selected cuts sequence in binary form
     def get_successors(self):
 
         # initialize a successors empty list

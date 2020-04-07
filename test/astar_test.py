@@ -11,31 +11,31 @@ point_list, m_d, M_d = loader.load("created point lists/point_list_1.json")
 # creation of DCStar object for the clustering operation
 dcstar = DCStar(point_list, m_d = m_d, M_d = M_d)
 
-# acquiring T_d created in DCStar object with passed points list
-T_d = dcstar.get_T_d()
+# acquiring cuts sequences created in DCStar object with passed points list
+cuts_sequences = dcstar.get_cuts_sequences()
 
 # execution of clustering with DCStar and acquiring of results
 result, branches_taken, time = dcstar.find(verbose = True)
 print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
 
-# creation of an S_d cuts sequence with found cuts sequence
-S_d = SelectedDimensionalSequenceNumeric()
-S_d.from_binary(T_d, result)
+# creation of an selected cuts sequence with found cuts sequence
+selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
+selected_cuts_sequences.from_binary(cuts_sequences, result)
 
-# if created T_d in in a bidimensional space then show
-# a plot with grafical view of found S_d cuts sequence
-if T_d.get_dimensions_number() == 2:
+# if created cuts sequences is in a bidimensional space then show
+# a plot with grafical view of found selected cuts sequence
+if cuts_sequences.get_dimensions_number() == 2:
 
-    # printing T_d cuts in the plot
-    for cut in T_d.get_dimension(0):
+    # printing S_d with d=1 in the plot
+    for cut in cuts_sequences.get_dimension(0):
         plt.plot([cut, cut], [0, 1], 'k', linestyle=':', color='grey')
-    for cut in T_d.get_dimension(1):
+    for cut in cuts_sequences.get_dimension(1):
         plt.plot([0, 1], [cut, cut], linestyle=':', color='grey')
 
-    # printing S_d cuts in the plot
-    for cut in S_d.get_dimension(0):
+    # printing S_d with d=2 in the plot
+    for cut in selected_cuts_sequences.get_dimension(0):
         plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
-    for cut in S_d.get_dimension(1):
+    for cut in selected_cuts_sequences.get_dimension(1):
         plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
 
     # printing points in the plot

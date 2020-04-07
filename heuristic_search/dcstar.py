@@ -20,10 +20,10 @@ class DCStar:
         # initialization of point list
         self.__points_list = points_list
 
-        # creation of T_d cuts sequence using the points list
-        self.__T_d = self.__create_T_d(self.__points_list)
+        # creation of cuts sequences using the points list
+        self.__cuts_sequences = self.__create_cuts_sequences(self.__points_list)
 
-        # initialization of boundaries of extended cut sequence S'_d
+        # initialization of boundaries of extended cuts sequences
         self.__boundary_points = (m_d, M_d)
 
         # initialization of priority queues: the closed queue,
@@ -45,7 +45,7 @@ class DCStar:
         # node will be equal to a binary cuts sequence where all cuts
         # are defined as False and the cost is equal to a tuple
         # containing three values equal to 0
-        most_promising_node = DCStarNode(state= self.__T_d.generate_starting_binary(), cost = (0, 0, 0))
+        most_promising_node = DCStarNode(state= self.__cuts_sequences.generate_starting_binary(), cost = (0, 0, 0))
 
         # inserting the initial most_promising_node into the open_queue
         self.__open_queue.put(most_promising_node)
@@ -120,10 +120,10 @@ class DCStar:
                     self.__open_queue.put(successor)
 
         # if there is no intermediate solution, i.e. a solution that
-        # does not imply the use of all the cuts defined by T_d
+        # does not imply the use of all the cuts defined by cuts sequences
         # (and, therefore, form a set of minimal hypercubes) then the solution
         # will be the last most_promising_node, i.e. the one whose cuts
-        # sequence is associated with the binary cuts sequence of T_d with
+        # sequence is associated with the binary cuts sequence with
         # all the values set to True.
         return most_promising_node.get_state(), nodes_evaluated, time.time() - start_time
 
@@ -135,14 +135,15 @@ class DCStar:
     # @node: node of to be evaluated to get the second-level priority
     def __goal(self, node):
 
-        # create a S_d cuts sequence using the binary sequence of passed node
-        S_d = SelectedDimensionalSequenceNumeric()
-        S_d.from_binary(self.__T_d, node.get_state())
+        # create a selected cuts sequence using the binary sequence of passed node
+        selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
+        selected_cuts_sequences.from_binary(self.__cuts_sequences, node.get_state())
 
-        # generate an HyperboxesSet object from the newly created S_d
+        # generate an HyperboxesSet object from the newly created selected
         # cuts sequence and using the prototype points list
-        hyperboxes_set = S_d.generate_hyperboxes_set(self.__points_list, m_d = self.__boundary_points[0],
-                                                     M_d = self.__boundary_points[1])
+        hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
+                                                                         m_d = self.__boundary_points[0],
+                                                                         M_d = self.__boundary_points[1])
 
         # the return value will be True if the HyperboxesSet object
         # contain only pure hyperboxes, False otherwise
@@ -155,10 +156,10 @@ class DCStar:
         return node.successors()
 
 
-    # Method for creating a T_d cut sequence starting from
+    # Method for creating a cuts sequence starting from
     # a list of prototype points.
     # @points_list: list of prototype points
-    def __create_T_d(self, points_list):
+    def __create_cuts_sequences(self, points_list):
 
         # initializes an empty list in order to contain the
         # sequence of T_d cuts that will later be used
@@ -219,9 +220,9 @@ class DCStar:
         return DimensionalSequenceNumeric(numerical_cuts_sequence)
 
 
-    # Method for acquiring the value of T_d cut sequence
-    def get_T_d(self):
-        return self.__T_d
+    # Method for acquiring the value of cuts sequences
+    def get_cuts_sequences(self):
+        return self.__cuts_sequences
 
 
     # Method for acquiring the value of first-level priority
@@ -276,7 +277,7 @@ class DCStar:
         # (t_k_previous) and the next cut (t_k_next). The first value
         # set to t_k_previous and t_k_next are, respectively, the values
         # of m_d and M_d
-        t_k = self.__T_d.get_dimension(dimension_index)[cut_index]
+        t_k = self.__cuts_sequences.get_dimension(dimension_index)[cut_index]
         t_k_previous = self.__boundary_points[0]
         t_k_next = self.__boundary_points[1]
 
@@ -292,7 +293,7 @@ class DCStar:
         index = cut_index
         while index > 0 and not found:
             if not successor_state.get_cut(dimension_index, index):
-                t_k_previous = self.__T_d.get_dimension(dimension_index)[index]
+                t_k_previous = self.__cuts_sequences.get_dimension(dimension_index)[index]
                 found = True
             index -= 1
 
@@ -307,9 +308,9 @@ class DCStar:
         # value defined by index, the numerical value of cut is taken and
         # it is assigned to t_k_next
         index = cut_index
-        while index < self.__T_d.get_dimension_size(dimension_index) and not found:
+        while index < self.__cuts_sequences.get_dimension_size(dimension_index) and not found:
             if not successor_state.get_cut(dimension_index, index):
-                t_k_next = self.__T_d.get_dimension(dimension_index)[index]
+                t_k_next = self.__cuts_sequences.get_dimension(dimension_index)[index]
                 found = True
             index += 1
 
@@ -365,14 +366,15 @@ class DCStar:
     # @node: node of to be evaluated to get the heuristic value
     def __h1(self, node):
 
-        # create a S_d cuts sequence using the binary sequence of passed node
-        S_d = SelectedDimensionalSequenceNumeric()
-        S_d.from_binary(self.__T_d, node.get_state())
+        # create a selected cuts sequence using the binary sequence of passed node
+        selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
+        selected_cuts_sequences.from_binary(self.__cuts_sequences, node.get_state())
 
-        # generate an HyperboxesSet object from the newly created S_d
+        # generate an HyperboxesSet object from the newly created selected
         # cuts sequence and using the prototype points list
-        hyperboxes_set = S_d.generate_hyperboxes_set(self.__points_list, m_d = self.__boundary_points[0],
-                                                     M_d = self.__boundary_points[1])
+        hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
+                                                                         m_d = self.__boundary_points[0],
+                                                                         M_d = self.__boundary_points[1])
 
         # all impure hyperboxes are captured by the HyperboxesSet object
         # and placed in a list. On them will be based the evaluation
@@ -397,9 +399,9 @@ class DCStar:
             # most_impure_hyperbox, i.e. if it has more prototypes of
             # different classes. If so, then the evaluated hyperbox
             # becomes the most_impure_hyperbox
-            for hb in hyperboxes:
-                if hb.get_different_classes_number() > most_impure_hyperboxes.get_different_classes_number():
-                    most_impure_hyperboxes = hb
+            for hyperbox in hyperboxes:
+                if hyperbox.get_different_classes_number() > most_impure_hyperboxes.get_different_classes_number():
+                    most_impure_hyperboxes = hyperbox
 
             # heuristic_value is increased by adding the already
             # existing value with the number of prototypes with
@@ -408,7 +410,7 @@ class DCStar:
             # (thus also the most_impure_hyperbox itself) is deleted from
             # the list and the evaluation of the remaining hyperboxes continue
             heuristic_value = heuristic_value + most_impure_hyperboxes.get_different_classes_number()
-            hyperboxes = [hb for hb in hyperboxes if most_impure_hyperboxes.is_connected(hb) is False]
+            hyperboxes = [hyperbox for hyperbox in hyperboxes if most_impure_hyperboxes.is_connected(hyperbox) is False]
 
         # finally, the heuristic_value calculated is passed as return value
         return heuristic_value

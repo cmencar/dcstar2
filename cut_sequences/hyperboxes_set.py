@@ -5,14 +5,14 @@ class HyperboxesSet:
 
     # class constructor
     # @points: prototypes point list
-    # @cuts: S_d cuts sequence used to calculate HyperboxesSet
+    # @cuts: selected cuts sequences used to calculate HyperboxesSet
     def __init__(self, points, cuts):
 
         # initialization of dictionary of points
         self.__points = dict()
 
-        # initialization of S_d cuts on which hyperboxes_set is based
-        self.__selected_dimensional_sequence_numeric = cuts
+        # initialization of selected cuts sequences on which hyperboxes_set is based
+        self.__selected_cuts_sequences = cuts
 
         # for each point in passed points list, create its hyperbox.
         # If there is already a point that use an hyperbox defined with
@@ -40,8 +40,8 @@ class HyperboxesSet:
         # definition of hyperbox's boundaries
         hyperbox_boundaries = list()
 
-        # for each dimension in passed S_d
-        for dimension in self.__selected_dimensional_sequence_numeric:
+        # for each S_d in selected cuts sequences
+        for S_d in self.__selected_cuts_sequences:
 
             # initializing found flag and
             # dimension cut's index
@@ -53,16 +53,16 @@ class HyperboxesSet:
 
             # while the smallest cut with greater value than
             # point coordinate is not found
-            while found is False and cut_index <= len(dimension):
+            while found is False and cut_index <= len(S_d):
 
                 # get the evaluated cut
-                cut = dimension[cut_index]
+                cut = S_d[cut_index]
 
                 # if cut value is greater than point coordinate value
                 # then insert that cut and previous cut in the
                 # dimensional order as one of hyperbox dimensional boundaries
                 if coordinate <= cut:
-                    hyperbox_boundaries.append((dimension[cut_index-1], cut))
+                    hyperbox_boundaries.append((S_d[cut_index - 1], cut))
                     found = True
 
                 # increment cut index
@@ -80,19 +80,6 @@ class HyperboxesSet:
         return self.__points.get(point)
 
 
-    # Method for checking if a given hyperbox is impure
-    # @hyperbox: given hyperbox
-    def is_impure_hyperbox(self, hyperbox):
-
-        # for each couple point-hyperbox
-        for point, hb in self.__points.items():
-
-            # if is found the given hyperbox return the logical value
-            # of hyperbox impurity
-            if hb.get_boundaries() == hyperbox.get_boundaries():
-                return hb.is_impure()
-
-
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
 
@@ -107,14 +94,6 @@ class HyperboxesSet:
                 num = num + 1
 
         return num
-
-
-    # Method for acquiring all impure hyperboxes
-    def get_impure_hyperboxes(self):
-
-        # for each couple point-hyperbox check if given hyperbox is impure.
-        # If so, add it to impure set. Finally, convert the set in a list
-        return [{hb for point, hb in self.__points.items() if hb.is_impure() is True}]
 
 
     # Method for acquiring all hyperboxes as a list.
