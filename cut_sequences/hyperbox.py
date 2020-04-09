@@ -36,7 +36,6 @@ class Hyperbox:
     def is_impure(self):
 
         # initialization of service variables
-        is_impure = False
         point_label = self.__points[0].get_label()
         point_index = 1
 
@@ -63,6 +62,7 @@ class Hyperbox:
     # Method for acquiring if the passed hyperbox and this hyperbox
     # are 'connected'. The term 'connected' refers to the fact that
     # the two hb have at least one pair of boundaries in common
+    # @hyperbox: element that is needed to evaluate for the connection
     def is_connected(self, hyperbox):
 
         # if at least one pair of boundary (defined as a tuple of two elements,

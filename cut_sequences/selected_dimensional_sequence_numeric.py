@@ -75,13 +75,10 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
     def generate_hyperboxes_set(self, point_list, m_d = 0, M_d = 1):
 
         # initialization of a list of intervals
-        intervals = list()
+        expanded_intervals = list()
 
         # for each S_d sequence
         for S_d in self.elements:
-
-            # get the evaluated dimension and the number of cuts in it
-            dimension_size = len(S_d)
 
             # initialization of a list of intervals for
             # the evaluated dimension
@@ -92,7 +89,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
             # for each cut in evaluate dimension, insert it into
             # the list of intervals for that dimension
-            for cut_index in range(dimension_size):
+            for cut_index in range(len(S_d)):
                 expanded_S_d.append(S_d[cut_index])
 
             # set the M_d cut, the rightmost cut of dimension
@@ -100,11 +97,8 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
             # insert the list of interval for evaluate dimension into
             # the expanded S_d interval list
-            intervals.append(expanded_S_d)
+            expanded_intervals.append(expanded_S_d)
 
-        # creation of hyperboxes set
-        hyperboxes = HyperboxesSet(point_list, intervals)
-
-        # return the set of hyperboxes
-        return hyperboxes
+        # return the created hyperboxes set
+        return HyperboxesSet(point_list, expanded_intervals)
 

@@ -94,14 +94,14 @@ class DimensionalSequenceBinary(DimensionalSequence):
         dimension_index = 0
 
         # each dimension is evaluated in order to analyze each possible editable cut
-        for dimension in self.elements:
+        for S_d_bin in self.elements:
 
             # the index used to identify the specific cut to be set to True
             cut_index = 0
 
             # for each cut in the evaluated dimension, if it is equal to False
             # then it can be modified in order to create a successor.
-            for cut in dimension:
+            for cut in S_d_bin:
 
                 # if the evaluated cut binary value is False
                 if not cut:
@@ -109,7 +109,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
                     # copy every logical cut value from S_d_bin and create
                     # the successor binary structure. Then, set the specific
                     # evaluated cut from False to True
-                    binary_successor = [np.array([cut for cut in dimension_array]) for dimension_array in self.elements]
+                    binary_successor = [np.array([cut for cut in S_d_bin_copied]) for S_d_bin_copied in self.elements]
                     binary_successor[dimension_index][cut_index] = True
 
                     # the logical raw sequence is used to create a
