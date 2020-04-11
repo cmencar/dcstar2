@@ -31,7 +31,7 @@ class PrototypesCreator:
         # definition of the list of points randomly.
         # The coordinates follow a particular distribution
         # of values (in this case the normal distribution)
-        point_list = [ Point(coordinates = [rand.gauss((m_d+M_d)/2, (m_d+M_d)/4) for _ in range(n_dimensions)],
+        point_list = [ Point(coordinates = [rand.gauss((m_d+M_d)/2, (m_d+M_d)/5) for _ in range(n_dimensions)],
                              label = rand.randrange(1, n_classes + 1), name = "point_" + str(point_id+1))
                        for point_id in range(n_points) ]
 

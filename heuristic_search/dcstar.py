@@ -290,7 +290,7 @@ class DCStar:
         # for t_k_previous) when a logical cut value is True: using the
         # value defined by index, the numerical value of cut is taken and
         # it is assigned to t_k_previous
-        index = cut_index
+        index = cut_index - 1
         while index > 0 and not found:
             if successor_state.get_cut(dimension_index, index):
                 t_k_previous = self.__cuts_sequences.get_dimension(dimension_index)[index]
@@ -307,7 +307,7 @@ class DCStar:
         # for t_k_next) when a logical cut value is True: using the
         # value defined by index, the numerical value of cut is taken and
         # it is assigned to t_k_next
-        index = cut_index
+        index = cut_index + 1
         while index < self.__cuts_sequences.get_dimension_size(dimension_index) and not found:
             if successor_state.get_cut(dimension_index, index):
                 t_k_next = self.__cuts_sequences.get_dimension(dimension_index)[index]
