@@ -90,22 +90,11 @@ class HyperboxesSet:
 
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
-
-        # initialization of number of impures
-        num = 0
-
-        # for each couple point-hyperbox
-        for point, hb in self.__points.items():
-
-            # check if given hyperbox is impure
-            if hb.is_impure():
-                num = num + 1
-
-        return num
+        return len({hyperbox for point, hyperbox in self.__points.items() if hyperbox.is_impure()})
 
 
     # Method for acquiring all hyperboxes as a list.
     # The hyperboxes are taken once and only once, regardless of
     # occurences as attributes in the dictionary of points
     def get_hyperboxes(self):
-        return list({hb for point, hb in self.__points.items()})
+        return list({hyperbox for point, hyperbox in self.__points.items()})

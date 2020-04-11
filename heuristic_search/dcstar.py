@@ -21,7 +21,7 @@ class DCStar:
         self.__points_list = points_list
 
         # creation of cuts sequences using the points list
-        self.__cuts_sequences = self.__create_cuts_sequences(self.__points_list)
+        self.__cuts_sequences = self.__create_cuts_sequences()
 
         # initialization of boundaries of extended cuts sequences
         self.__boundary_points = (m_d, M_d)
@@ -35,6 +35,7 @@ class DCStar:
 
     # Method for acquiring the partition of Universe of Discours
     # given a list of prototype points into an n-dimensional space
+    # @verbose: flag for the setting of a verbose computation
     def find(self, verbose = False):
 
         # initialization of timer (used to measure the time
@@ -83,8 +84,7 @@ class DCStar:
             # are returned such as the number of nodes evaluated and the time
             # taken for the computation
             if self.__goal(most_promising_node):
-                end_time = time.time() - start_time
-                return most_promising_node.get_state(), nodes_evaluated, end_time
+                return most_promising_node.get_state(), nodes_evaluated, time.time() - start_time
 
             else:
 
@@ -159,7 +159,7 @@ class DCStar:
     # Method for creating a cuts sequence starting from
     # a list of prototype points.
     # @points_list: list of prototype points
-    def __create_cuts_sequences(self, points_list):
+    def __create_cuts_sequences(self):
 
         # initializes an empty list in order to contain the
         # sequence of T_d cuts that will later be used
@@ -168,11 +168,11 @@ class DCStar:
 
         # for each possible dimension, indirectly defined
         # by the number of coordinates of any point
-        for dimension_index in range(len(points_list[0].get_coordinates())):
+        for dimension_index in range(len(self.__points_list[0].get_coordinates())):
 
             # sorts the list of points based on the coordinate
             # value on the dimension identified by dimension_index
-            sorted_point_list = sorted(points_list, key= lambda point: point.get_coordinate(dimension_index))
+            sorted_point_list = sorted(self.__points_list, key= lambda point: point.get_coordinate(dimension_index))
 
             # for each point a projection of the same is determined on the
             # dimension defined by dimension_index. The value of the projection
@@ -230,7 +230,7 @@ class DCStar:
     # based on the sum of cost value and heuristic value.
     # @node: node of to be evaluated to get the first-level priority
     def __get_first_level_priority(self, node):
-        return self.__g(node) + self.__h(node)
+        return self.__get_path_cost_value(node) + self.__get_heuristic_value(node)
 
 
     # Method for acquiring the value of second-level priority
@@ -292,7 +292,7 @@ class DCStar:
         # it is assigned to t_k_previous
         index = cut_index
         while index > 0 and not found:
-            if not successor_state.get_cut(dimension_index, index):
+            if successor_state.get_cut(dimension_index, index):
                 t_k_previous = self.__cuts_sequences.get_dimension(dimension_index)[index]
                 found = True
             index -= 1
@@ -309,7 +309,7 @@ class DCStar:
         # it is assigned to t_k_next
         index = cut_index
         while index < self.__cuts_sequences.get_dimension_size(dimension_index) and not found:
-            if not successor_state.get_cut(dimension_index, index):
+            if successor_state.get_cut(dimension_index, index):
                 t_k_next = self.__cuts_sequences.get_dimension(dimension_index)[index]
                 found = True
             index += 1
@@ -339,10 +339,10 @@ class DCStar:
         return value
 
 
-    # Method for acquiring the path-cost value. It is based on the counting
+    # Method for acquiring the g path-cost value. It is based on the counting
     # the cuts present in the logical sequence which value is True
     # @node: node of to be evaluated to get the path-cost value
-    def __g(self, node):
+    def __get_path_cost_value(self, node):
         return sum([np.sum(node.get_state().get_dimension(dimension_index) == True)
                     for dimension_index in range(node.get_state().get_dimensions_number())])
 
@@ -350,8 +350,8 @@ class DCStar:
     # Method for acquiring the heuristic value. It is based on the
     # sum of first-level and second-level heuristic values
     # @node: node of to be evaluated to get the second-level heuristic
-    def __h(self, node):
-        return self.__h1(node) + self.__h2(node)
+    def __get_heuristic_value(self, node):
+        return self.__get_first_level_heuristic_value(node) + self.__get_second_level_heuristic_value(node)
 
 
     # Method for acquiring the first-level heuristic value. It is based
@@ -364,7 +364,7 @@ class DCStar:
     # The procedure stops when the collection of hyperboxes to scan is empty
     # and, finally, the value of the counter is returned.
     # @node: node of to be evaluated to get the heuristic value
-    def __h1(self, node):
+    def __get_first_level_heuristic_value(self, node):
 
         # create a selected cuts sequence using the binary sequence of passed node
         selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
@@ -420,5 +420,5 @@ class DCStar:
     # It is based on
     # TODO(TO BE CONTINUED)
     # @node: node of to be evaluated to get the second-level heuristic
-    def __h2(self, node):
+    def __get_second_level_heuristic_value(self, node):
         return 1

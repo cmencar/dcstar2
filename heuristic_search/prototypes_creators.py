@@ -3,30 +3,6 @@ import random as rand
 import json
 
 
-# Class that defines a loader of a set of points
-class PrototypesLoader:
-
-    # Method for loading a list of points from a
-    # particular JSON file
-    # @filename: name and path directory of the file
-    #  containing the information to be loaded
-    def load(self, filename):
-
-        # open the file and upload the file in it. The data
-        # of the JSON file are acquired and saved in variables
-        # that will then be passed as return value
-        with open(filename, 'r') as json_file:
-            data = json.load(json_file)
-            m_d = data['m_d']
-            M_d = data['M_d']
-            point_list = [Point(coordinates=[ coordinate for coordinate in point['coordinates'] ], label=point['class'],
-                                name=point['name']) for point in data['points']]
-
-        # returning the loaded data
-        return point_list, m_d, M_d
-
-
-
 # Class that defines a creator of a randomly generated set of points
 class PrototypesCreator:
 
@@ -74,3 +50,24 @@ class PrototypesCreator:
         # creation of json file
         with open(filename, 'w') as output:
             json.dump(data, output)
+
+
+    # Method for loading a list of points from a
+    # particular JSON file
+    # @filename: name and path directory of the file
+    #  containing the information to be loaded
+    def load(self, filename):
+
+        # open the file and upload the file in it. The data
+        # of the JSON file are acquired and saved in variables
+        # that will then be passed as return value
+        with open(filename, 'r') as json_file:
+            data = json.load(json_file)
+            m_d = data['m_d']
+            M_d = data['M_d']
+            point_list = [Point(coordinates=[ coordinate for coordinate in point['coordinates'] ], label=point['class'],
+                                name=point['name']) for point in data['points']]
+
+        # returning the loaded data
+        return point_list, m_d, M_d
+

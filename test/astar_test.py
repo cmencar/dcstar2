@@ -1,11 +1,11 @@
-from heuristic_search.prototypes_creators import PrototypesLoader
+from heuristic_search.prototypes_creators import PrototypesCreator
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from heuristic_search.dcstar import DCStar
 import matplotlib.pyplot as plt
 
 
 # loading of prototypes point list and dimensional boundaries
-loader = PrototypesLoader()
+loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/point_list_1.json")
 
 # creation of DCStar object for the clustering operation
