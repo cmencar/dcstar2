@@ -2,7 +2,10 @@
 import random
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 from cut_sequences.cuts_sequence import CutsSequence
+from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
+from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
 from cut_sequences.point import Point
+from matplotlib import pyplot as plt
 import sys
 sys.path.append('../')
 
@@ -132,3 +135,48 @@ best_individual = genetic_guide.evolve(population_size, generations, selected_be
 
 # print the best possible individual
 print("\nBEST POSSIBLE PURE INDIVIDUAL: \n", best_individual)
+
+# best_case_scenario_example = [[False, False, False, False, False, False], [False, False, False, True, False, True]]
+
+# create selected sequence with generated dimensional sequence
+S_d_bin_example = DimensionalSequenceBinary()
+S_d_bin_example.from_binary(best_individual)
+S_d_example = SelectedCutsSequence()
+S_d_example.from_binary(T_d_example, S_d_bin_example)
+
+# create the plot
+for cut in S_d_example.get_dimension(0):
+    plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
+
+for cut in S_d_example.get_dimension(1):
+    plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
+
+for point in points_example:
+    color = 'ko'
+
+    if point.get_label() == "prototype_1":
+        color = 'ro'
+    elif point.get_label() == "prototype_2":
+        color = 'bo'
+
+    plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
+
+# show the plot
+plt.show()
+
+# get the average number of cuts in 100 individual
+print("\nCalculating average of active cuts in 100 individuals")
+generated_individuals = list()
+cuts_generated = 0
+for i in range(100):
+    generated_individuals.append(genetic_guide.evolve(population_size, generations, selected_best))
+    print("N°", i, "individual: ", generated_individuals[i])
+    active_cuts_ind = 0
+    for dimension in generated_individuals[i]:
+        for gene in dimension:
+            if gene:
+                active_cuts_ind += 1
+    print("Active cuts into individual: ", active_cuts_ind)
+    cuts_generated += active_cuts_ind
+avg_cuts_generated = cuts_generated / 100
+print("\nAVERAGE ACTIVE CUTS: ", avg_cuts_generated)

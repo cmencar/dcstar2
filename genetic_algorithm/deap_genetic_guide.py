@@ -124,7 +124,7 @@ class DeapGeneticGuide(GeneticEvolution):
         S_d_b = DimensionalSequenceBinary()
 
         # define pure individuals list
-        best_pure_individuals = list()
+        best_fo_the_best = list()
 
         # for each individual in the best individuals generated
         for individual in converted_best_individuals:
@@ -140,14 +140,12 @@ class DeapGeneticGuide(GeneticEvolution):
             # if all of the hyperboxes generated are pure
             if hyperboxes.get_impure_hyperboxes_number() == 0:
                 # append the evaluated individual into the list of pure individuals
-                best_pure_individuals.append(individual.copy())
+                best_fo_the_best.append(individual.copy())
 
         # if is found a pure individual at least
-        if len(best_pure_individuals) != 0:
+        if len(best_fo_the_best) != 0:
             # return the "best of the best"
-            best_of_the_best = list()
-            best_of_the_best.append(best_pure_individuals[0])
-            return best_of_the_best
+            return best_fo_the_best[0]
         else:
             # return the "worst case scenario"
             return self.worst_case_scenario(self.elements_per_dimension)
@@ -183,16 +181,27 @@ class DeapGeneticGuide(GeneticEvolution):
     # @individual: individual's genome
     # @genes_per_dimension: numbers of genes per dimension
     def from_monodim_ind_to_multidim_ind(self, individual, genes_per_dimension):
+        # create support lists
         sequence = list()
         dimension = list()
+
+        # initialize index and offset variables
         offset = 0
         i = 0
+        # for each dimension
         for num_elem in genes_per_dimension:
+            # clear the "dimension" support list
             dimension.clear()
+            # increment the offset that limits how many genes are copied into given dimension
             offset = offset + num_elem
+
+            # while index doesn't reach the max elements in given dimension
             while i < offset:
+                # append into given dimension the gene with given index from individual
                 dimension.append(individual[i])
+                # increment index
                 i += 1
+            # append a copy of the newly created dimension into sequence
             sequence.append(dimension.copy())
         return sequence
 
@@ -203,7 +212,7 @@ class DeapGeneticGuide(GeneticEvolution):
         sequence = list()
         dimension = list()
 
-        #for each dimension
+        # for each dimension
         for dim in range(len(elements_per_dimension)):
             # clear the "dimension" support list
             dimension.clear()
