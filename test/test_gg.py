@@ -114,7 +114,7 @@ mutation_rate = 1 / genes_number
 # set mating rate
 mating_rate = 0.7
 
-# set number of best individuals to retrieve
+# set number of best individuals to choose from
 selected_best = 10
 
 print("------------------------Parameters------------------------",

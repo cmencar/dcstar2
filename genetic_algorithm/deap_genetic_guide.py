@@ -78,9 +78,9 @@ class DeapGeneticGuide(GeneticEvolution):
         pass
 
     # Method generating best individuals by the genetic algorithm
-    # @population_size: number of individuals to generate
+    # @population_size: size fo population to generate
     # @generations: number of generations to create
-    # @selected_best: list of best individuals generated
+    # @selected_best: number of best individuals to generate
     def evolve(self, population_size, generations, selected_best):
 
         # create a population of "population_size" individuals using the given "generate_fun" function
@@ -111,7 +111,7 @@ class DeapGeneticGuide(GeneticEvolution):
         # select the "selected_best" number of best individuals with the highest fitness value
         best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
 
-        # initialize list of sequences (multidimensional individuals) and other support lists
+        # initialize list of sequences (multidimensional individuals)
         converted_best_individuals = list()
 
         # for each individual in the selected best
@@ -124,7 +124,7 @@ class DeapGeneticGuide(GeneticEvolution):
         S_d_b = DimensionalSequenceBinary()
 
         # define pure individuals list
-        best_fo_the_best = list()
+        best_of_the_best = list()
 
         # for each individual in the best individuals generated
         for individual in converted_best_individuals:
@@ -140,12 +140,12 @@ class DeapGeneticGuide(GeneticEvolution):
             # if all of the hyperboxes generated are pure
             if hyperboxes.get_impure_hyperboxes_number() == 0:
                 # append the evaluated individual into the list of pure individuals
-                best_fo_the_best.append(individual.copy())
+                best_of_the_best.append(individual.copy())
 
         # if is found a pure individual at least
-        if len(best_fo_the_best) != 0:
+        if len(best_of_the_best) != 0:
             # return the "best of the best"
-            return best_fo_the_best[0]
+            return best_of_the_best[0]
         else:
             # return the "worst case scenario"
             return self.worst_case_scenario(self.elements_per_dimension)
