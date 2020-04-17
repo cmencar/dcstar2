@@ -131,7 +131,7 @@ genetic_guide = DeapGeneticGuide(evaluate, generate, genes_number, mutation_rate
                                  T_d_example, points_example, genes_per_dimension, m_d, M_d)
 
 # evolution and acquisition of the best individual from genetic guide with monodimensional lists
-best_individual = genetic_guide.evolve(population_size, generations, selected_best)
+best_individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
 
 # print the best possible individual
 print("\nBEST POSSIBLE PURE INDIVIDUAL: \n", best_individual)
@@ -164,19 +164,43 @@ for point in points_example:
 # show the plot
 plt.show()
 
-# get the average number of cuts in 100 individual
-print("\nCalculating average of active cuts in 100 individuals")
-generated_individuals = list()
-cuts_generated = 0
-for i in range(100):
-    generated_individuals.append(genetic_guide.evolve(population_size, generations, selected_best))
-    print("N°", i, "individual: ", generated_individuals[i])
-    active_cuts_ind = 0
-    for dimension in generated_individuals[i]:
-        for gene in dimension:
-            if gene:
-                active_cuts_ind += 1
-    print("Active cuts into individual: ", active_cuts_ind)
-    cuts_generated += active_cuts_ind
-avg_cuts_generated = cuts_generated / 100
-print("\nAVERAGE ACTIVE CUTS: ", avg_cuts_generated)
+out_file = open("evaluation.txt", "a")
+
+out_file.write("Evaluating average of active cuts and <worst_case_scenario> occurrencies for 100 individuals")
+# evaluate how many times @worst_case_scenario is called and the average of active cuts with given random seed
+wcs_calls = list()
+for times in range(10):
+    # generate a new seed for each iteration
+    random.seed()
+    out_file.write("\n\n----------------------------------- ")
+    out_file.write(str(times + 1))
+    out_file.write(" ----------------------------------------\n")
+    generated_individuals = list()
+    cuts_generated = 0
+    worst_freq = 0
+    for i in range(100):
+        individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
+        out_file.write("\nN° ")
+        out_file.write(str(i + 1))
+        out_file.write(" individual: ")
+        out_file.write(str(individual))
+        active_cuts_ind = 0
+        for dimension in individual:
+            for gene in dimension:
+                if gene:
+                    active_cuts_ind += 1
+        out_file.write("\nActive cuts into individual: ")
+        out_file.write(str(active_cuts_ind))
+        cuts_generated += active_cuts_ind
+        if worst:
+            worst_freq += 1
+    avg_cuts_generated = cuts_generated / 100
+    out_file.write("\nAVERAGE ACTIVE CUTS: ")
+    out_file.write(str(avg_cuts_generated))
+    out_file.write("\nWORST CASE SCENARIO OCCURRENCIES: ")
+    out_file.write(str(worst_freq))
+    wcs_calls.append(worst_freq)
+out_file.write("\n\nWSC CALLS IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
+out_file.write(str(wcs_calls))
+out_file.close()
+

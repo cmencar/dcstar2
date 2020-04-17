@@ -48,7 +48,7 @@ class DeapGeneticGuide(GeneticEvolution):
         self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 
         # define mating method between individuals using uniform partially matched crossover
-        self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=0)
+        self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
 
         # define mutation method of individuals' son shuffling genes with "mutation_rate" percentage
         self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mutation_rate)
@@ -144,11 +144,11 @@ class DeapGeneticGuide(GeneticEvolution):
 
         # if is found a pure individual at least
         if len(best_of_the_best) != 0:
-            # return the "best of the best"
-            return best_of_the_best[0]
+            # return the "best of the best", added boolean for eval
+            return best_of_the_best[0], False
         else:
-            # return the "worst case scenario"
-            return self.worst_case_scenario(self.elements_per_dimension)
+            # return the "worst case scenario", added boolean for eval
+            return self.worst_case_scenario(self.elements_per_dimension), True
 
     # Method defining the fitness value of an individual
     # @individual: individual's genome
