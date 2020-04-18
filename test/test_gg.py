@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import random
 from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
-from cut_sequences.cuts_sequence import CutsSequence
+from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
-from cut_sequences.selected_cuts_sequence import SelectedCutsSequence
+from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.point import Point
 from matplotlib import pyplot as plt
 import sys
@@ -22,8 +22,8 @@ points_example = [
     Point(coordinates=[.999, .4], label="prototype_2", name="point_F"),
     Point(coordinates=[.799, .24], label="prototype_1", name="point_G")
 ]
-T_d_example = CutsSequence([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437, .37265,
-                                                                              .4722]])
+T_d_example = DimensionalSequenceNumeric([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437,
+                                                                                            .37265, .4722]])
 print("------------------------Prototypes------------------------")
 for point in points_example:
     print("Point coordinates: ", point.get_coordinates(),
@@ -92,7 +92,7 @@ print("\nBEST POSSIBLE PURE INDIVIDUAL: \n", best_individual)
 # create selected sequence with generated dimensional sequence
 S_d_bin_example = DimensionalSequenceBinary()
 S_d_bin_example.from_binary(best_individual)
-S_d_example = SelectedCutsSequence()
+S_d_example = SelectedDimensionalSequenceNumeric()
 S_d_example.from_binary(T_d_example, S_d_bin_example)
 
 # create the plot
@@ -189,7 +189,7 @@ for times in range(10):
     impure_freq = 0
     for i in range(100):
         individual = genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
-        S_d = SelectedCutsSequence()
+        S_d = SelectedDimensionalSequenceNumeric()
         S_d_b = DimensionalSequenceBinary()
         S_d_b.from_binary(individual)
         S_d.from_binary(T_d_example, S_d_b)

@@ -3,8 +3,8 @@ from cut_sequences.dimensional_sequence import DimensionalSequence
 import numpy as np
 
 
-# Class for define cuts sequence T_d
-class CutsSequence(DimensionalSequence):
+# Class for define cuts sequence cuts sequences
+class DimensionalSequenceNumeric(DimensionalSequence):
 
     # Cuts class constructor method
     # @cuts_list: list of cuts for each dimension
@@ -24,19 +24,18 @@ class CutsSequence(DimensionalSequence):
 
         # for each dimension take its cuts, insert them in a list
         # and convert that list in a NumPy array. Finally, insert
-        # the newly created NumPy array in elementlist
-        self.elementlist = [ np.array([ cut for cut in dimension ]) for dimension in cuts_list ]
-
+        # the newly created NumPy array in elements
+        self.elements = [np.array([cut for cut in T_d]) for T_d in cuts_list]
 
     # Function for creating a general cut sequence to
     # a logical cut sequence, where each element (corresponding to
-    # an element of T_d) is a False logical value
+    # an element of cuts sequences) is a False logical value
     def generate_starting_binary(self):
 
         # initialize an empty list for the creation of a dummy S_d cuts sequence
         # and insert an empty NumPy array for each dimension of T_d
-        empty_S_d = [ np.ndarray([]) for dimension in self.elementlist ]
+        empty_selected_cuts_list = [np.ndarray([]) for _ in self.elements]
 
         # creating a SelectedCutsSequenceBin using the dummy S_d
         # for defining the absence of cuts
-        return DimensionalSequenceBinary(empty_S_d, self.elementlist)
+        return DimensionalSequenceBinary(empty_selected_cuts_list, self.elements)

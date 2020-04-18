@@ -1,4 +1,5 @@
 
+
 # Class for defining a single hyperbox using
 # a particular set of intervals
 class Hyperbox:
@@ -15,27 +16,22 @@ class Hyperbox:
         # (as a list of tuples) and convert the list into a tuple
         self.boundaries = tuple([ tuple(dimensional_boundaries) for dimensional_boundaries in hyperbox_boundaries ])
 
-
     # Method for acquiring hyperbox boundaries for each dimension
     def get_boundaries(self):
         return self.boundaries
-
 
     # Method for setting belonging point of hyperbox
     # @point_list: single points, part of hyperbox
     def set_belonging_point(self, point):
         self.points.append(point)
 
-
     # Method for acquiring belonging points of hyperbox
     def get_belonging_points(self):
         return self.points
 
-
     # Method for checking if a given point is in the hyperbox
     def has_point(self, point):
         return [ True if point in self.points else False ]
-
 
     # Method for checking if the hyperbox is impure
     def is_impure(self):
