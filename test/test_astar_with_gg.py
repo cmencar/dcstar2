@@ -1,26 +1,15 @@
 from heuristic_search.prototypes_creators import PrototypesCreator
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
-from cut_sequences.point import Point
 from heuristic_search.astar import AStar
 import matplotlib.pyplot as plt
 
 
 # loading of prototypes point list and dimensional boundaries
-# loader = PrototypesCreator()
-# point_list, m_d, M_d = loader.load("created point lists/point_list_1.json")
-
-point_list = [
-    Point(coordinates=[.2354, .34], label="prototype_1", name="point_A"),
-    Point(coordinates=[.3345, .3421], label="prototype_1", name="point_B"),
-    Point(coordinates=[.351, .3453], label="prototype_2", name="point_C"),
-    Point(coordinates=[.45235, .00009], label="prototype_1", name="point_D"),
-    Point(coordinates=[.9, .5444], label="prototype_1", name="point_E"),
-    Point(coordinates=[.999, .4], label="prototype_2", name="point_F"),
-    Point(coordinates=[.799, .24], label="prototype_1", name="point_G")
-]
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load("created_point_lists/point_list_1.json")
 
 # creation of DCStar object for the clustering operation
-dcstar = AStar(point_list, m_d=0, M_d=1)
+dcstar = AStar(point_list, m_d=m_d, M_d=M_d)
 
 # acquiring cuts sequences created in DCStar object with passed points list
 cuts_sequences = dcstar.get_cuts_sequences()
