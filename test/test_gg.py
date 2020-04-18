@@ -119,6 +119,7 @@ out_file = open("n_cuts_evaluation.txt", "a")
 
 out_file.write("Evaluating average of active cuts for 100 individuals in 10 iterations")
 # evaluate the average of active cuts with given random seed
+total_avgs_cuts = list()
 for times in range(10):
     # generate a new seed for each iteration
     random.seed()
@@ -144,11 +145,14 @@ for times in range(10):
     avg_cuts_generated = cuts_generated / 100
     out_file.write("\nAVERAGE ACTIVE CUTS: ")
     out_file.write(str(avg_cuts_generated))
+    total_avgs_cuts.append(avg_cuts_generated)
+out_file.write("\n\nAVERAGE CUT USAGES IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
+out_file.write(str(total_avgs_cuts))
 out_file.close()
 
 out_file = open("wsc_evaluation.txt", "a")
 
-out_file.write("Evaluating <worst_case_scenario> occurrencies for 100 individuals in 10 iterations")
+out_file.write("Evaluating <worst_case_scenario> occurrences for 100 individuals in 10 iterations")
 # evaluate how many times @worst_case_scenario is called with given random seed
 wcs_calls = list()
 for times in range(10):
@@ -167,7 +171,7 @@ for times in range(10):
         out_file.write(str(individual))
         if worst:
             worst_freq += 1
-    out_file.write("\nWORST CASE SCENARIO OCCURRENCIES: ")
+    out_file.write("\nWORST CASE SCENARIO OCCURRENCES: ")
     out_file.write(str(worst_freq))
     wcs_calls.append(worst_freq)
 out_file.write("\n\nWSC CALLS IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
