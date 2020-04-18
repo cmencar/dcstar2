@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
-point_list, m_d, M_d = loader.load("created_point_lists/point_list_1.json")
+point_list, m_d, M_d = loader.load("example_point_lists/point_list_3.json")
 
 # creation of DCStar object for the clustering operation
 dcstar = AStar(point_list, m_d=m_d, M_d=M_d)
