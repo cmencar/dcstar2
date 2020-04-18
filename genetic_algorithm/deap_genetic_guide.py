@@ -77,7 +77,7 @@ class DeapGeneticGuide(GeneticEvolution):
     def generate(self):
         pass
 
-    # Method generating best individuals by the genetic algorithm
+    # Method generating best individuals by the genetic algorithm with <worst_case_scenario>
     # @population_size: size fo population to generate
     # @generations: number of generations to create
     # @selected_best: number of best individuals to generate
@@ -117,8 +117,8 @@ class DeapGeneticGuide(GeneticEvolution):
         # for each individual in the selected best
         for individual in best_individuals:
             # convert individual from monodimensional list to "binary cuts sequence"
-            converted_best_individuals.append(self.from_monodim_ind_to_multidim_ind(individual,
-                                                                                    self.elements_per_dimension))
+            converted_best_individuals.append(self.from_list_to_sequence(individual,
+                                                                         self.elements_per_dimension))
         # create selected cuts sequence and binary dimensional sequence objects
         S_d = SelectedCutsSequence()
         S_d_b = DimensionalSequenceBinary()
@@ -150,6 +150,47 @@ class DeapGeneticGuide(GeneticEvolution):
             # return the "worst case scenario", added boolean for eval
             return self.worst_case_scenario(self.elements_per_dimension), True
 
+    # Method generating best individuals by the genetic algorithm without <worst_case_scenario>
+    # @population_size: size fo population to generate
+    # @generations: number of generations to create
+    # @selected_best: number of best individuals to generate
+    def evolve_without_wsc(self, population_size, generations, selected_best):
+
+        # create a population of "population_size" individuals using the given "generate_fun" function
+        population = self.toolbox.population(n=population_size)
+
+        # for each generation
+        for epoch in range(generations):
+
+            # offsprings are generated using the varAnd algorithm, in which are passed the population, mating rate and
+            # mutation rate
+            # in this are used the previous defined methods in the toolbox, such as mutation, crossover, evaluation and
+            # selection
+            offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
+
+            # create a list of fitness values of the offsprings
+            son_fitness = list()
+            for son in offsprings:
+                son_fitness.append(self.fitness(son))
+
+            # map each fitness value to the corresponding offspring
+            for fit, ind in zip(son_fitness, offsprings):
+                ind.fitness.value = fit
+
+            # select a number of offsprings equal to the number of individuals in the population
+            # the selection is defined on a "selected_individual" number of offsprings
+            population = self.toolbox.select(offsprings, k=len(population))
+
+        # select the "selected_best" number of best individuals with the highest fitness value
+        best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
+
+        # convert individual from monodimensional list to "binary cuts sequence"
+        converted_best_individual = self.from_list_to_sequence(best_individuals[0],
+                                                               self.elements_per_dimension)
+
+        # return converted best individual
+        return converted_best_individual
+
     # Method defining the fitness value of an individual
     # @individual: individual's genome
     def fitness(self, individual):
@@ -164,7 +205,7 @@ class DeapGeneticGuide(GeneticEvolution):
         S_d_b = DimensionalSequenceBinary()
 
         # convert individual from monodimensional list to "multidimensional cut sequence"
-        converted_individual = self.from_monodim_ind_to_multidim_ind(individual, self.elements_per_dimension)
+        converted_individual = self.from_list_to_sequence(individual, self.elements_per_dimension)
 
         # create binary cuts sequence
         S_d_b.from_binary(converted_individual)
@@ -177,10 +218,10 @@ class DeapGeneticGuide(GeneticEvolution):
         # return ratio between number of pure hyperboxes and total number of hyperboxes
         return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
 
-    # Method converting individual's genome from list to "multidimensional cuts sequence"
+    # Method converting individual's genome from list to "multidimensional cuts sequence" (list of lists)
     # @individual: individual's genome
     # @genes_per_dimension: numbers of genes per dimension
-    def from_monodim_ind_to_multidim_ind(self, individual, genes_per_dimension):
+    def from_list_to_sequence(self, individual, genes_per_dimension):
         # create support lists
         sequence = list()
         dimension = list()

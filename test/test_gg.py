@@ -164,11 +164,10 @@ for point in points_example:
 # show the plot
 plt.show()
 
-out_file = open("evaluation.txt", "a")
+out_file = open("n_cuts_evaluation.txt", "a")
 
-out_file.write("Evaluating average of active cuts and <worst_case_scenario> occurrencies for 100 individuals")
-# evaluate how many times @worst_case_scenario is called and the average of active cuts with given random seed
-wcs_calls = list()
+out_file.write("Evaluating average of active cuts for 100 individuals in 10 iterations")
+# evaluate the average of active cuts with given random seed
 for times in range(10):
     # generate a new seed for each iteration
     random.seed()
@@ -177,7 +176,6 @@ for times in range(10):
     out_file.write(" ----------------------------------------\n")
     generated_individuals = list()
     cuts_generated = 0
-    worst_freq = 0
     for i in range(100):
         individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
         out_file.write("\nN° ")
@@ -192,11 +190,32 @@ for times in range(10):
         out_file.write("\nActive cuts into individual: ")
         out_file.write(str(active_cuts_ind))
         cuts_generated += active_cuts_ind
-        if worst:
-            worst_freq += 1
     avg_cuts_generated = cuts_generated / 100
     out_file.write("\nAVERAGE ACTIVE CUTS: ")
     out_file.write(str(avg_cuts_generated))
+out_file.close()
+
+out_file = open("wsc_evaluation.txt", "a")
+
+out_file.write("Evaluating <worst_case_scenario> occurrencies for 100 individuals in 10 iterations")
+# evaluate how many times @worst_case_scenario is called with given random seed
+wcs_calls = list()
+for times in range(10):
+    # generate a new seed for each iteration
+    random.seed()
+    out_file.write("\n\n----------------------------------- ")
+    out_file.write(str(times + 1))
+    out_file.write(" ----------------------------------------\n")
+    generated_individuals = list()
+    worst_freq = 0
+    for i in range(100):
+        individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
+        out_file.write("\nN° ")
+        out_file.write(str(i + 1))
+        out_file.write(" individual: ")
+        out_file.write(str(individual))
+        if worst:
+            worst_freq += 1
     out_file.write("\nWORST CASE SCENARIO OCCURRENCIES: ")
     out_file.write(str(worst_freq))
     wcs_calls.append(worst_freq)
@@ -204,3 +223,35 @@ out_file.write("\n\nWSC CALLS IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERE
 out_file.write(str(wcs_calls))
 out_file.close()
 
+out_file = open("no_wsc_evaluation.txt", "a")
+
+out_file.write("Evaluating average of impures for 100 individuals in 10 iterations")
+# evaluate how many times @worst_case_scenario is called and the average of active cuts with given random seed
+impures_per_iter = list()
+for times in range(10):
+    # generate a new seed for each iteration
+    random.seed()
+    out_file.write("\n\n----------------------------------- ")
+    out_file.write(str(times + 1))
+    out_file.write(" ----------------------------------------\n")
+    generated_individuals = list()
+    impure_freq = 0
+    for i in range(100):
+        individual = genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
+        S_d = SelectedCutsSequence()
+        S_d_b = DimensionalSequenceBinary()
+        S_d_b.from_binary(individual)
+        S_d.from_binary(T_d_example, S_d_b)
+        hyperboxes = S_d.generate_hyperboxes_set(points_example, m_d, M_d)
+        if hyperboxes.get_impure_hyperboxes_number() > 0:
+            impure_freq += 1
+        out_file.write("\nN° ")
+        out_file.write(str(i + 1))
+        out_file.write(" individual: ")
+        out_file.write(str(individual))
+    out_file.write("\nIMPURE INDIVIDUALS: ")
+    out_file.write(str(impure_freq))
+    impures_per_iter.append(impure_freq)
+out_file.write("\n\nIMPURES IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
+out_file.write(str(impures_per_iter))
+out_file.close()
