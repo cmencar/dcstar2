@@ -12,55 +12,6 @@ sys.path.append('../')
 
 # TESTING CLASS DEAPGENETICGUIDE (WITHOUT A*)
 
-# Function that generates an individual with the same number of cuts as the cuts sequence
-# @individual_class: class of the individual to create
-# @individual_dim: number of genes of the individual
-def generate(individual_class, individual_dim):
-    # definition of individual's genome
-    genome = list()
-
-    # initializing the genome with all genes to False
-    for gene in range(individual_dim):
-        genome.append(False)
-
-    # definition of a random number of genes to be modified
-    random_set_genes = random.randint(2, individual_dim)
-
-    # for "random_set_genes" times
-    for i in range(random_set_genes):
-
-        # definition of a random index where to change the gene
-        random_index = random.randint(0, individual_dim - 1)
-
-        # if in the given index there's a gene already changed, define a new index
-        while genome[random_index]:
-            random_index = random.randint(0, individual_dim - 1)
-
-        # change the value of the evaluated gene with the defined index
-        genome[random_index] = True
-
-    # print("\nINDIVIDUAL GENERATED: \n", genome)
-
-    # return the individual with the created genome
-    return individual_class(genome)
-
-# Function that evaluates the ratio between the "true" genes (considered cuts) and the whole number of them
-# (considered cuts and not)
-# @individual: object that contains the genome
-def evaluate(individual):
-    # initializing evaluation variables
-    valutation = 0
-    total_genes = 0
-    # every "true" gene increments the valutation while the total number of genes is calculated
-    valutation += individual.count(True)
-    total_genes += len(individual)
-    # returns the ratio
-    return valutation / total_genes
-
-
-# initialize the seed for random numbers
-random.seed()
-
 # define of example prototypes and cuts
 points_example = [
     Point(coordinates=[.2354, .34], label="prototype_1", name="point_A"),
@@ -127,8 +78,8 @@ print("------------------------Parameters------------------------",
       "\nNumber of best individuals to choose from: ", selected_best)
 
 # define DGG object to create the genetic guide with monodimensional lists
-genetic_guide = DeapGeneticGuide(evaluate, generate, genes_number, mutation_rate, mating_rate, selected_for_tournament,
-                                 T_d_example, points_example, genes_per_dimension, m_d, M_d)
+genetic_guide = DeapGeneticGuide(genes_number, mutation_rate, mating_rate, selected_for_tournament, T_d_example,
+                                 points_example, genes_per_dimension, m_d, M_d)
 
 # evolution and acquisition of the best individual from genetic guide with monodimensional lists
 best_individual, worst = genetic_guide.evolve(population_size, generations, selected_best)

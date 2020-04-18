@@ -1,5 +1,5 @@
 # Class for define the node type used in DCStar
-class DCStarNode:
+class AStarNode:
 
     # Class constructor
     # @state: state of node (defined in a logical sequence of cuts)
@@ -23,7 +23,7 @@ class DCStarNode:
     # Method for get the list of successors of this node.
     # The list of successor nodes is composed of DCStarNode type elements
     def successors(self):
-        return [DCStarNode(successor, (0, 0, 0)) for successor in self.__state.get_successors()]
+        return [AStarNode(successor, (0, 0, 0)) for successor in self.__state.get_successors()]
 
     # Overriding is-lower-than method
     def __lt__(self, node):
