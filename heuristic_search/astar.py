@@ -462,14 +462,18 @@ class AStar:
     # @node: node of to be evaluated to get the second-level heuristic
     def __get_second_level_heuristic_value_wsc(self, node):
         individual_node = list()
+        dimension_node = list()
         for dimension in range(node.get_state().get_dimensions_number()):
-            individual_node.append(node.get_state().get_dimension(dimension))
+            dimension_node.clear()
+            for cut_index in range(node.get_state().get_dimension_size(dimension)):
+                dimension_node.append(node.get_state().get_cut(dimension, cut_index))
+            individual_node.append(dimension_node.copy())
         individual_gg = self.best_pure_individual
 
         heuristic_value = 0
-        for dim_node, dim_gg in zip(individual_node, individual_gg):
-            for elem_node, elem_gg in zip(individual_node[dim_node], individual_gg[dim_gg]):
-                if elem_node == elem_gg:
+        for dim in range(len(individual_node)):
+            for index in range(len(individual_node[dim])):
+                if individual_node[dim][index] == individual_gg[dim][index]:
                     heuristic_value += 1
 
         return heuristic_value
