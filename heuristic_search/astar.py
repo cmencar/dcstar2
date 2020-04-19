@@ -2,6 +2,7 @@ from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeri
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from heuristic_search.pqueue import PriorityQueue
 from heuristic_search.astar_node import AStarNode
+from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 import numpy as np
 import sys
 import time
@@ -31,6 +32,50 @@ class AStar:
         # to all nodes to be evaluated
         self.__closed_queue = PriorityQueue()
         self.__open_queue = PriorityQueue()
+
+        # calculate the size of each dimension of cuts sequence
+        self.genes_per_dimension = list()
+        for dimension in range(self.__cuts_sequences.get_dimensions_number()):
+            self.genes_per_dimension.append(len(self.__cuts_sequences.get_dimension(dimension)))
+
+        # calculate the total number of genes that the genome will have
+        self.genes_number = 0
+        for num in self.genes_per_dimension:
+            self.genes_number += num
+
+        # set number of individuals for tournament selection
+        self.selected_for_tournament = 5
+
+        # calculate population
+        # N.B.: population is given by duplicating the number of genes in the genome
+        self.population_size = 2 * self.genes_number
+
+        # set number of generations
+        self.generations = 20
+
+        # calculate mutation rate
+        # N.B.: mutation rate is calculated by reciprocating the number of genes
+        self.mutation_rate = 1 / self.genes_number
+
+        # set mating rate
+        self.mating_rate = 0.7
+
+        # set number of best individuals to choose from
+        self.selected_best = 10
+
+        # define DGG object to create the genetic guide with monodimensional lists
+        self.genetic_guide = DeapGeneticGuide(self.genes_number, self.mutation_rate, self.mating_rate,
+                                              self.selected_for_tournament, self.__cuts_sequences, self.__points_list,
+                                              self.genes_per_dimension, self.__boundary_points[0],
+                                              self.__boundary_points[1])
+
+        # evolution and acquisition of the best individual from genetic guide with monodimensional lists (wsc)
+        self.best_pure_individual, self.worst = self.genetic_guide.evolve(self.population_size, self.generations,
+                                                                          self.selected_best)
+
+        # evolution and acquisition of the best individual from genetic guide with monodimensional lists (without wsc)
+        self.best_individual = self.genetic_guide.evolve_without_wsc(self.population_size, self.generations,
+                                                                     self.selected_best)
 
     # Method for acquiring the partition of Universe of Discours
     # given a list of prototype points into an n-dimensional space
