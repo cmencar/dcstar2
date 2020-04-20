@@ -183,11 +183,11 @@ class DeapGeneticGuide(GeneticEvolution):
 
         # if is found a pure individual at least
         if len(best_of_the_best) != 0:
-            # return the "best of the best", added boolean for eval
-            return best_of_the_best[0], False
+            # return the "best of the best", add boolean for eval
+            return best_of_the_best[0]
         else:
-            # return the "worst case scenario", added boolean for eval
-            return self.worst_case_scenario(self.elements_per_dimension), True
+            # return the "worst case scenario", add boolean for eval
+            return self.worst_case_scenario(self.elements_per_dimension)
 
     # Method generating best individuals by the genetic algorithm without <worst_case_scenario>
     # @population_size: size fo population to generate

@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("example_point_lists/point_list_3.json")
+for i in range(10):
+    # creation of DCStar object for the clustering operation
+    dcstar = AStar(point_list, m_d=m_d, M_d=M_d)
 
-# creation of DCStar object for the clustering operation
-dcstar = AStar(point_list, m_d=m_d, M_d=M_d)
+    # acquiring cuts sequences created in DCStar object with passed points list
+    cuts_sequences = dcstar.get_cuts_sequences()
 
-# acquiring cuts sequences created in DCStar object with passed points list
-cuts_sequences = dcstar.get_cuts_sequences()
-
-# execution of clustering with DCStar and acquiring of results
-result, branches_taken, time = dcstar.find(verbose=True)
-print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
+    # execution of clustering with DCStar and acquiring of results
+    result, branches_taken, time = dcstar.find(verbose=True)
+    print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
 
 # creation of an selected cuts sequence with found cuts sequence
 selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
