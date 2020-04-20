@@ -471,15 +471,15 @@ class AStar:
         individual = DimensionalSequenceBinary()
 
         # generate pure genetic individual individual using "evolve" method - possible call of "worst_case_scenario"
-        individual.from_binary(self.genetic_guide.evolve(self.population_size, self.generations, self.selected_best))
+        # individual.from_binary(self.genetic_guide.evolve(self.population_size, self.generations, self.selected_best))
 
         # generate pure genetic individual individual using "worst_case_scenario" method directly
         # individual.from_binary(DeapGeneticGuide.worst_case_scenario(self.genetic_guide, self.genes_per_dimension))
 
         # generate genetic individual individual with correction of impureness when needed
-        '''
+        # '''
         individual.from_binary(self.genetic_guide.evolve_without_wsc(self.population_size, self.generations,
-                                                                self.selected_best))
+                                                                     self.selected_best))
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, individual)
         hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
@@ -495,9 +495,8 @@ class AStar:
                     if hbs.get_impure_hyperboxes_number() == 0:
                         found = True
                         individual = successor
-            if not found:
-                print("Hmm")
-        '''
+                    successors = successor.get_successors()
+        # '''
         individual.debug_print()
 
         return individual
