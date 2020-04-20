@@ -126,3 +126,21 @@ class DimensionalSequenceBinary(DimensionalSequence):
             dimension_index += 1
 
         return successors
+
+
+    # Method for the definition of 'lower-than' operator
+    def __lt__(self, other):
+        return len([cut for sequences in self.elements for cut in sequences if cut == True]) < \
+               len([cut for sequences in other.elements for cut in sequences if cut == True])
+
+
+    # Method for the definition of 'greater-than' operator
+    def __gt__(self, other):
+        return len([cut for sequences in self.elements for cut in sequences if cut == True]) > \
+               len([cut for sequences in other.elements for cut in sequences if cut == True])
+
+
+    # Method for the definition of 'equal-to' operator
+    def __eq__(self, other):
+        return len([cut for sequences in self.elements for cut in sequences if cut == True]) == \
+               len([cut for sequences in other.elements for cut in sequences if cut == True])

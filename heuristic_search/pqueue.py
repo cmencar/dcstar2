@@ -1,6 +1,5 @@
-
-# Importa la libreria inerente alla gestione di una pila 
 import heapq as H
+
 
 # La classe PriorityQueue definisce una coda con priorità. 
 class PriorityQueue:
@@ -43,7 +42,7 @@ class PriorityQueue:
 
         (node, valid) = H.heappop(self.heap)
         
-        if not valid and not self.empty():
+        if not valid:
             return self.get()
         else:
             return node

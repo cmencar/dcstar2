@@ -6,16 +6,16 @@ from abc import ABC, abstractmethod
 
 
 # Classe astratta del problema
-class Problem (ABC):
+class Problem(ABC):
   
     unique_successors = False
     
     # Costruttore della classe Problem
-    def __init__ (self):
+    def __init__(self):
         raise NotImplementedError("Class not instantiable (abstract class)")
     
     
-    # Metodo per il calcolo del costo del percorso
+    # Method for calculating the cost of the node
     @abstractmethod
     def estimate_cost(self, path):
         pass

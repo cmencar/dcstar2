@@ -15,6 +15,8 @@ point_list = [
 
 # definition of al list of list containing numerical cuts values
 cuts_list = [[.12, .33, .56, .711, .83], [.41, .46, .65], [.18, .52, .88]]
+m_d = [0, 0, 0]
+M_d = [1, 1, 1]
 
 # creation of a DimensionalSequenceNumeric containing T_ds cuts sequences
 cuts_sequence = DimensionalSequenceNumeric(cuts_list)
@@ -32,4 +34,6 @@ simulated_successor = SelectedDimensionalSequenceNumeric()
 simulated_successor.from_binary(cuts_sequence, simulated_successor_binary)
 
 # definition of the HyperboxesSet object
-hyperboxes_set = simulated_successor.generate_hyperboxes_set(point_list, m_d = 0, M_d = 1)
+hyperboxes_set = simulated_successor.generate_hyperboxes_set(point_list, m_d, M_d)
+
+pass

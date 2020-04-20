@@ -66,11 +66,15 @@ class HyperboxesSet:
                 # get the evaluated cut
                 cut = S_d[cut_index]
 
-                # if cut value is greater than point coordinate value
-                # then insert that cut and previous cut in the
-                # dimensional order as one of hyperbox dimensional boundaries
+                # if cut value is greater than point coordinate value then insert that cut and previous cut in the
+                # dimensional order as one of hyperbox dimensional boundaries. Instead, if cut value is equal to the
+                # point coordinate value then insert that cut and following cut in the dimensional order as one of
+                # hyperbox dimensional boundaries
                 if coordinate <= cut:
-                    hyperbox_boundaries.append((S_d[cut_index - 1], cut))
+                    if cut_index == 0:
+                        hyperbox_boundaries.append((cut, S_d[cut_index + 1]))
+                    else:
+                        hyperbox_boundaries.append((S_d[cut_index - 1], cut))
                     found = True
 
                 # increment cut index
