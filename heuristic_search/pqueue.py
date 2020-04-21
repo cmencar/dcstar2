@@ -1,6 +1,5 @@
-
-# Importa la libreria inerente alla gestione di una pila 
 import heapq as H
+
 
 # La classe PriorityQueue definisce una coda con priorità. 
 class PriorityQueue:
@@ -17,7 +16,7 @@ class PriorityQueue:
     # La funzione empty ritorna true se la coda con priorità è vuota, 
     # false altrimenti.
     def empty(self):
-        
+
         return self.heap == []
 
 
@@ -40,7 +39,7 @@ class PriorityQueue:
     # della pila (e rimuovendolo da esso) per il quale il valore 
     # del campo valid sia true.
     def get(self):
-        
+
         (node, valid) = H.heappop(self.heap)
         
         if not valid:

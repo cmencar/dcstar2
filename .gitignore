@@ -30,3 +30,10 @@ heuristic_search/__pycache__/__init__.cpython-37.pyc
 test/__pycache__/GraphProblem.cpython-37.pyc
 heuristic_search/__pycache__/Problem.cpython-37.pyc
 *.pyc
+*.pyc
+*.xml
+*.pyc
+*.pyc
+*.pyc
+heuristic_search/__pycache__/pqueue.cpython-37.pyc
+*.pyc
