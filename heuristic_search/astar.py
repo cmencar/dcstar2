@@ -458,13 +458,18 @@ class AStar:
     def __get_second_level_heuristic_value(self, node):
         heuristic_value = 0
         evaluated_individual = node.get_state()
+        '''
         for dimension in range(evaluated_individual.get_dimensions_number()):
             for cut_index in range(evaluated_individual.get_dimension_size(dimension)):
                 if evaluated_individual.get_cut(dimension, cut_index) == \
                         self.genetic_guide_individual.get_cut(dimension, cut_index):
                     heuristic_value += 1
+        '''
+        s1 = set(evaluated_individual.elements)
+        s2 = set(self.genetic_guide_individual.elements)
+        return 1 - len(s1.intersection(s2)) / len(s1.union(s2))
 
-        return heuristic_value
+        # return heuristic_value
 
     def __generate_gg_individual(self):
         # initialize individual object
