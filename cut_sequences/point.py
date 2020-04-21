@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 # Class for the definition of a given point (prototype)
 # into the features space
 class Point:
@@ -23,6 +21,7 @@ class Point:
 
         # acquire every coordinate, insert them in a list
         # and convert the list into a NumPy array
+
         self.__coordinates = np.array([coordinate for coordinate in coordinates])
 
         # initialize label information
@@ -57,4 +56,5 @@ class Point:
     # Method for acquiring point associated name
     def get_name(self):
         return self.__name
+
 

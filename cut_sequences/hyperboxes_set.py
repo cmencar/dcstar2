@@ -66,6 +66,7 @@ class HyperboxesSet:
                 # get the evaluated cut
                 cut = S_d[cut_index]
 
+
                 # if cut value is greater than point coordinate value then insert that cut and previous cut in the
                 # dimensional order as one of hyperbox dimensional boundaries. Instead, if cut value is equal to the
                 # point coordinate value then insert that cut and following cut in the dimensional order as one of
@@ -75,6 +76,7 @@ class HyperboxesSet:
                         hyperbox_boundaries.append((cut, S_d[cut_index + 1]))
                     else:
                         hyperbox_boundaries.append((S_d[cut_index - 1], cut))
+
                     found = True
 
                 # increment cut index
@@ -91,6 +93,14 @@ class HyperboxesSet:
     def get_hyperbox_by_point(self, point):
         return self.__points.get(point)
 
+
+    # Method for counting hyperboxes
+    def get_hyperboxes_number(self):
+        return len({hyperbox for point, hyperbox in self.__points.items()})
+
+    # Method for counting pure hyperboxes
+    def get_pure_hyperboxes_number(self):
+        return len({hyperbox for point, hyperbox in self.__points.items() if not hyperbox.is_impure()})
 
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):

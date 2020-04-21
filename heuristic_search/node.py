@@ -1,4 +1,3 @@
-
 # Class that define a single node in the A* computation.
 class Node:
 
@@ -33,4 +32,4 @@ class Node:
     # Method for overriding the 'equal-to' operator
     def __eq__(self, other):
         return self.state == other.state
-    
+

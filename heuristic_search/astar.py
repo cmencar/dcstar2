@@ -1,3 +1,6 @@
+from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
+from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
+from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 from heuristic_search.pqueue import PriorityQueue
 from heuristic_search.node import Node
 
@@ -131,3 +134,4 @@ def astar(problem):
 
     # nessun risultato trovato
     return (None, branches_taken)
+

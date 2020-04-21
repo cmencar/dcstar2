@@ -8,7 +8,7 @@ class DimensionalSequenceBinary(DimensionalSequence):
     # DimensionalSequenceBinary class constructor method
     # @selected_cuts_list: iterable structure for selected cuts to be converted in logical sequences
     # @cuts_list: iterable structure for general cuts sequences
-    def __init__(self, selected_cuts_list = [], cuts_list = []):
+    def __init__(self, selected_cuts_list=[], cuts_list=[]):
 
         # calling superclass constructor
         super().__init__()
@@ -127,7 +127,6 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
         return successors
 
-
     # Method for the definition of 'lower-than' operator
     def __lt__(self, other):
         return len([cut for sequences in self.elements for cut in sequences if cut == True]) < \
@@ -144,3 +143,4 @@ class DimensionalSequenceBinary(DimensionalSequence):
     def __eq__(self, other):
         return len([cut for sequences in self.elements for cut in sequences if cut == True]) == \
                len([cut for sequences in other.elements for cut in sequences if cut == True])
+

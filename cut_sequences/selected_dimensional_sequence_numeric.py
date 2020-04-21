@@ -9,7 +9,8 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
     # Cuts class constructor method
     # @selected_cuts_list: list of selected cuts sequence for each dimension
-    def __init__(self, selected_cuts_list = []):
+    def __init__(self, selected_cuts_list=[]):
+
 
         # calling superclass constructor
         super().__init__()
@@ -26,7 +27,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
         # define a list of element composed by NumPy array (one of each dimension of S_d)
         # where its elements are the same cuts passed in cuts_list structure
         self.elements = [np.array([cut for cut in S_d]) for S_d in selected_cuts_list]
-
+        
 
     # Function for converting a logical cut sequence to a point-based cut sequence
     # @cuts_sequences: general cut sequence
@@ -38,6 +39,7 @@ class SelectedDimensionalSequenceNumeric(DimensionalSequence):
 
         # for each S_d_bin logical sequence cut
         for dimension_index in range(selected_binary_cuts_sequences.get_dimensions_number()):
+
 
             # definition of a temporary cuts' list for the evaluated dimension. The list contain numerical values
             # of cuts for the evaluated dimension, presents in T_d, where the corresponding value in S_d_bin is True

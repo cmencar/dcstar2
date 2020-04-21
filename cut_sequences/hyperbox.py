@@ -1,4 +1,3 @@
-
 # Class for defining a single hyperbox using
 # a particular set of intervals
 class Hyperbox:

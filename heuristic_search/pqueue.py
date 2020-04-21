@@ -78,7 +78,7 @@ class PriorityQueue:
         
                 self.heap[i] = (estimated_node, not valid)
                 return
-
+                
 
     # La funziona resize ridimensiona l'heap nel caso in cui 
     # la sua dimensione supera quella massima definita in partenza. 
