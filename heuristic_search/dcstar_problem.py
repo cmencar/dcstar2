@@ -1,6 +1,8 @@
+from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from heuristic_search.Problem import Problem
+from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 import numpy as np
 
 
@@ -12,7 +14,7 @@ class DCStarProblem(Problem):
     # @m_d: smallest boundary cut of dimension d
     # @M_d: greatest boundary cut of dimension d
     # @verbose: flag for the debug print
-    def __init__(self, points_list, m_d, M_d, verbose = False):
+    def __init__(self, points_list, m_d, M_d, verbose = False, use_genetic_guide = False):
 
         # initialization of point list
         self.__points_list = points_list
@@ -28,6 +30,11 @@ class DCStarProblem(Problem):
 
         # initialization of verbose flag
         self.verbose = verbose
+
+        # initialization of the individual from genetic guide
+        self.__genetic_guide_individual = None
+        if use_genetic_guide:
+            self.__genetic_guide_individual = self.__generate_gg_individual()
 
 
     # Method for creating a cuts sequence starting from a list of prototype points
@@ -280,7 +287,10 @@ class DCStarProblem(Problem):
     # Method for acquiring the second-level heuristic value. It is based on TODO(TO BE CONTINUED)
     # @node: Node object of to be evaluated to get the second-level heuristic
     def __get_second_level_heuristic_value(self, node):
-        return 1
+        if self.__genetic_guide_individual is None:
+            return 1
+        else:
+            return 2
 
 
     # Method for acquiring the value of cuts sequences
@@ -325,3 +335,80 @@ class DCStarProblem(Problem):
 
         # the list of the number of cuts for each dimension is returned
         return necessary_cuts
+
+
+    def __generate_gg_individual(self):
+
+        genetic_guide, population_size, generations, selected_best = self.__initialize_gg()
+
+        # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
+        # elements = self.genetic_guide.evolve(self.population_size, self.generations, self.selected_best)
+
+        # generate pure genetic sequence using "worst_case_scenario" method directly
+        # elements = DeapGeneticGuide.worst_case_scenario(self.genetic_guide, self.genes_per_dimension)
+
+        # generate genetic sequence with correction of impureness when needed
+        # '''
+        elements = genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
+        sequence = DimensionalSequenceBinary()
+        sequence.from_binary(elements)
+        s_d = SelectedDimensionalSequenceNumeric()
+        s_d.from_binary(self.__cuts_sequences, sequence)
+        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
+        if hbs.get_impure_hyperboxes_number() != 0:
+            print("Impure DGG sequence generated, purification in process")
+            found = False
+            successors = sequence.get_successors()
+            while not found:
+                for successor in successors:
+                    s_d.from_binary(self.__cuts_sequences, successor)
+                    hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0],
+                                                      self.__boundary_points[1])
+                    if hbs.get_impure_hyperboxes_number() == 0:
+                        found = True
+                        sequence = successor
+                    successors = successor.get_successors()
+        # '''
+        sequence.debug_print()
+
+        return sequence
+
+
+    def __initialize_gg(self):
+
+        # calculate the size of each dimension of cuts sequence
+        genes_per_dimension = list()
+        for dimension in range(self.__cuts_sequences.get_dimensions_number()):
+            genes_per_dimension.append(len(self.__cuts_sequences.get_dimension(dimension)))
+
+        # calculate the total number of genes that the genome will have
+        genes_number = 0
+        for num in genes_per_dimension:
+            genes_number += num
+
+        # set number of individuals for tournament selection
+        selected_for_tournament = 5
+
+        # calculate population
+        # N.B.: population is given by duplicating the number of genes in the genome
+        population_size = 2 * genes_number
+
+        # set number of generations
+        generations = 20
+
+        # calculate mutation rate
+        # N.B.: mutation rate is calculated by reciprocating the number of genes
+        mutation_rate = 1 / genes_number
+
+        # set mating rate
+        mating_rate = 0.7
+
+        # set number of best individuals to choose from
+        selected_best = 10
+
+        # define DGG object to create the genetic guide with monodimensional lists
+        genetic_guide = DeapGeneticGuide(genes_number, mutation_rate, mating_rate, selected_for_tournament,
+                                         self.__cuts_sequences, self.__points_list, genes_per_dimension,
+                                         self.__boundary_points[0], self.__boundary_points[1])
+
+        return genetic_guide, generations, population_size, selected_best

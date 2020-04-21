@@ -10,7 +10,7 @@ loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/chessboard_k10.json")
 
 # creation of DCStarProblem object for the clustering operation
-problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True)
+problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, use_genetic_guide = True)
 
 # acquiring cuts sequences created in DCStar object with passed points list
 cuts_sequences = problem.get_cuts_sequences()
