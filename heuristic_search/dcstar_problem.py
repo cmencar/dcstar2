@@ -348,41 +348,57 @@ class DCStarProblem(Problem):
 
     def __generate_gg_individual(self):
 
+        # initialize the genetic guide
         genetic_guide, population_size, generations, selected_best = self.__initialize_gg()
 
+        # create an empty binary sequence
+        sequence = DimensionalSequenceBinary()
+
         # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
-        # elements = self.genetic_guide.evolve(self.population_size, self.generations, self.selected_best)
+        # sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
 
         # generate pure genetic sequence using "worst_case_scenario" method directly
-        # elements = DeapGeneticGuide.worst_case_scenario(self.genetic_guide, self.genes_per_dimension)
+        # sequence.from_binary(DeapGeneticGuide.worst_case_scenario(genetic_guide, genetic_guide.elements_per_dimension))
 
         # generate genetic sequence with correction of impureness when needed
-        # '''
-        elements = genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
-        sequence = DimensionalSequenceBinary()
-        sequence.from_binary(elements)
+        sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
+
+        # Purification of sequence process
+        # create a selected cuts sequence with given genetic guide binary sequence
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
+        # generate hyperboxes of created selected cuts sequence
         hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
+        # if solution sequence is not fully pure
         if hbs.get_impure_hyperboxes_number() != 0:
             print("Impure DGG sequence generated, purification in process")
+            # set solution not found
             found = False
+            # generate successors of genetic binary sequence with added random cut
             successors = sequence.get_successors()
+            # while is not found a pure solution
             while not found:
+                # for every generated successor
                 for successor in successors:
+                    # generate successor's hyperboxes
                     s_d.from_binary(self.__cuts_sequences, successor)
                     hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0],
                                                       self.__boundary_points[1])
+                    # if evaluated successor is fully pure
                     if hbs.get_impure_hyperboxes_number() == 0:
+                        # set solution found
                         found = True
+                        # change generated sequence with pure successor
                         sequence = successor
+                    # generate other successors
                     successors = successor.get_successors()
-        # '''
+
+        # show genetic guide sequence
         sequence.debug_print()
 
         return sequence
 
-
+    # Method for initialize the genetic guide into DCStarProblem if needed
     def __initialize_gg(self):
 
         # calculate the size of each dimension of cuts sequence

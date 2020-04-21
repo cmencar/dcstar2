@@ -174,7 +174,7 @@ class DeapGeneticGuide(GeneticEvolution):
             S_d.from_binary(self.T_d, S_d_b)
 
             # create set of hyperboxes from selected cuts sequence, points list, m_d and M_d
-            hyperboxes = S_d.generate_hyperboxes_set(self.points_list, 0, 1)
+            hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
 
             # if all of the hyperboxes generated are pure
             if hyperboxes.get_impure_hyperboxes_number() == 0:
