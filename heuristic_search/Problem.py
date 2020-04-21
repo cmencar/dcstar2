@@ -5,12 +5,13 @@ sys.path.append('../')
 from abc import ABC, abstractmethod
 
 
-# Classe astratta del problema
+# Abstract class of the problem to give to A* algorithm
 class Problem(ABC):
-  
+
+    # unique_successors flag
     unique_successors = False
     
-    # Costruttore della classe Problem
+    # Class abstract constructor. It can't be instantiable.
     def __init__(self):
         raise NotImplementedError("Class not instantiable (abstract class)")
     
@@ -21,28 +22,25 @@ class Problem(ABC):
         pass
     
     
-    # Metodo per la restituzione della lunghezza del percorso
+    # Method for acquiring the g path-cost value
     @abstractmethod
     def g(self, path):
         pass
 
     
-    # Metodo per la restituzione dell'euristica del percorso
+    # Method for acquiring the h heuristic value
     @abstractmethod
     def h(self, path):
         pass
 
     
-    # Metodo per definire se lo stato analizzato è
-    # quello definito come obiettivo finale
+    # Method for acquiring if the node is a result of A* computation
     @abstractmethod
     def goal(self, state):
         pass
     
 
-    # Metodo per definire la lista di successori
-    # di un determinato stato
-    # Ritorna la lista degli elementi adiacenti al nodo    
+    # Method for acquiring the list of successors for passed state
     @abstractmethod
     def successors(self, state):
         pass

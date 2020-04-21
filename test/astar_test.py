@@ -1,16 +1,16 @@
 from heuristic_search.prototypes_creators import PrototypesCreator
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 import matplotlib.pyplot as plt
-from heuristic_search.astar_remastered import astar
+from heuristic_search.astar import astar
 from heuristic_search.dcstar_problem import DCStarProblem
 
 
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
-point_list, m_d, M_d = loader.load("created point lists/chessboard_k10.json")
+point_list, m_d, M_d = loader.load("created point lists/chessboard_k5.json")
 
 # creation of DCStarProblem object for the clustering operation
-problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, use_genetic_guide = True)
+problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, use_genetic_guide = False)
 
 # acquiring cuts sequences created in DCStar object with passed points list
 cuts_sequences = problem.get_cuts_sequences()
