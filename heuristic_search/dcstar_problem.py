@@ -290,7 +290,16 @@ class DCStarProblem(Problem):
         if self.__genetic_guide_individual is None:
             return 1
         else:
-            return 2
+            intersection_value = 0
+            union_value = 0
+            for dimension in range(node.state.get_dimensions_number()):
+                intersection_value += len(
+                    set(node.state.get_dimension(dimension)).intersection(
+                        set(self.__genetic_guide_individual.get_dimension(dimension))))
+                union_value += len(
+                    set(node.state.get_dimension(dimension)).union(
+                        set(self.__genetic_guide_individual.get_dimension(dimension))))
+            return 1 - intersection_value / union_value
 
 
     # Method for acquiring the value of cuts sequences
