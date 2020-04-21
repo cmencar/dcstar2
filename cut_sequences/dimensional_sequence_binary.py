@@ -141,6 +141,9 @@ class DimensionalSequenceBinary(DimensionalSequence):
 
     # Method for the definition of 'equal-to' operator
     def __eq__(self, other):
-        return len([cut for sequences in self.elements for cut in sequences if cut == True]) == \
-               len([cut for sequences in other.elements for cut in sequences if cut == True])
+        for this_dimension, other_dimension in zip(self.elements, other.elements):
+            for this_cut, other_cut in zip(this_dimension, other_dimension):
+                if this_cut != other_cut:
+                    return False
+        return True
 
