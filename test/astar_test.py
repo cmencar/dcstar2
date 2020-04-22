@@ -9,6 +9,7 @@ from heuristic_search.dcstar_problem import DCStarProblem
 loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/chessboard_k5.json")
 
+
 # creation of DCStarProblem object for the clustering operation
 problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, use_genetic_guide = False)
 
@@ -23,7 +24,8 @@ print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
 selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
 selected_cuts_sequences.from_binary(cuts_sequences, result)
 
-# if created cuts sequences is in a bidimensional space then show a plot with grafical view of found selected cuts sequence
+# if created cuts sequences is in a bidimensional space then show a plot with grafical view of found selected cuts
+# sequence
 if cuts_sequences.get_dimensions_number() == 2:
 
     # printing S_d with d=1 in the plot
