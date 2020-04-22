@@ -1,0 +1,79 @@
+import numpy as np
+import pandas as pd
+from sklearn import preprocessing
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
+
+# train_lvq: trains an lvq system using the given training data and
+# corresponding labels. Run the desired number of epochs using the
+# given learning rate. Optional validation set to monitor performance.
+
+
+class lvq1:
+
+    def __init__(self, data, n_prototypes, n_epochs, learning_rate, tolerance):
+
+        self.data = data
+        self.n_prototypes = n_prototypes
+        self.n_epochs = n_epochs
+        self.learning_rate = learning_rate
+        self.tolerance = tolerance
+
+    def normalized_dataset(self, data):
+        X = data.iloc[:, :-1]
+        y = data.iloc[:, -1]
+        unique_y = data["classes"].unique()
+        normalized_X = preprocessing.normalize(X)
+        list_of_tuples = list(zip(normalized_X[:, 0], normalized_X[:, -1], y))
+        df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
+        return df, unique_y
+
+    def init_prot(self, data, n_prototypes, unique_y):
+        n_dimension = data.shape[1]
+        p_init = np.empty((0, n_dimension))
+        # Initialize prototypes using random choice.
+        for i in range(len(unique_y)):
+            class_data = data.loc[data.classes == unique_y[i]]
+            np_class = round(len(class_data) / len(data) * n_prototypes)
+            for j in range(np_class):
+                x = class_data.sample().to_numpy()
+                p_init = np.append(p_init, x, axis=0)
+        return p_init
+
+    def vector_quantization(self, data, tolerance, p_init, n_epochs, learning_rate):
+        flag = True
+        i = 1
+        prototypes = np.copy(p_init)
+        while flag:
+            e = 0
+            for index, x in data.iterrows():
+                dist = list()
+                for j in range(len(prototypes)):
+                    distance = np.linalg.norm(prototypes[j][0:-1] - x[0:-1])
+                    dist.append((j, distance))
+                dist.sort(key=lambda z: z[1])
+                p = prototypes[dist[0][0]]
+                p_old = np.copy(p)
+                if x.iloc[-1] == p[-1]:
+                    p[0:-1] = np.add(p[0:-1], np.multiply(learning_rate, np.subtract(x[0:-1], p[0:-1]))).to_numpy()
+                else:
+                    p[0:-1] = np.subtract(p[0:-1], np.multiply(learning_rate, np.subtract(x[0:-1], p[0:-1]))).to_numpy()
+                prototypes[dist[0][0]] = p
+                e = e + np.linalg.norm(p - p_old)
+            i = i + 1
+            learning_rate = learning_rate - (learning_rate / n_epochs)
+            if i > n_epochs and e < tolerance:
+                flag = False
+        return prototypes
+
+
+def scatterplot(df):
+    groups = df.groupby("classes")
+    for name, group in groups:
+        plt.plot(group["feature1"], group["feature2"], marker="o", linestyle="", label=name)
+
+    plt.legend()
+    plt.savefig('test/bandiera/bandiera_30.png')
+    plt.show()
+
