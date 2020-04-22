@@ -1,13 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-
-
-# train_lvq: trains an lvq system using the given training data and
-# corresponding labels. Run the desired number of epochs using the
-# given learning rate. Optional validation set to monitor performance.
 
 
 class lvq1:
@@ -66,14 +59,4 @@ class lvq1:
             if i > n_epochs and e < tolerance:
                 flag = False
         return prototypes
-
-
-def scatterplot(df):
-    groups = df.groupby("classes")
-    for name, group in groups:
-        plt.plot(group["feature1"], group["feature2"], marker="o", linestyle="", label=name)
-
-    plt.legend()
-    plt.savefig('test/bandiera/bandiera_30.png')
-    plt.show()
 
