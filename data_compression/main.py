@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from data_compression.lvq1 import lvq1
 from data_compression.misc import scatterPlot
 
-dataSet = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=['feature1', 'feature2', 'classes'])
+dataSet = pd.read_csv('dataset_bidimensionali/banana.csv', names=['feature1', 'feature2', 'classes'])
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 lr = 0.1
 n_iter = 10

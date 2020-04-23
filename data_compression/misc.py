@@ -7,5 +7,5 @@ def scatterPlot(df):
         plt.plot(group["feature1"], group["feature2"], marker="o", linestyle="", label=name)
 
     plt.legend()
-    plt.savefig('test/bandiera/bandiera_30.png')
+    plt.savefig('test_prototipi/banana/banana_10.png')
     plt.show()
