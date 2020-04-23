@@ -122,7 +122,7 @@ class DeapGeneticGuide(GeneticEvolution):
     # @selected_best: number of best individuals to generate
     def evolve(self, population_size, generations, selected_best):
 
-        # create a population of "population_size" individuals using the given "generate_fun" function
+        # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
 
         # for each generation
@@ -195,7 +195,7 @@ class DeapGeneticGuide(GeneticEvolution):
     # @selected_best: number of best individuals to generate
     def evolve_without_wsc(self, population_size, generations, selected_best):
 
-        # create a population of "population_size" individuals using the given "generate_fun" function
+        # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
 
         # for each generation
