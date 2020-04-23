@@ -32,3 +32,4 @@ heuristic_search/__pycache__/Problem.cpython-37.pyc
 *.pyc
 *.xml
 heuristic_search/__pycache__/pqueue.cpython-37.pyc
+*.pyc

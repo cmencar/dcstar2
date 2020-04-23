@@ -101,8 +101,12 @@ class DCStarProblem(Problem):
     # logical sequence which value is True
     # @node: Node object of to be evaluated to get the path-cost value
     def g(self, node):
-        return sum([np.sum(node.state.get_dimension(dimension_index) == True)
-                    for dimension_index in range(node.state.get_dimensions_number())])
+        x = 0
+        for dimension_index in range(node.state.get_dimensions_number()):
+            for cut in node.state.get_dimension(dimension_index):
+                if cut:
+                    x += 1
+        return x
 
 
     # Method for acquiring the heuristic value. It is based on the sum of first-level and second-level heuristic values
@@ -225,8 +229,8 @@ class DCStarProblem(Problem):
         # for every dimension in the successor node, if it has at least
         # one cut, then the counter is decreased by one unit
         value = 0
-        for dimension_index in range(node.state.get_dimensions_number()):
-            if node.state.get_dimension_size(dimension_index) > 0:
+        for array in node.state.elements:
+            if np.any(array):
                 value -= 1
         return value
 
@@ -288,7 +292,7 @@ class DCStarProblem(Problem):
     # @node: Node object of to be evaluated to get the second-level heuristic
     def __get_second_level_heuristic_value(self, node):
         if self.__genetic_guide_individual is None:
-            return 1
+            return 0
         else:
             intersection_value = 0
             union_value = 0
@@ -346,6 +350,7 @@ class DCStarProblem(Problem):
         return necessary_cuts
 
 
+    # Method for generate a genetic DimensionalSequenceBinary individual to be used as guide for A* computation
     def __generate_gg_individual(self):
 
         # initialize the genetic guide
@@ -397,6 +402,7 @@ class DCStarProblem(Problem):
         sequence.debug_print()
 
         return sequence
+
 
     # Method for initialize the genetic guide into DCStarProblem if needed
     def __initialize_gg(self):
