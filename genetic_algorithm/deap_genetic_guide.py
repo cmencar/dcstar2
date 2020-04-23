@@ -162,11 +162,10 @@ class DeapGeneticGuide(GeneticEvolution):
         S_d = SelectedDimensionalSequenceNumeric()
         S_d_b = DimensionalSequenceBinary()
 
-        # define pure individuals list
-        best_of_the_best = list()
-
         # for each individual in the best individuals generated
         for individual in converted_best_individuals:
+            found = False
+
             # generate binary sequence from the individual
             S_d_b.from_binary(individual)
 
@@ -178,15 +177,16 @@ class DeapGeneticGuide(GeneticEvolution):
 
             # if all of the hyperboxes generated are pure
             if hyperboxes.get_impure_hyperboxes_number() == 0:
-                # append the evaluated individual into the list of pure individuals
-                best_of_the_best.append(individual.copy())
+                # pick it as "best of the best"
+                best_of_the_best = individual
+                found = True
 
         # if is found a pure individual at least
-        if len(best_of_the_best) != 0:
-            # return the "best of the best", add boolean for eval
-            return best_of_the_best[0]
+        if found:
+            # return the "best of the best"
+            return best_of_the_best
         else:
-            # return the "worst case scenario", add boolean for eval
+            # return the "worst case scenario"
             return self.worst_case_scenario(self.elements_per_dimension)
 
     # Method generating best individuals by the genetic algorithm without <worst_case_scenario>
@@ -286,7 +286,7 @@ class DeapGeneticGuide(GeneticEvolution):
         return sequence
 
     # Method for the worst case scenario, generates a sequence with all the possible cuts active
-    # @elements_per_dimension: number of cuts per dimension in reference T_d
+    # @elements_per_dimension: number of cuts per dimension
     def worst_case_scenario(self, elements_per_dimension):
         # create support lists
         sequence = list()

@@ -368,15 +368,16 @@ class DCStarProblem(Problem):
         sequence = DimensionalSequenceBinary()
 
         # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
-        # sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
+        sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
 
-        # generate pure genetic sequence using "worst_case_scenario" method directly
+        # generate pure genetic sequence forcing "worst_case_scenario" method
         # sequence.from_binary(DeapGeneticGuide.worst_case_scenario(genetic_guide, genetic_guide.elements_per_dimension))
 
         # generate genetic sequence with correction of impureness when needed
-        sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
+        # sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
 
         # Purification of sequence process
+        '''
         # create a selected cuts sequence with given genetic guide binary sequence
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
@@ -405,7 +406,7 @@ class DCStarProblem(Problem):
                         sequence = successor
                     # generate other successors
                     successors = successor.get_successors()
-
+        '''
         # show genetic guide sequence
         sequence.debug_print()
 
