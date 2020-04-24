@@ -2,10 +2,10 @@
 import sys
 sys.path.append('../')
 
-from heuristic_search.Problem import Problem
+from heuristic_search.problem import Problem
 from heuristic_search.astar import astar
-from genetic_algorithm.DeapGeneticGuideGraphProblem import DeapGeneticGuideGraphProblem
-from genetic_algorithm.UGPGeneticGuideGraphProblem import UGPGeneticGuideGraphProblem
+from genetic_algorithm.deap_genetic_guide_graph_problem import DeapGeneticGuideGraphProblem
+from genetic_algorithm.ugp_genetic_guide_graph_problem import UGPGeneticGuideGraphProblem
 from GraphProblem import GraphProblem
 
 # lista degli stati del grafo

@@ -5,7 +5,7 @@ sys.path.append('../')
 
 import random
 from genetic_algorithm.GeneticEvolution import GeneticEvolution
-from genetic_algorithm.DeapGeneticGuide import DeapGeneticGuide
+from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 
 
 # TEST EFFETTUATO SULL'USO DELLA CLASSE DEAPGENETICGUIDE

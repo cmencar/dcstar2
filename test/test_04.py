@@ -2,7 +2,7 @@
 import sys
 sys.path.append('../')
 
-from heuristic_search.Problem import Problem
+from heuristic_search.problem import Problem
 from heuristic_search.astar import astar
 from DeapGeneticGuideGraphProblem import DeapGeneticGuideGraphProblem
 

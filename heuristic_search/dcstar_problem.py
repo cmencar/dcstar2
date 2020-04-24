@@ -1,8 +1,8 @@
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
-from heuristic_search.Problem import Problem
-from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
+from heuristic_search.problem import Problem
+from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 import numpy as np
 
 
@@ -288,7 +288,7 @@ class DCStarProblem(Problem):
         return heuristic_value
 
 
-    # Method for acquiring the second-level heuristic value. It is based on Jaccard's similarity.
+    # Method for acquiring the second-level heuristic value. It is based on Jaccard's dissimilarity.
     # When genetic guide is not called acts as a dummy method
     # @node: Node object of to be evaluated to get the second-level heuristic
     def __get_second_level_heuristic_value(self, node):
@@ -310,7 +310,7 @@ class DCStarProblem(Problem):
                 union_value += len(
                     set(node.state.get_dimension(dimension)).union(
                         set(self.__genetic_guide_individual.get_dimension(dimension))))
-            # return Jaccard similarity
+            # return Jaccard dissimilarity
             return 1 - intersection_value / union_value
 
 
@@ -447,8 +447,8 @@ class DCStarProblem(Problem):
         selected_best = 10
 
         # define DGG object to create the genetic guide with monodimensional lists
-        genetic_guide = DeapGeneticGuide(genes_number, mutation_rate, mating_rate, selected_for_tournament,
-                                         self.__cuts_sequences, self.__points_list, genes_per_dimension,
-                                         self.__boundary_points[0], self.__boundary_points[1])
+        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, mating_rate, selected_for_tournament,
+                                                        self.__cuts_sequences, self.__points_list, genes_per_dimension,
+                                                        self.__boundary_points[0], self.__boundary_points[1])
 
         return genetic_guide, generations, population_size, selected_best

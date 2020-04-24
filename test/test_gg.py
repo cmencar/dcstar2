@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
-from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
+from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
@@ -78,8 +78,8 @@ print("------------------------Parameters------------------------",
       "\nNumber of best individuals to choose from: ", selected_best)
 
 # define DGG object to create the genetic guide with monodimensional lists
-genetic_guide = DeapGeneticGuide(genes_number, mutation_rate, mating_rate, selected_for_tournament, T_d_example,
-                                 points_example, genes_per_dimension, m_d, M_d)
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, mating_rate, selected_for_tournament, T_d_example,
+                                                points_example, genes_per_dimension, m_d, M_d)
 
 # evolution and acquisition of the best individual from genetic guide with monodimensional lists
 best_individual, worst = genetic_guide.evolve(population_size, generations, selected_best)

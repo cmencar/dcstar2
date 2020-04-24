@@ -3,7 +3,7 @@ import sys
 sys.path.append('../')
 
 from abc import abstractmethod
-from heuristic_search.Problem import Problem
+from heuristic_search.problem import Problem
 
 
 # Classe astratta del problema in GG
