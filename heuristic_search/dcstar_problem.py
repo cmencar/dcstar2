@@ -14,7 +14,7 @@ class DCStarProblem(Problem):
     # @m_d: smallest boundary cut of dimension d
     # @M_d: greatest boundary cut of dimension d
     # @verbose: flag for the debug print
-    def __init__(self, points_list, m_d, M_d, verbose = False, use_genetic_guide = False):
+    def __init__(self, points_list, m_d, M_d, verbose = False, gg_parameters = None):
 
         # initialization of point list
         self.__points_list = points_list
@@ -33,8 +33,8 @@ class DCStarProblem(Problem):
 
         # initialization of the individual from genetic guide
         self.__genetic_guide_individual = None
-        if use_genetic_guide:
-            self.__genetic_guide_individual = self.__generate_gg_individual()
+        if gg_parameters is not None:
+            self.__genetic_guide_individual = self.__generate_gg_individual(gg_parameters)
 
 
     # Method for creating a cuts sequence starting from a list of prototype points
@@ -359,24 +359,25 @@ class DCStarProblem(Problem):
 
 
     # Method for generate a genetic DimensionalSequenceBinary individual to be used as guide for A* computation
-    def __generate_gg_individual(self):
+    # @gg_parameters: dictionary of parameters to initialize genetic guide
+    def __generate_gg_individual(self, gg_parameters):
 
         # initialize the genetic guide
-        genetic_guide, population_size, generations, selected_best = self.__initialize_gg()
+        genetic_guide, population_size, generations, selected_best = self.__initialize_gg(gg_parameters)
 
         # create an empty binary sequence
         sequence = DimensionalSequenceBinary()
 
         # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
-        sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
+        # sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
 
         # generate pure genetic sequence forcing "worst_case_scenario" method
         # sequence.from_binary(DeapGeneticGuide.worst_case_scenario(genetic_guide, genetic_guide.elements_per_dimension))
 
-        # generate genetic sequence with correction of impureness when needed
-        # sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
+        # generate genetic sequence with impure possibility
+        sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
 
-        # Purification of sequence process
+        # Process of sequence purification
         '''
         # create a selected cuts sequence with given genetic guide binary sequence
         s_d = SelectedDimensionalSequenceNumeric()
@@ -414,7 +415,8 @@ class DCStarProblem(Problem):
 
 
     # Method for initialize the genetic guide into DCStarProblem if needed
-    def __initialize_gg(self):
+    # @gg_parameters: dictionary of parameters to initialize genetic guide
+    def __initialize_gg(self, gg_parameters):
 
         # calculate the size of each dimension of cuts sequence
         genes_per_dimension = list()
@@ -426,29 +428,18 @@ class DCStarProblem(Problem):
         for num in genes_per_dimension:
             genes_number += num
 
-        # set number of individuals for tournament selection
-        selected_for_tournament = 5
-
         # calculate population
         # N.B.: population is given by duplicating the number of genes in the genome
         population_size = 2 * genes_number
-
-        # set number of generations
-        generations = 20
 
         # calculate mutation rate
         # N.B.: mutation rate is calculated by reciprocating the number of genes
         mutation_rate = 1 / genes_number
 
-        # set mating rate
-        mating_rate = 0.7
-
-        # set number of best individuals to choose from
-        selected_best = 10
-
         # define DGG object to create the genetic guide with monodimensional lists
-        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, mating_rate, selected_for_tournament,
-                                                        self.__cuts_sequences, self.__points_list, genes_per_dimension,
+        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],
+                                                        gg_parameters["selected_for_tournament"], self.__cuts_sequences,
+                                                        self.__points_list, genes_per_dimension,
                                                         self.__boundary_points[0], self.__boundary_points[1])
 
-        return genetic_guide, generations, population_size, selected_best
+        return genetic_guide, gg_parameters["generations"], population_size, gg_parameters["selected_best"]

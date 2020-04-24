@@ -7,11 +7,16 @@ from heuristic_search.dcstar_problem import DCStarProblem
 
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
-point_list, m_d, M_d = loader.load("created point lists/chessboard_k5.json")
+point_list, m_d, M_d = loader.load("created point lists/point_list_2.json")
 
+# declaration of DeapGeneticGuideSequenceProblem parameters
+gg_args = {"selected_for_tournament": 5,
+           "generations": 20,
+           "mating_rate": 0.7,
+           "selected_best": 10}
 
 # creation of DCStarProblem object for the clustering operation
-problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, use_genetic_guide = False)
+problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, gg_parameters=gg_args)
 
 # acquiring cuts sequences created in DCStar object with passed points list
 cuts_sequences = problem.get_cuts_sequences()
