@@ -1,5 +1,6 @@
 from sklearn import preprocessing
 import pandas as pd
+from data_compression import compression_algorithm
 
 
 class dataset:
@@ -9,6 +10,15 @@ class dataset:
         self.features = data.iloc[:, :-1]
         self.labels = data.iloc[:, -1]
 
+    """
+    @property
+    def strategy(self) -> compression_algorithm:
+        # The Context maintains a reference to one of the Strategy objects. The
+        # Context does not know the concrete class of a strategy. It should work
+        # with all strategies via the Strategy interface.
+
+        return self._strategy
+    """
     # It only takes the features from the dataset
     def get_features(self):
         return self.features

@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
 from timeit import default_timer as timer
+from data_compression.compression_algorithm import compression_algorithm
 from datetime import timedelta
 
 
-class lvq1:
+class lvq1(compression_algorithm):
 
-    def __init__(self, data, n_prototypes, n_epochs, learning_rate, tolerance):
+    def __init__(self, data, n_prototypes, n_epochs=10, learning_rate=0.1, tolerance=5):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -18,18 +18,17 @@ class lvq1:
     # Method for initialization of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
     # output: prototypes_init
-    def init_prot(self, data, n_prototypes, unique_y):
-        start = timer()
+    def init_prot(self, unique_y):
         # calculation number of features
-        n_dimension = data.shape[1]
+        n_dimension = self.data.shape[1]
         # I initialize the empty array where I will put the chosen prototypes
         p_init = np.empty((0, n_dimension))
         # Initialize prototypes using random choice.
         for i in range(len(unique_y)):
             # Division of the dataset according to the label examined
-            class_data = data.loc[data.classes == unique_y[i]]
+            class_data = self.data.loc[self.data.classes == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = round(len(class_data) / len(data) * n_prototypes)
+            np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
@@ -41,7 +40,7 @@ class lvq1:
     # Training phase of the lvq1 algorithm
     # Input: normalized_dataset, tolerance, p_init, n_epochs, learning_rate
     # Output: collection of prototypes
-    def vector_quantization(self, data, tolerance, p_init, n_epochs, learning_rate):
+    def vector_quantization(self, p_init):
         # Initializing the flag to determine the end of the cycle do-while
         flag = True
         # Initialization of epochs
@@ -51,7 +50,7 @@ class lvq1:
         while flag:
             # error initialization
             e = 0
-            for index, x in data.iterrows():
+            for index, x in self.data.iterrows():
                 # initialization of the list of distances
                 dist = list()
                 for j in range(len(prototypes)):
@@ -67,18 +66,18 @@ class lvq1:
                 # Copy of the prototype with shorter distance
                 p_old = np.copy(p)
                 if x.iloc[-1] == p[-1]:
-                    p[0:-1] = np.add(p[0:-1], np.multiply(learning_rate, np.subtract(x[0:-1], p[0:-1]))).to_numpy()
+                    p[0:-1] = np.add(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
                 else:
-                    p[0:-1] = np.subtract(p[0:-1], np.multiply(learning_rate, np.subtract(x[0:-1], p[0:-1]))).to_numpy()
+                    p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
                 prototypes[dist[0][0]] = p
                 # Error Update
                 e = e + np.linalg.norm(p - p_old)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
-            learning_rate = learning_rate - (learning_rate / n_epochs)
+            self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
             # Checking the cycle exit conditions
-            if i > n_epochs and e < tolerance:
+            if i > self.n_epochs and e < self.tolerance:
                 flag = False
         return prototypes
 
