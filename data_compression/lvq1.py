@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+from timeit import default_timer as timer
+from datetime import timedelta
 
 
 class lvq1:
@@ -13,28 +15,11 @@ class lvq1:
         self.learning_rate = learning_rate
         self.tolerance = tolerance
 
-    # Method for the normalization of the initial dataset
-    # input: dataSet
-    # output: normalized_dataset, unique_labels
-    def normalized_dataset(self, data):
-        # It only takes the features from the dataset
-        X = data.iloc[:, :-1]
-        # It only takes the labels from the dataset
-        y = data.iloc[:, -1]
-        # Delete duplicates from dataset labels to get unique labels
-        unique_y = data["classes"].unique()
-        # Normalization method taken from the sklearn library
-        normalized_X = preprocessing.scale(X)
-        # Union of normalized features with corresponding labels
-        list_of_tuples = list(zip(normalized_X[:, 0], normalized_X[:, -1], y))
-        df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
-        print(df)
-        return df, unique_y
-
     # Method for initialization of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
     # output: prototypes_init
     def init_prot(self, data, n_prototypes, unique_y):
+        start = timer()
         # calculation number of features
         n_dimension = data.shape[1]
         # I initialize the empty array where I will put the chosen prototypes
@@ -50,6 +35,7 @@ class lvq1:
                 x = class_data.sample().to_numpy()
                 # Adding the initial prototype chosen in the array
                 p_init = np.append(p_init, x, axis=0)
+        end = timer()
         return p_init
 
     # Training phase of the lvq1 algorithm
