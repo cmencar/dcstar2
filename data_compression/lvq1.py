@@ -1,13 +1,12 @@
 import numpy as np
 import pandas as pd
-from timeit import default_timer as timer
 from data_compression.compression_algorithm import compression_algorithm
-from datetime import timedelta
+import json
 
 
 class lvq1(compression_algorithm):
 
-    def __init__(self, data, n_prototypes, n_epochs=10, learning_rate=0.1, tolerance=5):
+    def __init__(self, data, n_prototypes, n_epochs=50, learning_rate=0.1, tolerance=5):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -34,7 +33,6 @@ class lvq1(compression_algorithm):
                 x = class_data.sample().to_numpy()
                 # Adding the initial prototype chosen in the array
                 p_init = np.append(p_init, x, axis=0)
-        end = timer()
         return p_init
 
     # Training phase of the lvq1 algorithm
@@ -79,5 +77,28 @@ class lvq1(compression_algorithm):
             # Checking the cycle exit conditions
             if i > self.n_epochs and e < self.tolerance:
                 flag = False
-        return prototypes
+            results = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
+        return results
+
+    def create_json(self, prototypes, m_d, M_d):
+        point_coordinates = prototypes.iloc[:, :-1].values.tolist()
+        # print(point_coordinates)
+        point_labels = prototypes.iloc[:, -1].values.tolist()
+        # print(point_labels)
+        point_id = list()
+        for i in point_coordinates:
+            point_id.append(point_coordinates.index(i))
+
+        data = {'points': [], 'm_d': m_d, 'M_d': M_d}
+        for i in range(len(point_coordinates)):
+            coordinates = point_coordinates[i]
+            data['points'].append({
+                'coordinates': coordinates,
+                'class': point_labels[i],
+                'name': "point" + str(point_id[i] + 1)
+            })
+
+        with open("file_name.json", 'w') as output:
+            json.dump(data, output, indent=1)
+
 

@@ -5,20 +5,13 @@ from data_compression import compression_algorithm
 
 class dataset:
 
-    def __init__(self, data):
+    def __init__(self, data, m_d=None, M_d=None):
+        self.m_d = m_d
+        self.M_d = M_d
         self.data = data
         self.features = data.iloc[:, :-1]
         self.labels = data.iloc[:, -1]
 
-    """
-    @property
-    def strategy(self) -> compression_algorithm:
-        # The Context maintains a reference to one of the Strategy objects. The
-        # Context does not know the concrete class of a strategy. It should work
-        # with all strategies via the Strategy interface.
-
-        return self._strategy
-    """
     # It only takes the features from the dataset
     def get_features(self):
         return self.features
@@ -30,6 +23,16 @@ class dataset:
     # Delete duplicates from dataset labels to get unique labels
     def get_unique_labels(self):
         return self.data["classes"].unique()
+
+    def get_boundary(self, df):
+        minValues = df.min()
+        maxValues = df.max()
+        m_d = tuple()
+        M_d = tuple()
+        for i in (range(len(minValues) - 1)):
+            m_d = m_d + (minValues[i],)
+            M_d = M_d + (maxValues[i],)
+        return m_d, M_d
 
     # Normalization method taken from the sklearn library
     def normalized_dataset(self):
