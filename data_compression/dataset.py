@@ -4,9 +4,7 @@ import pandas as pd
 
 class dataset:
 
-    def __init__(self, data, m_d=None, M_d=None):
-        self.m_d = m_d
-        self.M_d = M_d
+    def __init__(self, data):
         self.data = data
         self.features = data.iloc[:, :-1]
         self.labels = data.iloc[:, -1]
@@ -23,9 +21,9 @@ class dataset:
     def get_unique_labels(self):
         return self.data["classes"].unique()
 
-    def get_boundary(self, df):
-        minValues = df.min()
-        maxValues = df.max()
+    def get_boundary(self, data):
+        minValues = data.min()
+        maxValues = data.max()
         m_d = tuple()
         M_d = tuple()
         for i in (range(len(minValues) - 1)):
