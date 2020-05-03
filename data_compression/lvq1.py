@@ -6,7 +6,7 @@ import json
 
 class lvq1(compression_algorithm):
 
-    def __init__(self, data, n_prototypes, n_epochs=50, learning_rate=0.1, tolerance=5):
+    def __init__(self, data, n_prototypes, n_epochs=10, learning_rate=0.1, tolerance=5):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -16,8 +16,8 @@ class lvq1(compression_algorithm):
 
     # Method for initialization of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
-    # output: prototypes_init
-    def init_prot(self, unique_y):
+    # output: prototypes
+    def algorithm(self, unique_y):
         # calculation number of features
         n_dimension = self.data.shape[1]
         # I initialize the empty array where I will put the chosen prototypes
@@ -33,12 +33,6 @@ class lvq1(compression_algorithm):
                 x = class_data.sample().to_numpy()
                 # Adding the initial prototype chosen in the array
                 p_init = np.append(p_init, x, axis=0)
-        return p_init
-
-    # Training phase of the lvq1 algorithm
-    # Input: normalized_dataset, tolerance, p_init, n_epochs, learning_rate
-    # Output: collection of prototypes
-    def vector_quantization(self, p_init):
         # Initializing the flag to determine the end of the cycle do-while
         flag = True
         # Initialization of epochs
@@ -67,9 +61,9 @@ class lvq1(compression_algorithm):
                     p[0:-1] = np.add(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
                 else:
                     p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
-                prototypes[dist[0][0]] = p
-                # Error Update
-                e = e + np.linalg.norm(p - p_old)
+                    prototypes[dist[0][0]] = p
+                    # Error Update
+                    e = e + np.linalg.norm(p - p_old)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate

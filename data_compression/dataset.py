@@ -1,6 +1,5 @@
 from sklearn import preprocessing
 import pandas as pd
-from data_compression import compression_algorithm
 
 
 class dataset:
