@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=['feature1', 'feature2', 'classes'])
 n_p = 20
-
+"""
 start = timer()
 dataset = dataset(original_dataset)
 norm = dataset.normalized_dataset()
@@ -24,3 +24,12 @@ compression.create_json(prototypes, m_d, M_d)
 scatterPlot(norm, m_d, M_d)
 scatterPlot(prototypes, m_d, M_d)
 plt.show()
+"""
+lvq1 = lvq1(original_dataset, n_p)
+k_means = K_means()
+compression = dataset(original_dataset)
+compression.set_strategy(k_means)
+compression.compression()
+
+compression.set_strategy(lvq1)
+compression.compression()

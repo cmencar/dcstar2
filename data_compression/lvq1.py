@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
-from data_compression.compression_algorithm import compression_algorithm
+from data_compression.compression_algorithm import Compression
 import json
 
 
-class lvq1(compression_algorithm):
+class lvq1(Compression):
 
     def __init__(self, data, n_prototypes, n_epochs=10, learning_rate=0.1, tolerance=5):
 
@@ -71,7 +71,8 @@ class lvq1(compression_algorithm):
             # Checking the cycle exit conditions
             if i > self.n_epochs and e < self.tolerance:
                 flag = False
-            results = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
+        results = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
+        print(results)
         return results
 
     def create_json(self, prototypes, m_d, M_d):

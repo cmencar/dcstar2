@@ -1,13 +1,18 @@
 from sklearn import preprocessing
 import pandas as pd
+from data_compression.compression_algorithm import Compression
 
 
 class dataset:
 
-    def __init__(self, data):
+    def __init__(self, data, strategy: Compression = None):
         self.data = data
         self.features = data.iloc[:, :-1]
         self.labels = data.iloc[:, -1]
+        self._strategy = strategy
+
+    def set_strategy(self, strategy):
+        self._strategy = strategy
 
     # It only takes the features from the dataset
     def get_features(self):
@@ -38,3 +43,6 @@ class dataset:
         list_of_tuples = list(zip(normalized_features[:, 0], normalized_features[:, -1], self.labels))
         df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
         return df
+
+    def compression(self):
+        self._strategy.algorithm(self.get_unique_labels())
