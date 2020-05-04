@@ -6,7 +6,7 @@ import json
 
 class lvq1(Compression):
 
-    def __init__(self, data, n_prototypes, n_epochs=10, learning_rate=0.1, tolerance=5):
+    def __init__(self, data, n_prototypes, n_epochs=1, learning_rate=0.1, tolerance=5):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -72,28 +72,6 @@ class lvq1(Compression):
             if i > self.n_epochs and e < self.tolerance:
                 flag = False
         results = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
-        print(results)
         return results
-
-    def create_json(self, prototypes, m_d, M_d):
-        point_coordinates = prototypes.iloc[:, :-1].values.tolist()
-        # print(point_coordinates)
-        point_labels = prototypes.iloc[:, -1].values.tolist()
-        # print(point_labels)
-        point_id = list()
-        for i in point_coordinates:
-            point_id.append(point_coordinates.index(i))
-
-        data = {'points': [], 'm_d': m_d, 'M_d': M_d}
-        for i in range(len(point_coordinates)):
-            coordinates = point_coordinates[i]
-            data['points'].append({
-                'coordinates': coordinates,
-                'class': point_labels[i],
-                'name': "point" + str(point_id[i] + 1)
-            })
-
-        with open("file_name.json", 'w') as output:
-            json.dump(data, output, indent=1)
 
 

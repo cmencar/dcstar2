@@ -11,6 +11,7 @@ class dataset:
         self.labels = data.iloc[:, -1]
         self._strategy = strategy
 
+
     def set_strategy(self, strategy):
         self._strategy = strategy
 
@@ -26,23 +27,30 @@ class dataset:
     def get_unique_labels(self):
         return self.data["classes"].unique()
 
-    def get_boundary(self, data):
-        minValues = data.min()
-        maxValues = data.max()
+    def get_minimum_boundary(self):
+        minValues = self.data.min()
         m_d = tuple()
-        M_d = tuple()
         for i in (range(len(minValues) - 1)):
             m_d = m_d + (minValues[i],)
+        return m_d
+
+    def get_maximum_boundary(self):
+        maxValues = self.data.max()
+        M_d = tuple()
+        for i in (range(len(maxValues) - 1)):
             M_d = M_d + (maxValues[i],)
-        return m_d, M_d
+        return M_d
 
-    # Normalization method taken from the sklearn library
-    def normalized_dataset(self):
-        normalized_features = preprocessing.scale(self.features)
-        # Union of normalized features with corresponding labels
-        list_of_tuples = list(zip(normalized_features[:, 0], normalized_features[:, -1], self.labels))
-        df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
-        return df
+    def do_compression(self):
+        results = self._strategy.algorithm(self.get_unique_labels())
+        return results
 
-    def compression(self):
-        self._strategy.algorithm(self.get_unique_labels())
+
+# Normalization method taken from the sklearn library
+def normalized_dataset(df):
+    normalized_features = preprocessing.scale(df.iloc[:, :-1])
+    labels = df.iloc[:, -1]
+    # Union of normalized features with corresponding labels
+    list_of_tuples = list(zip(normalized_features[:, 0], normalized_features[:, -1], labels))
+    df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
+    return df
