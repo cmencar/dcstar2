@@ -4,6 +4,7 @@ from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensio
 from heuristic_search.problem import Problem
 from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 import numpy as np
+import time
 
 
 # Class that defines a problem that can be used by the A* algorithm to define a cluster solution.
@@ -91,10 +92,14 @@ class DCStarProblem(Problem):
     # three-levels priority and define a tuple with the three values
     # @node: Node object of to be evaluated to get the cost value
     def estimate_cost(self, node):
-        first_level_priority = self.__get_first_level_priority(node)
-        second_level_priority = self.__get_second_level_priority(node)
-        third_level_priority = self.__get_third_level_priority(node)
-        return tuple((first_level_priority, second_level_priority, third_level_priority))
+        #first_level_priority = self.__get_first_level_priority(node)
+        #second_level_priority = self.__get_first_level_heuristic_value(node)
+        #second_level_priority = self.__revisited_first_level_heuristic_value(node) ** 3
+        second_level_priority = self.__optimized_first_level_heuristic_value(node)
+        first_level_priority = self.g(node) + second_level_priority
+        #third_level_priority = self.__get_second_level_priority(node)
+        #fourth_level_priority = self.__get_third_level_priority(node)
+        return first_level_priority, second_level_priority #,third_level_priority #, fourth_level_priority
 
 
     # Method for acquiring the g path-cost value. It is based on the counting the cuts present in the
@@ -112,7 +117,12 @@ class DCStarProblem(Problem):
     # Method for acquiring the heuristic value. It is based on the sum of first-level and second-level heuristic values
     # @node: Node object of to be evaluated to get the second-level heuristic
     def h(self, node):
-        return self.__get_first_level_heuristic_value(node) + self.__get_second_level_heuristic_value(node)
+
+        #first_heuristic = self.__get_first_level_heuristic_value(node)
+        #second_heuristic = self.__get_second_level_heuristic_value(node)
+        #return first_heuristic, second_heuristic
+        first_heuristic = self.__get_first_level_heuristic_value(node)
+        return first_heuristic
 
 
     # Method for acquiring if the node is a result of clustering process. Is based on the fact that each hyperbox
@@ -136,13 +146,91 @@ class DCStarProblem(Problem):
     # Method for acquiring the list of successors for passed DimensionalSequenceBinary.
     # @state: DimensionalSequenceBinary object to be evaluated to get the successors list.
     def successors(self, state):
-        return [successor for successor in state.get_successors()]
+        node = SelectedDimensionalSequenceNumeric()
+        node.from_binary(self.__cuts_sequences, state)
+        return self.succ_struct(node)
+        #return [successor for successor in state.get_successors()]
+
+
+    def succ_struct(self, node):
+
+        # inizializzazione della struttura completa del nodo e degli elementi del nodo stesso. La struttura completa è
+        # associata alle sequenze di tagli T_d, quindi è composta dall'insieme degli elementi numerici dei tagli. Gli
+        # elementi del nodo sono, pertanto, un sottinsieme dell'insieme delle sequenze T_d
+        complete_structure = self.__cuts_sequences.elements
+        evaluated_node = node.elements
+
+        # inizializzazione del numero di dimensioni della struttura del nodo
+        dimensions_number = len(complete_structure)
+
+        # inizializzazione della lista delle lunghezze di ogni sequenza dimensionale. La lista contiene, per ogni array
+        # di tagli della struttura completa, la dimensione di T_d.
+        dimension_lengths = [len(complete_structure[dimension]) for dimension in range(dimensions_number)]
+
+        # inizializzazione del numero totale degli elementi nella struttura
+        elements_number = sum(dimension_lengths)
+
+        # inizializzazione della sequenza cumulativa delle lunghezze. Tale sequenza ha il compito di definire gli indici
+        # iniziali sulle varie dimensioni in modo tale da poter essere valutate velocemente
+        dimension_offsets = [sum(dimension_lengths[:dimension]) for dimension in range(dimensions_number + 1)]
+
+        # mappatura dei tagli presenti nel nodo passato. La mappatura avviene trasformando le sequenze dei tagli in
+        # numeri naturali. Ciò avviene in questo modo: ad ogni taglio presente nella struttura completa è associato
+        # un numero naturale, partendo da 0 ed arrivando al valore elements_number - 1. Se un determinato taglio
+        # è presente tra gli elementi delle sequenze di tagli del nodo passato, allora si acquisisce il valore
+        # dell'indice e lo si inserisce nella struttura della mappatura
+        mapped_elements = [np.where(complete_structure[dimension] == evaluated_node[dimension][element])[0][0] + dimension_offsets[dimension]
+                           for dimension in range(dimensions_number)
+                           for element in range(len(evaluated_node[dimension]))]
+
+        # genera i successori di node mappati come lista di interi
+        # generazione dei successori come una lista di tagli mappati. La lista dei successori conterrà un insieme di
+        # elementi che saranno differenti tra loro unicamente per un taglio (l'ultimo, per esattezza).
+        mapped_successors = [mapped_elements + [new_cut]
+                             for new_cut in range(max(mapped_elements, default = -1) + 1, elements_number)]
+
+        # definizione della dimensione associata a ciascun taglio. Per ogni taglio (definito da un elemento naturale)
+        # si determina a quale dimensione appartiene: in particolare, se il valore del taglio supera un certo
+        # numero di offset (intesi come numeri interi che indicano il taglio, o meglio il suo indice, di partenza per
+        # una data dimensione), si determina la dimensione ad esso associato prendendo l'offset minore (ovvero
+        # l'indice della dimensione a cui appartiene)
+        dimensions = [[min([enum_index - 1 for enum_index, dim_offset in enumerate(dimension_offsets) if dim_offset > cut_index])
+                 for cut_index in mapped_successor]
+                for mapped_successor in mapped_successors]
+
+        # definizione degli indici dei tagli all'interno delle dimensioni di appartenenza. Essi, pertanto, indicano
+        # le posizioni nelle quali i tagli andranno ad essere inseriti. Dato che i tagli all'interno di
+        # mapped_successors sono definiti come indici "globali" (ovvero intesi come elementi di una successione
+        # a cui fanno capo tutti i tagli di una combinazione, a prescindere dalla dimensione in cui sono posti)
+        # bisogna che ci si riconduca agli indici "locali" nelle dimensioni sottraendo a global_cut_index il valore
+        # del dimension_offset della dimensione a cui appartiene
+        local_cut_indexes = [[global_cut_index - dimension_offsets[dimensions[enum_successor_index][enum_cut_index]]
+                        for enum_cut_index, global_cut_index in enumerate(successor)]
+                       for enum_successor_index, successor in enumerate(mapped_successors)]
+
+        # definizione della mappatura inversa per la creazione dei successori. La mappatura inversa avviene
+        # in questo modo: si acquisiscono i valori dei tagli effettivi (non i valori degli indici) dalla struttura
+        # completa sulla base degli elementi presenti in local_cut_indexes e dimensions. Per ognuno degli elementi
+        # di local_cut_indexes, infatti, si acquisisce il taglio numerico che si trova alla posizione definita
+        # all'interno di un "successore", si utilizza l'indice della dimensione del taglio correlato (presente
+        # alla stessa dimensione nella struttura "dimensions") e si acquisisce il taglio effettivo da complete_structure
+        # sulla base degli indici trovati. Infine, tutti i successori numerici vengono convertiti in oggetti di tipo
+        # DimensionalSequenceBinary e restituiti come output del metodo
+        numeric_successors = [[[complete_structure[struct_dim][local_cut_indexes[local_cut_dim][cut_index]]
+                                for cut_index in filter(lambda i: dimensions[local_cut_dim][i] == struct_dim, range(len(dimensions[local_cut_dim])))]
+                               for struct_dim in range(dimensions_number)]
+                              for local_cut_dim in range(len(dimensions))]
+        return [DimensionalSequenceBinary(element, self.__cuts_sequences.elements) for element in numeric_successors]
+
 
 
     # Method for acquiring the value of first-level priority for the successor node. The first-level priority
     # is a value based on the sum of cost value and heuristic value.
     # @node: Node object of to be evaluated to get the first-level priority
     def __get_first_level_priority(self, node):
+
+        #g = self.g(node)
+        #h = self.h(node)
         return self.g(node) + self.h(node)
 
 
@@ -193,7 +281,7 @@ class DCStarProblem(Problem):
         # when a logical cut value is True: using the value defined by index, the numerical value of cut
         # is taken and it is assigned to t_k_previous
         index = cut_index - 1
-        while index > 0 and not found:
+        while index >= 0 and not found:
             if node_state.get_cut(dimension_index, index):
                 t_k_previous = self.__cuts_sequences.get_dimension(dimension_index)[index]
                 found = True
@@ -215,7 +303,10 @@ class DCStarProblem(Problem):
 
         # the returned value is the minimum between two elements: the distance between t_k and t_k_previous
         # and the distance between t_k_next and t_k
-        return min(t_k - t_k_previous, t_k_next - t_k)
+
+        uno = t_k - t_k_previous
+        due = t_k_next - t_k
+        return min(uno, due)
 
 
     # Method for acquiring the value of third-level priority for the successor node. The third-level priority is a
@@ -257,9 +348,9 @@ class DCStarProblem(Problem):
         # the minimum number of cuts (for single hyperbox) to be added to transform them in pure hyperboxes.
         # The list is then sorted according to the value of the number of cuts to be added.
         # On the list of impure hyperboxes will be based the evaluation of the value of the first level heuristics.
-        hyperboxes = [(hyperbox, self.__get_cuts_number_to_add(hyperbox))
+        hyperboxes = [(hyperbox, self.__get_cuts_number_to_add(hyperbox) )
                       for hyperbox in hyperboxes_set.get_hyperboxes() if hyperbox.is_impure()]
-        hyperboxes.sort(key = lambda element : element[1])
+        #hyperboxes.sort(key = lambda element : element[1])
 
         # initializing the heuristic value to 0. Later, until the list of impure hyperboxes is not empty,
         # heuristic_value is incremented using the remaining hyperboxes
@@ -267,6 +358,7 @@ class DCStarProblem(Problem):
         # classes within it, obviously the name given is only used to better render the idea and probably
         # not to be considered a scientifically valid term
         heuristic_value = 0
+        counter = 0
         while len(hyperboxes) > 0:
 
             # acquiring the first hyperbox in the impure hyperboxes list (is not necessarily the 'worst').
@@ -281,10 +373,119 @@ class DCStarProblem(Problem):
             # heuristic_value is increased by adding the already existing value with the number of cuts to be added
             # in the most_impure_hyperbox. Subsequently, each hyperbox connected to the most_impure_hyperbox (thus also
             # the most_impure_hyperbox itself) is deleted from the list and the evaluation of the remaining hyperboxes continue
-            heuristic_value += sum(most_impure_hyperboxes[1])
+            heuristic_value += most_impure_hyperboxes[1]
             hyperboxes = [hyperbox for hyperbox in hyperboxes if most_impure_hyperboxes[0].is_connected(hyperbox[0]) is False]
+            counter += 1
+
+        assert counter == heuristic_value, print("Error in calculating heuristic_value")
 
         # finally, the heuristic_value calculated is passed as return value
+        return heuristic_value
+
+
+    # TODO DA TRADURRE I COMMENTI IN INGLESE
+    def __optimized_first_level_heuristic_value(self, node):
+
+        # create a selected cuts sequence using the binary sequence of passed node
+        selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
+        selected_cuts_sequences.from_binary(self.__cuts_sequences, node.state)
+
+        # generate an HyperboxesSet object from the newly created selected cuts sequence and using the prototype points list
+        hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
+                                                                         m_d = self.__boundary_points[0],
+                                                                         M_d = self.__boundary_points[1])
+
+        # acquisizione degli hyperboxes impuri per l'oggetto SelectedDimensionalSequenceNumeric e calcolo del
+        # valore del numero minimo di tagli da aggiungere per rendere puri tali hyperboxes. Tutti gli hyperboxes impuri
+        # sono salvati all'interno di un dizionario per velocizzare l'accesso ad essi. Il dizionario segue la struttura
+        # (hyperbox, n_B_C) : lista di hyperboxes collegati.
+        connected_hyperboxes = {(hyperbox, self.__get_cuts_number_to_add(hyperbox)) : []
+                                for hyperbox in hyperboxes_set.get_hyperboxes() if hyperbox.is_impure()}
+
+        # definizione della lista degli hyperboxes connessi per ognuno degli hyperboxes del dizionario
+        # connected_hyperboxes. Per ogni hyperbox del dizionario si riempie la lista degli hyperboxes in base
+        # alla dimensione valutata: infatti, ogni hyperbox possiede un certo gruppo di altri hyperboxes collegati su
+        # una particolare dimensione che è differente dal gruppo di hyperboxes associati ad esso su un'altra dimensione.
+        for hyperbox, connected_hyperboxes_list in connected_hyperboxes.items():
+            for dimension in range(selected_cuts_sequences.get_dimensions_number()):
+                connected_hyperboxes_list.append({other_hb for other_hb in connected_hyperboxes.keys()
+                                                  if other_hb[0] != hyperbox[0]
+                                                  and hyperbox[0].is_connected(other_hb[0], dimension)})
+
+        # inizializzazione del valore dell'euristica a zero. Il valore finale è dato da un incremento unitario che
+        # perdura finché il dizionario connected_hyperboxes conterrà hyperboxes impuri da valutare
+        heuristic_value = 1
+        while len(connected_hyperboxes) > 0:
+
+            # acquisizione del valore massimo di n_B_C associato a tutti gli hyperboxes. Tale valore è associato
+            # al valore degli hyperboxes che in questa iterazione verranno valutati, ovvero gli hyperboxes a cui si
+            # associa il valore massimo di tagli da aggiungere per poter diventare puri
+            max_n_B_C_value = max(connected_hyperboxes.keys(), key = lambda key:key[1])[1]
+
+            # definizione della lista degli hyperboxes che dovranno essere valutati in tale iterazione. Il processo
+            # di acquisizione degli hyperbox è semplice: si acquisiscono unicamente gli hyperboxes che possiedono
+            # il valore di n_B_C uguale a quello massimo. Di tali hyperboxes, successivamente, si acquisiscono le
+            # informazioni riguardo il numero di elementi connessi per ogni dimensione: per esempio, se nella
+            # dimensione 0 ci sono tre hyperboxes connessi e nella dimensione 1 ci sono cinque hyperboxes connessi,
+            # allora si aggiungono i valori 3 e 5, quindi la struttura inserita nella lista best_hyperboxes sarà:
+            # (HYPERBOX, n_B_C), 3, 5
+            best_hyperboxes = []
+            for hyperbox, connected_hyperboxes_list in connected_hyperboxes.items():
+                if hyperbox[1] == max_n_B_C_value:
+                    hyperbox_associated_info = [hyperbox]
+                    for dimension in connected_hyperboxes_list:
+                        hyperbox_associated_info.append(len(dimension))
+                    best_hyperboxes.append(hyperbox_associated_info)
+
+            # inizializzazione dell'insieme degli hyperboxes da eliminare dal dizionario
+            hyperboxes_to_be_removed = set()
+
+            # se esiste più di un iperbox con un certo valore massimo di n_B_C, allora bisogna scegliere l'hyperbox
+            # con il numero maggiore di elementi connessi in una certa dimensione. Per esempio, se un hyperbox h1
+            # possiede 3 e 5 elementi connessi nelle due dimensioni, mentre h2 possiede 4 e 2 elementi connessi nelle
+            # due dimensioni, allora l'hyperbox che verrà valutato equivale a h1, dato che possiede 5 elementi connessi
+            # nella dimensione due, il massimo in assoluto
+            if len(best_hyperboxes) > 1:
+
+                # inizializzazione delle variabili dell'hyperbox da acquisire
+                best_hyperbox = best_hyperboxes[0][0]
+                most_connected_hyperbox_number = best_hyperboxes[0][1]
+                dimension_with_most_connected = 0
+
+                # acquisizione dell'hyperbox che possiede il maggior numero di hyperboxes connessi in assoluto
+                # su una qualsiasi dimensione, secondo il criterio prima descritto.
+                for evaluated_hyperbox in best_hyperboxes:
+                    for dimension in range(len(evaluated_hyperbox[1:])):
+                        if evaluated_hyperbox[dimension + 1] > most_connected_hyperbox_number:
+                            best_hyperbox = evaluated_hyperbox[0]
+                            most_connected_hyperbox_number = evaluated_hyperbox[dimension + 1]
+                            dimension_with_most_connected = dimension
+
+                # acquisizione degli hyperboxes da rimuovere dal dizionario. Gli hyperboxes da rimuovere sono
+                # quello definito da best_hyperbox (presente come chiave nel dizionario) e quelli presenti nella
+                # lista degli hyperboxes collegati per il detto best_hyperbox (salvato come attributo del dizionario)
+                hyperboxes_to_be_removed = set(hyperbox_to_remove for hyperbox_to_remove
+                                               in connected_hyperboxes.get(best_hyperbox)[dimension_with_most_connected])
+                hyperboxes_to_be_removed.add(best_hyperbox)
+
+            # se esiste un solo iperbox con un certo valore massimo di n_B_C, allora lo si aggiunge all'insieme degli
+            # hyperboxes da rimuovere dal dizionario
+            else:
+                hyperboxes_to_be_removed.add(best_hyperboxes[0][0])
+
+            # rimozione degli hyperboxes dal dizionario, rimuovendo dapprima gli elementi come key del dizionario.
+            # Successivamente, per ogni elemento rimanente, si eliminano i riferimenti degli hyperboxes nelle liste
+            # degli elementi connessi, facendo in modo che essi non verranno più valutati.
+            for ipercubo_da_cancellare in hyperboxes_to_be_removed:
+                connected_hyperboxes.pop(ipercubo_da_cancellare)
+            for ipercubo_valutato, ipercubi_connessi_per_dimensione in connected_hyperboxes.items():
+                for lista_ipercubi_nella_dimensione in ipercubi_connessi_per_dimensione:
+                    lista_ipercubi_nella_dimensione.difference_update(hyperboxes_to_be_removed)
+
+            # il valore di euristica viene incrementato di una unità e si passa alla iterazione successiva
+            heuristic_value += 1
+
+        # ritorno del valore di euristica calcolato
         return heuristic_value
 
 
@@ -355,7 +556,7 @@ class DCStarProblem(Problem):
                 necessary_cuts[dimension_index - 1] += 1
 
         # the list of the number of cuts for each dimension is returned
-        return necessary_cuts
+        return sum(necessary_cuts)
 
 
     # Method for generate a genetic DimensionalSequenceBinary individual to be used as guide for A* computation

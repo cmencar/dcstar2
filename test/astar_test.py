@@ -7,7 +7,8 @@ from heuristic_search.dcstar_problem import DCStarProblem
 
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
-point_list, m_d, M_d = loader.load("created point lists/point_list_2.json")
+
+point_list, m_d, M_d = loader.load("created point lists/point_list_3.json")
 
 # declaration of DeapGeneticGuideSequenceProblem parameters
 gg_args = {"selected_for_tournament": 5,
@@ -16,14 +17,23 @@ gg_args = {"selected_for_tournament": 5,
            "selected_best": 10}
 
 # creation of DCStarProblem object for the clustering operation
-problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, gg_parameters=gg_args)
+problem = DCStarProblem(point_list, m_d = m_d, M_d = M_d, verbose = True, gg_parameters = None)
 
 # acquiring cuts sequences created in DCStar object with passed points list
 cuts_sequences = problem.get_cuts_sequences()
 
 # execution of clustering with DCStar and acquiring of results
-result, branches_taken, time = astar(problem)
+# TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA (nodi_valutati)
+#for _ in range(10):
+result, branches_taken, time, nodi_valutati = astar(problem)
 print("\nFound node in", branches_taken, "evaluation in", time, "sec.")
+
+# TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
+duplicati = len(nodi_valutati) - len(set(nodi_valutati))
+print("Number of duplication:", duplicati)
+if duplicati > 0:
+    print("Duplicate elements:", set([nodo for nodo in nodi_valutati if nodi_valutati.count(nodo) > 1]))
+
 
 # creation of an selected cuts sequence with found cuts sequence
 selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
