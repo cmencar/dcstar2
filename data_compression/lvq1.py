@@ -61,9 +61,9 @@ class lvq1(Compression):
                     p[0:-1] = np.add(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
                 else:
                     p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
-                    prototypes[dist[0][0]] = p
-                    # Error Update
-                    e = e + np.linalg.norm(p - p_old)
+                prototypes[dist[0][0]] = p
+                # Error Update
+                e = e + np.linalg.norm(p - p_old)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
