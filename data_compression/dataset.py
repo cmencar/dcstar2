@@ -1,16 +1,16 @@
 from sklearn import preprocessing
 import pandas as pd
-from data_compression.compression_algorithm import Compression
+import numpy as np
+from data_compression.compression_strategy import compression_strategy
 
 
 class dataset:
 
-    def __init__(self, data, strategy: Compression = None):
+    def __init__(self, data, strategy: compression_strategy = None):
         self.data = data
         self.features = data.iloc[:, :-1]
         self.labels = data.iloc[:, -1]
         self._strategy = strategy
-
 
     def set_strategy(self, strategy):
         self._strategy = strategy

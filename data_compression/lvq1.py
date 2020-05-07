@@ -1,12 +1,12 @@
 import numpy as np
 import pandas as pd
-from data_compression.compression_algorithm import Compression
+from data_compression.compression_strategy import compression_strategy
 import json
 
 
-class lvq1(Compression):
+class lvq1(compression_strategy):
 
-    def __init__(self, data, n_prototypes, n_epochs=1, learning_rate=0.1, tolerance=5):
+    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.1, tolerance=5):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -14,7 +14,7 @@ class lvq1(Compression):
         self.learning_rate = learning_rate
         self.tolerance = tolerance
 
-    # Method for initialization of prototypes
+    # Method for creation of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
     # output: prototypes
     def algorithm(self, unique_y):
@@ -33,22 +33,25 @@ class lvq1(Compression):
                 x = class_data.sample().to_numpy()
                 # Adding the initial prototype chosen in the array
                 p_init = np.append(p_init, x, axis=0)
+
         # Initializing the flag to determine the end of the cycle do-while
         flag = True
         # Initialization of epochs
         i = 1
         # Copy of the initial prototype array, so you can update them
         prototypes = np.copy(p_init)
+
         while flag:
             # error initialization
             e = 0
-            for index, x in self.data.iterrows():
+            start = pd.Timestamp.now()
+            for row in self.data.itertuples():
                 # initialization of the list of distances
                 dist = list()
                 for j in range(len(prototypes)):
                     # Euclidean distance between the initial prototype and the element of the examined
                     # normalized_dataset
-                    distance = np.linalg.norm(prototypes[j][0:-1] - x[0:-1])
+                    distance = np.linalg.norm(prototypes[j][0:-1] - row[1:-1])
                     # Adding the calculated distance to the distance list
                     dist.append((j, distance))
                 # Descending order of the distance list
@@ -57,21 +60,22 @@ class lvq1(Compression):
                 p = prototypes[dist[0][0]]
                 # Copy of the prototype with shorter distance
                 p_old = np.copy(p)
-                if x.iloc[-1] == p[-1]:
-                    p[0:-1] = np.add(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
+                if row[-1] == p[-1]:
+                    p[0:-1] = np.add(p[0:-1], np.multiply(self.learning_rate, np.subtract(row[1:-1], p[0:-1])))
                 else:
-                    p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(x[0:-1], p[0:-1])))
+                    p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(row[1:-1], p[0:-1])))
                 prototypes[dist[0][0]] = p
                 # Error Update
                 e = e + np.linalg.norm(p - p_old)
+            print("Timer epoca n." + str(i))
+            print(pd.Timestamp.now() - start)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
             # Checking the cycle exit conditions
-            if i > self.n_epochs and e < self.tolerance:
+            if i < self.n_epochs and e < self.tolerance:
                 flag = False
-        results = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
-        return results
 
-
+        print(type(prototypes))
+        return prototypes
