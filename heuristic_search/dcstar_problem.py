@@ -17,6 +17,8 @@ class DCStarProblem(Problem):
     # @verbose: flag for the debug print
     def __init__(self, points_list, m_d, M_d, verbose = False, gg_parameters = None):
 
+        self.unique_successors = True
+
         # initialization of point list
         self.__points_list = points_list
 
