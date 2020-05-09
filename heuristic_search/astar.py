@@ -8,7 +8,7 @@ import time
 def astar(problem):
 
     # TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
-    nodi_valutati = []
+    evaluated_nodes = []
 
     # initialization of timer (used to measure the time taken in the computation) and number of branches taken
     start_time = time.time()
@@ -21,7 +21,7 @@ def astar(problem):
     # definition of the starting node for the evaluation and its starting cost. The starting node is now defined
     # as the first estimated node to be evaluated in problem computation
     start_node = Node(problem.start_state)
-    estimated_node = ((0, 0, 0), start_node) #0, 0, 0), start_node)
+    estimated_node = ((0, 0), start_node) #0, 0, 0), start_node)
     front.put(estimated_node)
 
     # if the front priority queue is not empty means that are more nodes to be evaluated
@@ -43,7 +43,7 @@ def astar(problem):
 
         # TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
         #print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
-        nodi_valutati.append(repr(current_state.elements))
+        evaluated_nodes.append([repr(current_state.elements), repr(estimated_cost)])
 
 
         # if it is not a unique successor then insert the current_node in closed queue. unique_successor means that
@@ -56,7 +56,7 @@ def astar(problem):
         # The information on current_State as a possible result is given by the goal function, which returns True
         # if the cut sequence defined by the state generates a set of hyperboxes all pure
         if problem.goal(current_state):
-            return current_node.state, branches_taken, time.time() - start_time, nodi_valutati
+            return current_node.state, branches_taken, time.time() - start_time, evaluated_nodes
 
         # if the evaluated current_State is not a possible result then define the list of successors of the
         # evaluated current_state. Those successors will be evaluated in the next steps.
@@ -75,9 +75,6 @@ def astar(problem):
                 # if it is not a unique successor then there could be a duplicate node, i.e. a front priority
                 # queue's node that has the same state as one of the newly created successors
                 if not problem.unique_successors:
-
-                    # TODO solo per valutazione, la ricerca dei nodi non viene mai praticata, quindi spreco di tempo
-                    #front.put((estimated_cost, successor_node))
 
                     # Search if the evaluated successor state, i.e. a certain cut configuration defined by
                     # DimensionalSequenceBinary, is already present in a node in the front priority queue.

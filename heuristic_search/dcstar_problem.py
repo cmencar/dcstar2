@@ -4,7 +4,7 @@ from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensio
 from heuristic_search.problem import Problem
 from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 import numpy as np
-import time
+import matplotlib.pyplot as plt
 
 
 # Class that defines a problem that can be used by the A* algorithm to define a cluster solution.
@@ -99,8 +99,9 @@ class DCStarProblem(Problem):
         #second_level_priority = self.__revisited_first_level_heuristic_value(node) ** 3
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
-        #third_level_priority = self.__get_second_level_priority(node)
-        #fourth_level_priority = self.__get_third_level_priority(node)
+        #third_level_priority = self.__get_second_level_heuristic_value(node)
+        #fourth_level_priority = self.__get_second_level_priority(node)
+        #fifth_level_priority = self.__get_third_level_priority(node)
         return first_level_priority, second_level_priority #,third_level_priority #, fourth_level_priority
 
 
@@ -501,6 +502,14 @@ class DCStarProblem(Problem):
             # initialize intersection and union cardinality
             intersection_value = 0
             union_value = 0
+
+            genetic_individual = SelectedDimensionalSequenceNumeric()
+            genetic_individual.from_binary(self.__cuts_sequences, self.__genetic_guide_individual)
+
+            numerical_node = SelectedDimensionalSequenceNumeric()
+            numerical_node.from_binary(self.__cuts_sequences, node.state)
+
+            '''
             # for each dimension into evaluated node
             for dimension in range(node.state.get_dimensions_number()):
                 # increment intersection cardinality by the one of the intersection of both
@@ -513,6 +522,13 @@ class DCStarProblem(Problem):
                 union_value += len(
                     set(node.state.get_dimension(dimension)).union(
                         set(self.__genetic_guide_individual.get_dimension(dimension))))
+            '''
+            for dimension in range(genetic_individual.get_dimensions_number()):
+                intersection_value += len(set(numerical_node.get_dimension(dimension)).
+                                          intersection(set(genetic_individual.get_dimension(dimension))))
+                union_value += len(set(numerical_node.get_dimension(dimension)).
+                                       union(set(genetic_individual.get_dimension(dimension))))
+
             # return Jaccard dissimilarity
             return 1 - intersection_value / union_value
 
@@ -580,8 +596,8 @@ class DCStarProblem(Problem):
         # generate genetic sequence with impure possibility
         sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
 
-        # Process of sequence purification
         '''
+        # Process of sequence purification
         # create a selected cuts sequence with given genetic guide binary sequence
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
@@ -593,9 +609,10 @@ class DCStarProblem(Problem):
             # set solution not found
             found = False
             # generate successors of genetic binary sequence with added random cut
-            successors = sequence.get_successors()
+            #successors = sequence.get_successors()
+            successors = self.successors(sequence)
             # while is not found a pure solution
-            while not found:
+            while not found and successors != []:
                 # for every generated successor
                 for successor in successors:
                     # generate successor's hyperboxes
@@ -611,8 +628,11 @@ class DCStarProblem(Problem):
                     # generate other successors
                     successors = successor.get_successors()
         '''
+
         # show genetic guide sequence
-        sequence.debug_print()
+        if self.verbose:
+            print("Genetic individual:")
+            sequence.debug_print()
 
         return sequence
 
@@ -646,3 +666,36 @@ class DCStarProblem(Problem):
                                                         self.__boundary_points[0], self.__boundary_points[1])
 
         return genetic_guide, gg_parameters["generations"], population_size, gg_parameters["selected_best"]
+
+
+    def stampa(self, node):
+
+        if node.get_dimensions_number() == 2:
+
+            # printing T_d sequences in the plot
+            for cut in self.__cuts_sequences.get_dimension(0):
+                plt.plot([cut, cut], [self.__boundary_points[0][0], self.__boundary_points[1][0]], 'k', linestyle=':', color='grey')
+            for cut in self.__cuts_sequences.get_dimension(1):
+                plt.plot([self.__boundary_points[0][1], self.__boundary_points[1][1]], [cut, cut], linestyle=':', color='grey')
+
+            # printing S_d sequences in the plot
+            for cut in node.get_dimension(0):
+                plt.plot([cut, cut], [self.__boundary_points[0][0], self.__boundary_points[1][0]], 'k', linestyle='--', color='red')
+            for cut in node.get_dimension(1):
+                plt.plot([self.__boundary_points[0][1], self.__boundary_points[1][1]], [cut, cut], linestyle='--', color='red')
+
+
+            '''
+            classes = set([p.get_label() for p in self.__points_list])
+            colors_list = list(colors._colors_full_map.values())
+            random.shuffle(colors_list)
+            colored_class = {label: color for label, color in zip(classes, colors_list)}
+
+            for point in self.prototypes:
+                plt.scatter(point.get_coordinate(0), point.get_coordinate(1),
+                            color=colored_class.get(point.get_label()))
+            '''
+
+            # showing the plot to video
+            plt.show()
+
