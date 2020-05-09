@@ -21,7 +21,7 @@ def astar(problem):
     # definition of the starting node for the evaluation and its starting cost. The starting node is now defined
     # as the first estimated node to be evaluated in problem computation
     start_node = Node(problem.start_state)
-    estimated_node = ((0, 0), start_node) #0, 0, 0), start_node)
+    estimated_node = ((0, 0, 0), start_node) #0, 0, 0), start_node)
     front.put(estimated_node)
 
     # if the front priority queue is not empty means that are more nodes to be evaluated

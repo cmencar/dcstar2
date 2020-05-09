@@ -14,7 +14,7 @@ gg_args = {"selected_for_tournament": 5,
            "selected_best": 10}
 
 clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d,
-                                         genetic_guide_parameters=gg_args, verbose=False)
+                                         genetic_guide_parameters=gg_args, verbose=True)
 clustering.predict_verbose(save_log=True)
 clustering.plot_result()
 
