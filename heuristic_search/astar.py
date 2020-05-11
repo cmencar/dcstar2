@@ -3,6 +3,13 @@ from heuristic_search.node import Node
 import sys
 import time
 
+# TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
+'''
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+from doubleclusteringstar import DoubleClusteringStar as dcstar
+import random
+'''
 
 # Method for the execution of A* algorithm for the clustering problem
 def astar(problem):
@@ -24,6 +31,27 @@ def astar(problem):
     estimated_node = ((0, 0, 0), start_node) #0, 0, 0), start_node)
     front.put(estimated_node)
 
+    # generation of dynamic plot
+    '''
+    xdata = []
+    ydata = []
+    plt.show()
+    axes = plt.gca()
+    axes.set_xlim()
+    axes.set_ylim()
+    classes = set([p.get_label() for p in dcstar.prototypes])
+    colors_list = list(colors._colors_full_map.values())
+    random.shuffle(colors_list)
+    colored_class = {label: color for label, color in zip(classes, colors_list)}
+
+    for point in dcstar.prototypes:
+        if point.get_label() == 1.0:
+            color = "blue"
+        else:
+            color = "green"
+        plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color=color)
+    '''
+
     # if the front priority queue is not empty means that are more nodes to be evaluated
     while not front.empty():
 
@@ -44,6 +72,7 @@ def astar(problem):
         # TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
         print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
         evaluated_nodes.append([repr(current_state.elements), repr(estimated_cost)])
+
 
 
         # if it is not a unique successor then insert the current_node in closed queue. unique_successor means that

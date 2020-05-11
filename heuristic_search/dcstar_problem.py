@@ -97,10 +97,10 @@ class DCStarProblem(Problem):
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
         third_level_priority = self.__get_second_level_heuristic_value(node)
-        fourth_level_priority = self.__get_second_level_priority(node)
+        #fourth_level_priority = self.__get_second_level_priority(node)
         #fifth_level_priority = self.__get_third_level_priority(node)
-        return first_level_priority, second_level_priority, third_level_priority, \
-               fourth_level_priority#, fifth_level_priority
+        return first_level_priority, second_level_priority, third_level_priority#, \
+               #fourth_level_priority, fifth_level_priority
 
 
     # Method for acquiring the g path-cost value. It is based on the counting the cuts present in the
