@@ -31,10 +31,10 @@ def astar(problem):
         branches_taken = branches_taken + 1
 
         # depending if the verbose mode is chosen, the correct on-screen printing is shown
-        if problem.verbose:
-            sys.stdout.write('\r' + "Evaluating node #" + str(branches_taken))
-        else:
-            sys.stdout.write('\r' + "Evaluating" + str('.' * (branches_taken % 5)))
+        #if problem.verbose:
+        #    sys.stdout.write('\r' + "Evaluating node #" + str(branches_taken))
+        #else:
+        #    sys.stdout.write('\r' + "Evaluating" + str('.' * (branches_taken % 5)))
 
         # acquiring the most promising node from front priority queue, i.e. the node with the best estimated_cost,
         # and initialize the current_state variable with the most promising node state (a DimensionalSequenceBinary object)
@@ -42,7 +42,7 @@ def astar(problem):
         current_state = current_node.state
 
         # TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
-        #print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
+        print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
         evaluated_nodes.append([repr(current_state.elements), repr(estimated_cost)])
 
 

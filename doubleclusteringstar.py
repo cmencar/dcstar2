@@ -70,7 +70,12 @@ class DoubleClusteringStar:
             colored_class = {label : color for label, color in zip(classes, colors_list)}
 
             for point in self.prototypes:
-                plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = colored_class.get(point.get_label()))
+                if point.get_label() == 1.0:
+                    color = "blue"
+                else:
+                    color = "green"
+                plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = color)
+                #plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = colored_class.get(point.get_label()))
 
             # showing the plot to video
             plt.show()
@@ -83,12 +88,25 @@ class DoubleClusteringStar:
 
         file.write("# Prototypes\n")
         for prototype in self.prototypes:
-            file.write(repr(prototype.get_coordinates()) + ", " + repr(prototype.get_label()) + "\n")
+            file.write(repr(prototype.get_coordinates()) + "; " + repr(prototype.get_label()) + "\n")
+
         file.write("\n# T_d sequences\n")
-        file.write(repr(self.cuts_sequences.elements) + "\n")
+        file.write(repr(self.cuts_sequences.elements).replace("\n", "").replace("\t", "") + "\n")
+
+        if self.problem.get_genetic_guide_individual() is not None:
+            file.write("\n# Genetic sequences\n")
+            file.write(repr(self.problem.get_genetic_guide_individual().elements).replace("\n", "").replace("\t", "") + "\n")
+
         file.write("\n# S_d sequences\n")
         for evaluated_node in evaluated_nodes:
-            file.write(evaluated_node[0] + ", " + evaluated_node[1] + "\n")
+            file.write(evaluated_node[0].replace("\n", "").replace("\t", "") + "; " + evaluated_node[1] + "\n")
+
+        file.write("\n# M_d\n")
+        file.write(repr(self.M_d) + "\n")
+
+        file.write("\n# m_d\n")
+        file.write(repr(self.m_d) + "\n")
+
         file.close()
 
 

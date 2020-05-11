@@ -94,15 +94,13 @@ class DCStarProblem(Problem):
     # three-levels priority and define a tuple with the three values
     # @node: Node object of to be evaluated to get the cost value
     def estimate_cost(self, node):
-        #first_level_priority = self.__get_first_level_priority(node)
-        #second_level_priority = self.__get_first_level_heuristic_value(node)
-        #second_level_priority = self.__revisited_first_level_heuristic_value(node) ** 3
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
         third_level_priority = self.__get_second_level_heuristic_value(node)
-        #fourth_level_priority = self.__get_second_level_priority(node)
+        fourth_level_priority = self.__get_second_level_priority(node)
         #fifth_level_priority = self.__get_third_level_priority(node)
-        return first_level_priority, second_level_priority,third_level_priority #, fourth_level_priority
+        return first_level_priority, second_level_priority, third_level_priority, \
+               fourth_level_priority#, fifth_level_priority
 
 
     # Method for acquiring the g path-cost value. It is based on the counting the cuts present in the
@@ -596,6 +594,12 @@ class DCStarProblem(Problem):
         # generate genetic sequence with impure possibility
         sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
 
+        s_d = SelectedDimensionalSequenceNumeric()
+        s_d.from_binary(self.__cuts_sequences, sequence)
+        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
+        if hbs.get_impure_hyperboxes_number() != 0:
+            print("evaluated genetic individual is an impure one\n")
+
         '''
         # Process of sequence purification
         # create a selected cuts sequence with given genetic guide binary sequence
@@ -609,8 +613,8 @@ class DCStarProblem(Problem):
             # set solution not found
             found = False
             # generate successors of genetic binary sequence with added random cut
-            #successors = sequence.get_successors()
-            successors = self.successors(sequence)
+            successors = sequence.get_successors()
+            #successors = self.successors(sequence)
             # while is not found a pure solution
             while not found and successors != []:
                 # for every generated successor
@@ -668,34 +672,5 @@ class DCStarProblem(Problem):
         return genetic_guide, gg_parameters["generations"], population_size, gg_parameters["selected_best"]
 
 
-    def stampa(self, node):
-
-        if node.get_dimensions_number() == 2:
-
-            # printing T_d sequences in the plot
-            for cut in self.__cuts_sequences.get_dimension(0):
-                plt.plot([cut, cut], [self.__boundary_points[0][0], self.__boundary_points[1][0]], 'k', linestyle=':', color='grey')
-            for cut in self.__cuts_sequences.get_dimension(1):
-                plt.plot([self.__boundary_points[0][1], self.__boundary_points[1][1]], [cut, cut], linestyle=':', color='grey')
-
-            # printing S_d sequences in the plot
-            for cut in node.get_dimension(0):
-                plt.plot([cut, cut], [self.__boundary_points[0][0], self.__boundary_points[1][0]], 'k', linestyle='--', color='red')
-            for cut in node.get_dimension(1):
-                plt.plot([self.__boundary_points[0][1], self.__boundary_points[1][1]], [cut, cut], linestyle='--', color='red')
-
-
-            '''
-            classes = set([p.get_label() for p in self.__points_list])
-            colors_list = list(colors._colors_full_map.values())
-            random.shuffle(colors_list)
-            colored_class = {label: color for label, color in zip(classes, colors_list)}
-
-            for point in self.prototypes:
-                plt.scatter(point.get_coordinate(0), point.get_coordinate(1),
-                            color=colored_class.get(point.get_label()))
-            '''
-
-            # showing the plot to video
-            plt.show()
-
+    def get_genetic_guide_individual(self):
+        return self.__genetic_guide_individual
