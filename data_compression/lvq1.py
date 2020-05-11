@@ -34,16 +34,13 @@ class lvq1(compression_strategy):
                 # Adding the initial prototype chosen in the array
                 p_init = np.append(p_init, x, axis=0)
 
-        # Initializing the flag to determine the end of the cycle do-while
-        flag = True
-        # Initialization of epochs
-        i = 1
+        # Initialization of epochs and error
+        i = 0
+        e = 0
         # Copy of the initial prototype array, so you can update them
         prototypes = np.copy(p_init)
 
-        while flag:
-            # error initialization
-            e = 0
+        while i < self.n_epochs or e < self.tolerance:
             start = pd.Timestamp.now()
             for row in self.data.itertuples():
                 # initialization of the list of distances
@@ -67,15 +64,13 @@ class lvq1(compression_strategy):
                 prototypes[dist[0][0]] = p
                 # Error Update
                 e = e + np.linalg.norm(p - p_old)
-            print("Timer epoca n." + str(i))
+            print("Timer epoca n." + str(i+1))
             print(pd.Timestamp.now() - start)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-            # Checking the cycle exit conditions
-            if i < self.n_epochs and e < self.tolerance:
-                flag = False
+        df = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
+        return df
 
-        print(type(prototypes))
-        return prototypes
+# or e < self.tolerance

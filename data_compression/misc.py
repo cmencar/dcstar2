@@ -8,7 +8,7 @@ def scatterPlot(df, m_d, M_d):
         plt.plot(group["feature1"], group["feature2"], marker="o", linestyle="", label=name)
 
     plt.legend()
-    plt.savefig('test_prototipi/banana/banana_new_100.png')
+    plt.savefig('test_prototipi/bandiera/bandiera_new_100.png')
 
 
 def create_json(m_d, M_d, prototypes):
