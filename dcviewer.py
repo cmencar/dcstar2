@@ -135,7 +135,7 @@ class App(QMainWindow):
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getOpenFileName(self, "Open log file", "",
+        filename, _ = QFileDialog.getOpenFileName(self, "Open log file", "../",
                                                   "Double Clustering Log Files (*.dcl)",
                                                   options=options)
         if filename:
