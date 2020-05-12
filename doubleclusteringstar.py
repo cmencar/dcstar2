@@ -71,9 +71,11 @@ class DoubleClusteringStar:
 
             for point in self.prototypes:
                 if point.get_label() == 1.0:
-                    color = "blue"
-                else:
+                    color = "red"
+                elif point.get_label() == 2.0:
                     color = "green"
+                else:
+                    color = "blue"
                 plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = color)
                 #plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = colored_class.get(point.get_label()))
 

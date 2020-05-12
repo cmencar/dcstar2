@@ -94,6 +94,7 @@ class DCStarProblem(Problem):
     # three-levels priority and define a tuple with the three values
     # @node: Node object of to be evaluated to get the cost value
     def estimate_cost(self, node):
+    
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
         third_level_priority = self.__get_second_level_heuristic_value(node)
@@ -105,6 +106,7 @@ class DCStarProblem(Problem):
     # logical sequence which value is True
     # @node: Node object of to be evaluated to get the path-cost value
     def g(self, node):
+    
         x = 0
         for dimension_index in range(node.state.get_dimensions_number()):
             for cut in node.state.get_dimension(dimension_index):
