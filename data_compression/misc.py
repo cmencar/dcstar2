@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import json
 
 
-def scatterPlot(df, m_d, M_d):
-    groups = df.groupby("classes")
+def scatterPlot(df, alpha):
+    groups = df.groupby("species")
     for name, group in groups:
-        plt.plot(group["feature1"], group["feature2"], marker="o", linestyle="", label=name)
+        plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
 
     plt.legend()
-    plt.savefig('test_prototipi/bandiera/bandiera_new_100.png')
+    plt.savefig('prove.png')
 
 
 def create_json(m_d, M_d, prototypes):
@@ -29,5 +29,5 @@ def create_json(m_d, M_d, prototypes):
             'name': "point" + str(point_id[i] + 1)
         })
 
-    with open("test_prototipi/banana/Json/banana_100.json", 'w') as output:
+    with open("iris_100_42_norm.json", 'w') as output:
         json.dump(data, output, indent=1)

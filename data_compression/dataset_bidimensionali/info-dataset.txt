@@ -23,7 +23,7 @@ datacircle:
     # Input	2
     # Classi 2
     # Datapoint	500
-    Range x	[[0.003156274, 0.9985265235]
+    Range x	[0.003156274, 0.9985265235]
     Range y	[0.0005482364, 0.9961826395]
     
 bandiera:

@@ -25,7 +25,7 @@ class dataset:
 
     # Delete duplicates from dataset labels to get unique labels
     def get_unique_labels(self):
-        return self.data["classes"].unique()
+        return self.data["species"].unique()
 
     def get_minimum_boundary(self):
         minValues = self.data.min()
@@ -46,11 +46,9 @@ class dataset:
         return results
 
 
-# Normalization method taken from the sklearn library
 def normalized_dataset(df):
-    normalized_features = preprocessing.scale(df.iloc[:, :-1])
+    features = df.iloc[:, :-1]
     labels = df.iloc[:, -1]
-    # Union of normalized features with corresponding labels
-    list_of_tuples = list(zip(normalized_features[:, 0], normalized_features[:, -1], labels))
-    df = pd.DataFrame(list_of_tuples, columns=['feature1', 'feature2', 'classes'])
-    return df
+    data_normal = (features - features.min()) / (features.max() - features.min())
+    data_normal['species'] = labels
+    return data_normal

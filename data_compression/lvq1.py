@@ -6,7 +6,7 @@ import json
 
 class lvq1(compression_strategy):
 
-    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.1, tolerance=5):
+    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.001, tolerance=12):
 
         self.data = data
         self.n_prototypes = n_prototypes
@@ -17,15 +17,16 @@ class lvq1(compression_strategy):
     # Method for creation of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
     # output: prototypes
-    def algorithm(self, unique_y):
+    def algorithm(self, data):
         # calculation number of features
         n_dimension = self.data.shape[1]
+        unique_y = self.get_unique_labels()
         # I initialize the empty array where I will put the chosen prototypes
         p_init = np.empty((0, n_dimension))
         # Initialize prototypes using random choice.
         for i in range(len(unique_y)):
             # Division of the dataset according to the label examined
-            class_data = self.data.loc[self.data.classes == unique_y[i]]
+            class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
             np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
             # Causal choice of label prototypes examined
@@ -39,8 +40,7 @@ class lvq1(compression_strategy):
         e = 0
         # Copy of the initial prototype array, so you can update them
         prototypes = np.copy(p_init)
-
-        while i < self.n_epochs or e < self.tolerance:
+        while i < self.n_epochs and e < self.tolerance:
             start = pd.Timestamp.now()
             for row in self.data.itertuples():
                 # initialization of the list of distances
@@ -63,14 +63,14 @@ class lvq1(compression_strategy):
                     p[0:-1] = np.subtract(p[0:-1], np.multiply(self.learning_rate, np.subtract(row[1:-1], p[0:-1])))
                 prototypes[dist[0][0]] = p
                 # Error Update
-                e = e + np.linalg.norm(p - p_old)
-            print("Timer epoca n." + str(i+1))
+                e = e + np.linalg.norm(p[0:-1] - p_old[0:-1])
+            print("Timer epoca n." + str(i + 1))
             print(pd.Timestamp.now() - start)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        df = pd.DataFrame(prototypes, columns=['feature1', 'feature2', 'classes'])
-        return df
+        return prototypes
 
-# or e < self.tolerance
+    def get_unique_labels(self):
+        return self.data.iloc[:, -1].unique()
