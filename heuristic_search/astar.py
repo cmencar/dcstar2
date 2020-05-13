@@ -3,13 +3,6 @@ from heuristic_search.node import Node
 import sys
 import time
 
-# TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
-'''
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-from doubleclusteringstar import DoubleClusteringStar as dcstar
-import random
-'''
 
 # Method for the execution of A* algorithm for the clustering problem
 def astar(problem):
@@ -28,29 +21,8 @@ def astar(problem):
     # definition of the starting node for the evaluation and its starting cost. The starting node is now defined
     # as the first estimated node to be evaluated in problem computation
     start_node = Node(problem.start_state)
-    estimated_node = ((0, 0, 0), start_node) #0, 0, 0), start_node)
+    estimated_node = ((0, 0, 0), start_node)
     front.put(estimated_node)
-
-    # generation of dynamic plot
-    '''
-    xdata = []
-    ydata = []
-    plt.show()
-    axes = plt.gca()
-    axes.set_xlim()
-    axes.set_ylim()
-    classes = set([p.get_label() for p in dcstar.prototypes])
-    colors_list = list(colors._colors_full_map.values())
-    random.shuffle(colors_list)
-    colored_class = {label: color for label, color in zip(classes, colors_list)}
-
-    for point in dcstar.prototypes:
-        if point.get_label() == 1.0:
-            color = "blue"
-        else:
-            color = "green"
-        plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color=color)
-    '''
 
     # if the front priority queue is not empty means that are more nodes to be evaluated
     while not front.empty():
@@ -59,10 +31,10 @@ def astar(problem):
         branches_taken = branches_taken + 1
 
         # depending if the verbose mode is chosen, the correct on-screen printing is shown
-        #if problem.verbose:
-        #    sys.stdout.write('\r' + "Evaluating node #" + str(branches_taken))
-        #else:
-        #    sys.stdout.write('\r' + "Evaluating" + str('.' * (branches_taken % 5)))
+        if problem.verbose:
+            sys.stdout.write('\r' + "Evaluating node #" + str(branches_taken))
+        else:
+            sys.stdout.write('\r' + "Evaluating" + str('.' * (branches_taken % 5)))
 
         # acquiring the most promising node from front priority queue, i.e. the node with the best estimated_cost,
         # and initialize the current_state variable with the most promising node state (a DimensionalSequenceBinary object)
@@ -70,10 +42,8 @@ def astar(problem):
         current_state = current_node.state
 
         # TODO togli questa parte - SOLO PER DEBUG EURISTICA MOMENTANEA
-        print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
+        #print("Nodo", branches_taken, "\tHeuristic value:", estimated_cost, "\tTagli:", repr(current_state.elements[0]), repr(current_state.elements[1]))
         evaluated_nodes.append([repr(current_state.elements), repr(estimated_cost)])
-
-
 
         # if it is not a unique successor then insert the current_node in closed queue. unique_successor means that
         # is impossible to find cycles in the evaluated path: consequently, the paths taken by the A* algorithm

@@ -4,7 +4,7 @@ from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensio
 from heuristic_search.problem import Problem
 from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 import numpy as np
-import matplotlib.pyplot as plt
+import time
 
 
 # Class that defines a problem that can be used by the A* algorithm to define a cluster solution.
@@ -36,8 +36,10 @@ class DCStarProblem(Problem):
 
         # initialization of the individual from genetic guide
         self.__genetic_guide_individual = None
+        self.__genetic_individual_purity = True
+        self.__ga_time = 0
         if gg_parameters is not None:
-            self.__genetic_guide_individual = self.__generate_gg_individual(gg_parameters)
+            self.__genetic_guide_individual, self.__ga_time = self.__generate_gg_individual(gg_parameters)
 
 
     # Method for creating a cuts sequence starting from a list of prototype points
@@ -98,7 +100,7 @@ class DCStarProblem(Problem):
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
         third_level_priority = self.__get_second_level_heuristic_value(node)
-        #fifth_level_priority = self.__get_third_level_priority(node)
+        fifth_level_priority = self.__get_third_level_priority(node)
         return first_level_priority, second_level_priority, third_level_priority#, fifth_level_priority
 
 
@@ -579,6 +581,8 @@ class DCStarProblem(Problem):
     # @gg_parameters: dictionary of parameters to initialize genetic guide
     def __generate_gg_individual(self, gg_parameters):
 
+        start_time = time.time()
+
         # initialize the genetic guide
         genetic_guide, population_size, generations, selected_best = self.__initialize_gg(gg_parameters)
 
@@ -599,6 +603,7 @@ class DCStarProblem(Problem):
         hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
         if hbs.get_impure_hyperboxes_number() != 0:
             print("evaluated genetic individual is an impure one\n")
+            self.__genetic_individual_purity = False
 
         '''
         # Process of sequence purification
@@ -638,7 +643,7 @@ class DCStarProblem(Problem):
             print("Genetic individual:")
             sequence.debug_print()
 
-        return sequence
+        return sequence, time.time() - start_time
 
 
     # Method for initialize the genetic guide into DCStarProblem if needed
@@ -674,3 +679,9 @@ class DCStarProblem(Problem):
 
     def get_genetic_guide_individual(self):
         return self.__genetic_guide_individual
+
+    def get_genetic_guide_purity(self):
+        return self.__genetic_individual_purity
+
+    def get_genetic_algorithm_time(self):
+        return self.__ga_time

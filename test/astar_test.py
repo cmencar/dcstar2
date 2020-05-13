@@ -6,24 +6,37 @@ import doubleclusteringstar as dcstar
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
 
-point_list, m_d, M_d = loader.load("created point lists/bandiera_1000_30.json")
+point_list, m_d, M_d = loader.load("created point lists/bandiera_100_30.json")
 
 # declaration of DeapGeneticGuideSequenceProblem parameters
-gg_args = {"selected_for_tournament": 5,
-           "generations": 20,
-           "mating_rate": 0.7,
-           "selected_best": 10}
+gg_args_test_01 = {"selected_for_tournament": 5,
+                   "generations": 20,
+                   "mating_rate": 0.7,
+                   "selected_best": 10}
+
+gg_args_test_02 = {"selected_for_tournament": 2,
+                   "generations": 15,
+                   "mating_rate": 0.7,
+                   "selected_best": 10}
+
+gg_args_test_03 = {"selected_for_tournament": 5,
+                   "generations": 30,
+                   "mating_rate": 0.5,
+                   "selected_best": 10}
+
+gg_args_test_04 = {"selected_for_tournament": 5,
+                   "generations": 50,
+                   "mating_rate": 0.7,
+                   "selected_best": 5}
+
+gg_args_test_05 = {"selected_for_tournament": 5,
+                   "generations": 50,
+                   "mating_rate": 0.2,
+                   "selected_best": 10}
 
 clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d,
-                                         genetic_guide_parameters=gg_args, verbose=True)
+                                         genetic_guide_parameters=gg_args_test_05, verbose=True)
 clustering.predict_verbose(save_log=True)
 clustering.plot_result()
-'''
-clustering.problem.genetic_guide_individual.debug_print()
-selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
-selected_cuts_sequences.from_binary(clustering.problem.cuts_sequences, clustering.problem.genetic_guide_individual)
-hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(clustering.problem.points_list, m_d = clustering.problem.boundary_points[0],
-                                                                 M_d=clustering.problem.boundary_points[1])
-print("puro") if hyperboxes_set.get_impure_hyperboxes_number() == 0 else print("impuro")
-'''
+
 pass

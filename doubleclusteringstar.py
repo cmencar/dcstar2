@@ -21,13 +21,14 @@ class DoubleClusteringStar:
         self.time = 0
 
 
-    def predict(self):
+    def predict(self, save_log = False):
 
         self.problem.verbose = False
         binary_result, self.branches_taken, self.time, evaluated_nodes = astar.astar(problem = self.problem)
         self.result.from_binary(self.cuts_sequences, binary_result)
 
-        # TODO stampa evaluated_nodes in un file per essere letti dall'applicazione grafica
+        if save_log:
+            self.__save_log(evaluated_nodes)
 
         return self.result, self.branches_taken, self.time
 
@@ -77,7 +78,6 @@ class DoubleClusteringStar:
                 else:
                     color = "blue"
                 plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = color)
-                #plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = colored_class.get(point.get_label()))
 
             # showing the plot to video
             plt.show()
@@ -90,7 +90,7 @@ class DoubleClusteringStar:
 
         file.write("# Prototypes\n")
         for prototype in self.prototypes:
-            file.write(repr(prototype.get_coordinates()) + "; " + repr(prototype.get_label()) + "\n")
+            file.write(repr(prototype.get_coordinates()).replace("\n", "") + "; " + repr(prototype.get_label()) + "\n")
 
         file.write("\n# T_d sequences\n")
         file.write(repr(self.cuts_sequences.elements).replace("\n", "").replace("\t", "") + "\n")
@@ -98,6 +98,10 @@ class DoubleClusteringStar:
         if self.problem.get_genetic_guide_individual() is not None:
             file.write("\n# Genetic sequences\n")
             file.write(repr(self.problem.get_genetic_guide_individual().elements).replace("\n", "").replace("\t", "") + "\n")
+            file.write("\n# Genetic purity\n")
+            file.write(repr(self.problem.get_genetic_guide_purity()) + "\n")
+            file.write("\n# Genetic algoritm's time\n")
+            file.write(repr(self.problem.get_genetic_algorithm_time()) + "\n")
 
         file.write("\n# S_d sequences\n")
         for evaluated_node in evaluated_nodes:
@@ -108,6 +112,12 @@ class DoubleClusteringStar:
 
         file.write("\n# m_d\n")
         file.write(repr(self.m_d) + "\n")
+
+        file.write("\n# Time\n")
+        file.write(repr(self.time) + "\n")
+
+        file.write("\n# Number of evaluated nodes\n")
+        file.write(repr(self.branches_taken) + "\n")
 
         file.close()
 
