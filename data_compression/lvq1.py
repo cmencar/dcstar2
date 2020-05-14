@@ -41,7 +41,7 @@ class lvq1(compression_strategy):
         # Copy of the initial prototype array, so you can update them
         prototypes = np.copy(p_init)
         while i < self.n_epochs and e < self.tolerance:
-            start = pd.Timestamp.now()
+            # start = pd.Timestamp.now()
             for row in self.data.itertuples():
                 # initialization of the list of distances
                 dist = list()
@@ -64,8 +64,8 @@ class lvq1(compression_strategy):
                 prototypes[dist[0][0]] = p
                 # Error Update
                 e = e + np.linalg.norm(p[0:-1] - p_old[0:-1])
-            print("Timer epoca n." + str(i + 1))
-            print(pd.Timestamp.now() - start)
+            # print("Timer epoca n." + str(i + 1))
+            # print(pd.Timestamp.now() - start)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate

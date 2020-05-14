@@ -4,7 +4,7 @@ import numpy as np
 from data_compression.compression_strategy import compression_strategy
 
 
-class dataset:
+class compression:
 
     def __init__(self, data, strategy: compression_strategy = None):
         self.data = data
