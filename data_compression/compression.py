@@ -42,7 +42,7 @@ class compression:
         return M_d
 
     def do_compression(self):
-        results = self._strategy.algorithm(self.get_unique_labels())
+        results = self._strategy.algorithm()
         return results
 
 

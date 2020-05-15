@@ -17,7 +17,7 @@ class lvq1(compression_strategy):
     # Method for creation of prototypes
     # input: normalized_dataSet, n_prototypes, unique_labels
     # output: prototypes
-    def algorithm(self, data):
+    def algorithm(self):
         # calculation number of features
         n_dimension = self.data.shape[1]
         unique_y = self.get_unique_labels()
