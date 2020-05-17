@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from data_compression.compression_strategy import compression_strategy
+import matplotlib.pyplot as plt
 import json
 
 
@@ -28,7 +29,7 @@ class lvq1(compression_strategy):
             # Division of the dataset according to the label examined
             class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
+            np_class = round(len(class_data) / len(self.data) * n_p)
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
@@ -75,3 +76,37 @@ class lvq1(compression_strategy):
 
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
+
+    def draw_prototypes(self, prototypes, alpha):
+        groups = prototypes.groupby("species")
+        n_p = len(prototypes)
+        for name, group in groups:
+            plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
+
+        filename = "prove"
+        plt.legend()
+        plt.savefig(filename)
+
+    def create_json(self, m_d, M_d, prototypes):
+        prototypes = prototypes.to_numpy()
+        n_p = len(prototypes)
+        point_coordinates = prototypes[:, :-1].tolist()
+        # print(point_coordinates)
+        point_labels = prototypes[:, -1].tolist()
+        # print(point_labels)
+        point_id = list()
+        for i in point_coordinates:
+            point_id.append(point_coordinates.index(i))
+
+        data = {'points': [], 'm_d': m_d, 'M_d': M_d}
+        for i in range(len(point_coordinates)):
+            coordinates = point_coordinates[i]
+            data['points'].append({
+                'coordinates': coordinates,
+                'class': point_labels[i],
+                'name': "point" + str(point_id[i] + 1)
+            })
+
+        filename = "prove.json"
+        with open(filename, 'w') as output:
+            json.dump(data, output, indent=1)

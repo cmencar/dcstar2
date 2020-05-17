@@ -91,6 +91,7 @@ class fcm(compression_strategy):
                 print("Cluster Centers:")
                 print(np.array(cluster_centers))
             epoch += 1
+
         # print(np.array(m_matrix))
         # print("Final Cluster center:")  # final cluster centers
         cluster_centers = np.array(cluster_centers)
