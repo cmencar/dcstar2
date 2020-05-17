@@ -4,14 +4,18 @@ import json
 
 def scatterPlot(df, alpha):
     groups = df.groupby("species")
+    n_p = len(df)
     for name, group in groups:
         plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
 
+    filename = "test_finale_lvq1/bandiera_{}_100".format(n_p)
     plt.legend()
-    plt.savefig('prove.png')
+    plt.savefig(filename)
 
 
 def create_json(m_d, M_d, prototypes):
+    prototypes = prototypes.to_numpy()
+    n_p = len(prototypes)
     point_coordinates = prototypes[:, :-1].tolist()
     # print(point_coordinates)
     point_labels = prototypes[:, -1].tolist()
@@ -29,5 +33,6 @@ def create_json(m_d, M_d, prototypes):
             'name': "point" + str(point_id[i] + 1)
         })
 
-    with open("iris_100_42_norm.json", 'w') as output:
+    filename = "test_finale_lvq1/bandiera_{}_100.json".format(n_p)
+    with open(filename, 'w') as output:
         json.dump(data, output, indent=1)

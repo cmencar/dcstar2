@@ -4,6 +4,8 @@ import operator
 import numpy as np
 import pandas as pd
 import math
+import matplotlib.pyplot as plt
+from seaborn import scatterplot as scatter
 
 from data_compression.compression_strategy import compression_strategy
 
@@ -12,7 +14,7 @@ class fcm(compression_strategy):
 
     def __init__(self, data, n_clusters=3, n_epochs=100, m=1.7):
 
-        self.data = data
+        super().__init__(data)
         self.n_c = n_clusters
         self.n_epochs = n_epochs
         self.m = m
@@ -81,7 +83,6 @@ class fcm(compression_strategy):
         cluster_labels = []
         epoch = 0
         while epoch < self.n_epochs:
-            start = pd.Timestamp.now()
             cluster_centers = self.calculateCenterCluster(m_matrix, n, df_features)
             m_matrix = self.updateMembershipValue(m_matrix, cluster_centers, n, df_features)
             cluster_labels = self.getClusters(m_matrix, n)
@@ -89,11 +90,17 @@ class fcm(compression_strategy):
             if epoch == 0:
                 print("Cluster Centers:")
                 print(np.array(cluster_centers))
-            # print("Timer epoca n." + str(epoch + 1))
-            # print(pd.Timestamp.now() - start)
             epoch += 1
         # print(np.array(m_matrix))
         # print("Final Cluster center:")  # final cluster centers
         cluster_centers = np.array(cluster_centers)
         cluster_labels = np.array(cluster_labels)
         return cluster_labels, cluster_centers
+
+    def draw_clusters(self, cluster_label, cluster_center):
+        X = self.data.iloc[:, :-1].to_numpy()
+        f, axs = plt.subplots(1, 2, figsize=(11, 5))
+        scatter(X[:, 0], X[:, 1], ax=axs[0])
+        scatter(X[:, 0], X[:, 1], ax=axs[1], hue=cluster_label)
+        scatter(cluster_center[:, 0], cluster_center[:, 1], ax=axs[1], marker=">", s=200)
+        plt.show()

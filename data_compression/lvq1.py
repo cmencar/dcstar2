@@ -8,7 +8,7 @@ class lvq1(compression_strategy):
 
     def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.001, tolerance=12):
 
-        self.data = data
+        super().__init__(data)
         self.n_prototypes = n_prototypes
         self.n_epochs = n_epochs
         self.learning_rate = learning_rate
@@ -70,6 +70,7 @@ class lvq1(compression_strategy):
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
+        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species'])
         return prototypes
 
     def get_unique_labels(self):
