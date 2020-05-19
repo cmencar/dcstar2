@@ -23,30 +23,20 @@ class DoubleClusteringStar:
 
     def predict(self, save_log = False):
 
-        self.problem.verbose = False
         binary_result, self.branches_taken, self.time, evaluated_nodes = astar.astar(problem = self.problem)
         self.result.from_binary(self.cuts_sequences, binary_result)
+
+        if self.problem.verbose:
+            print("\nFound node in", self.branches_taken, "evaluation in", self.time, "sec.")
+            nodes = [node[0] for node in evaluated_nodes]
+            if len(nodes) - len(set(nodes)) > 0:
+                print("Duplicate elements:", set([node for node in evaluated_nodes if evaluated_nodes.count(node) > 1]))
 
         if save_log:
             self.__save_log(evaluated_nodes)
 
         return self.result, self.branches_taken, self.time
 
-
-    def predict_verbose(self, save_log = False):
-
-        binary_result, self.branches_taken, self.time, evaluated_nodes = astar.astar(problem = self.problem)
-        self.result.from_binary(self.cuts_sequences, binary_result)
-
-        print("\nFound node in", self.branches_taken, "evaluation in", self.time, "sec.")
-        nodes = [node[0] for node in evaluated_nodes]
-        if len(nodes) - len(set(nodes)) > 0:
-            print("Duplicate elements:", set([node for node in evaluated_nodes if evaluated_nodes.count(node) > 1]))
-
-        if save_log:
-            self.__save_log(evaluated_nodes)
-
-        return self.result, self.branches_taken, self.time
 
 
     def plot_result(self):
