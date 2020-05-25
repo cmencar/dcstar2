@@ -4,7 +4,7 @@ from data_compression.fcm import fcm
 from datetime import datetime
 
 colnames = ('f1', 'f2', 'species')
-original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=colnames)
+original_dataset = pd.read_csv('dataset_bidimensionali/datacerchiconcentrici_3classi(pieni)(classiNum).csv', names=colnames)
 
 start = pd.Timestamp.now()
 compression = compression(original_dataset)
