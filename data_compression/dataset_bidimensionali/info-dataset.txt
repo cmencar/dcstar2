@@ -1,0 +1,70 @@
+Synt6:
+    # Input	2
+    # Classi 3
+    # Datapoint	200
+    Range x	[-1.4969, 7.7873]
+    Range y	[-0.83586, 7.0034]
+    
+Synt18:
+    # Input	2
+    # Classi 3
+    # Datapoint	400
+    Range x	[-0.17631, 23.809]
+    Range y	[2.5348, 19.943]
+    
+Synt19:
+    # Input	2
+    # Classi 3
+    # Datapoint	400
+    Range x	[-0.944428, 22.814]
+    Range y	[2.4701, 14.003]
+    
+datacircle:    
+    # Input	2
+    # Classi 2
+    # Datapoint	500
+    Range x	[0.003156274, 0.9985265235]
+    Range y	[0.0005482364, 0.9961826395]
+    
+bandiera:
+    # Input	2
+    # Classi 3
+    # Datapoint	300
+    Range x	[0.0114252855, 0.8974773602]
+    Range y	[0.0138966121, 0.996601415]
+    
+scacchi:
+    # Input	2
+    # Classi 2
+    # Datapoint	300
+    Range x	[0.0105462815, 0.9997061813]
+    Range y	[0.0001420687, 0.9943813063]    
+    
+scacchi_new:
+    # Input	2
+    # Classi 2
+    # Datapoint	300
+    Range x	[0.0022397271, 0.9978364615]
+    Range y	[0.0006317381, 0.9980418683]
+    
+banana:
+    # Input	2
+    # Classi 2
+    # Datapoint	5300
+    Range x	[-3.09, 2.81]
+    Range y	[-2.39, 3.19]
+    
+datacerchiconcentrici_3classi_pieni:
+    # Input	2
+    # Classi 3
+    # Datapoint	600
+    Range x	[0.0070186919, 0.9912144267]
+    Range y	[0.0074734972, 0.9998625746]
+
+dataciambelle_3classi:
+    # Input	2
+    # Classi 3
+    # Datapoint	600
+    Range x	[0.0154947684, 0.9884320709]
+    Range y	[0.007832687, 0.9831541528]
+    
