@@ -7,7 +7,7 @@ import json
 
 class lvq1(compression_strategy):
 
-    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.001, tolerance=12):
+    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.001, tolerance=8):
 
         super().__init__(data)
         self.n_prototypes = n_prototypes
@@ -29,7 +29,7 @@ class lvq1(compression_strategy):
             # Division of the dataset according to the label examined
             class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = round(len(class_data) / len(self.data) * n_p)
+            np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
@@ -42,7 +42,7 @@ class lvq1(compression_strategy):
         # Copy of the initial prototype array, so you can update them
         prototypes = np.copy(p_init)
         while i < self.n_epochs and e < self.tolerance:
-            # start = pd.Timestamp.now()
+            start = pd.Timestamp.now()
             for row in self.data.itertuples():
                 # initialization of the list of distances
                 dist = list()
@@ -65,13 +65,13 @@ class lvq1(compression_strategy):
                 prototypes[dist[0][0]] = p
                 # Error Update
                 e = e + np.linalg.norm(p[0:-1] - p_old[0:-1])
-            # print("Timer epoca n." + str(i + 1))
-            # print(pd.Timestamp.now() - start)
+            print("Timer epoca n." + str(i + 1))
+            print(pd.Timestamp.now() - start)
             # Increase of the epoch
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species'])
+        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species'])
         return prototypes
 
     def get_unique_labels(self):
@@ -107,6 +107,17 @@ class lvq1(compression_strategy):
                 'name': "point" + str(point_id[i] + 1)
             })
 
-        filename = "prove.json"
+        filename = "ionosphere_100_20.json"
         with open(filename, 'w') as output:
             json.dump(data, output, indent=1)
+
+    def get_boundary(self, prototypes):
+        minValues = prototypes.min()
+        m_d = tuple()
+        for i in (range(len(minValues) - 1)):
+            m_d = m_d + (minValues[i],)
+        maxValues = prototypes.max()
+        M_d = tuple()
+        for i in (range(len(maxValues) - 1)):
+            M_d = M_d + (maxValues[i],)
+        return m_d, M_d

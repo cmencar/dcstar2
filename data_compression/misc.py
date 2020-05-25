@@ -10,4 +10,4 @@ def scatterPlot(df, alpha):
 
     filename = "test_finale_lvq1/bandiera_{}_100".format(n_p)
     plt.legend()
-    plt.savefig(filename)
+    # plt.savefig(filename)

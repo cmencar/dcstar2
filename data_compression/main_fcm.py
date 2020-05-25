@@ -5,7 +5,6 @@ from datetime import datetime
 
 colnames = ('f1', 'f2', 'species')
 original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=colnames)
-n_p = 20
 
 start = pd.Timestamp.now()
 compression = compression(original_dataset)
