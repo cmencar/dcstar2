@@ -71,14 +71,14 @@ class lvq1(compression_strategy):
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species'])
+        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species'])
         return prototypes
 
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
 
     def draw_prototypes(self, prototypes, alpha):
-        groups = prototypes.groupby("species")
+        groups = prototypes.groupby(prototypes.iloc[-1])
         n_p = len(prototypes)
         for name, group in groups:
             plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
@@ -87,7 +87,7 @@ class lvq1(compression_strategy):
         plt.legend()
         plt.savefig(filename)
 
-    def create_json(self, m_d, M_d, prototypes):
+    def create_json(self, m_d, M_d, prototypes, filename):
         prototypes = prototypes.to_numpy()
         n_p = len(prototypes)
         point_coordinates = prototypes[:, :-1].tolist()
@@ -107,7 +107,6 @@ class lvq1(compression_strategy):
                 'name': "point" + str(point_id[i] + 1)
             })
 
-        filename = "ionosphere_100_20.json"
         with open(filename, 'w') as output:
             json.dump(data, output, indent=1)
 

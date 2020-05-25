@@ -15,7 +15,7 @@ class DCStarProblem(Problem):
     # @m_d: smallest boundary cut of dimension d
     # @M_d: greatest boundary cut of dimension d
     # @verbose: flag for the debug print
-    def __init__(self, points_list, m_d, M_d, verbose = False, gg_parameters = None):
+    def __init__(self, points_list, m_d, M_d, verbose=False, gg_parameters=None):
 
         self.unique_successors = True
 
@@ -41,19 +41,17 @@ class DCStarProblem(Problem):
         if gg_parameters is not None:
             self.__genetic_guide_individual, self.__ga_time = self.__generate_gg_individual(gg_parameters)
 
-
     # Method for creating a cuts sequence starting from a list of prototype points
     def __create_cuts_sequences(self):
 
         # initializes an empty list in order to contain the sequence of T_d cuts that will later be used
         # to create the DimensionalSequenceNumeric object
         numerical_cuts_sequence = list()
-
         # for each possible dimension, indirectly defined by the number of coordinates of any point
         for dimension_index in range(len(self.__points_list[0].get_coordinates())):
 
             # sorts the list of points based on the coordinate value on the dimension identified by dimension_index
-            sorted_point_list = sorted(self.__points_list, key= lambda point: point.get_coordinate(dimension_index))
+            sorted_point_list = sorted(self.__points_list, key=lambda point: point.get_coordinate(dimension_index))
 
             # for each point a projection of the same is determined on the dimension defined by dimension_index.
             # The value of the projection is equivalent to the coordinate of the point on the dimension evaluated.
@@ -80,10 +78,11 @@ class DCStarProblem(Problem):
             # of classes of the evaluated projection must either be different from the next projection in the order
             # in sorted_projections_on_d or it must contain more than one class (since it has at least two
             # different classes, at least one of the two is different).
-            cuts_in_d = [(sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0])/2
-                         for projection_idx in range(len(sorted_projections_on_d) - 1)
-                         if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
-                         or len(sorted_projections_on_d[projection_idx][1]) > 1]
+            cuts_in_d = [
+                (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+                for projection_idx in range(len(sorted_projections_on_d) - 1)
+                if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+                or len(sorted_projections_on_d[projection_idx][1]) > 1]
 
             # once a valid cuts sequence for the dimension is defined, it is inserted in the global cuts sequence
             numerical_cuts_sequence.append(cuts_in_d)
@@ -91,24 +90,22 @@ class DCStarProblem(Problem):
         # using the global cuts sequence, a DimensionalSequenceNumeric object is created and passed as return value
         return DimensionalSequenceNumeric(numerical_cuts_sequence)
 
-
     # Method for calculating the cost of the node. The cost of the node is calculated evaluating the
     # three-levels priority and define a tuple with the three values
     # @node: Node object of to be evaluated to get the cost value
     def estimate_cost(self, node):
-    
+
         second_level_priority = self.__optimized_first_level_heuristic_value(node)
         first_level_priority = self.g(node) + second_level_priority
         third_level_priority = self.__get_second_level_heuristic_value(node)
         fifth_level_priority = self.__get_third_level_priority(node)
-        return first_level_priority, second_level_priority, third_level_priority#, fifth_level_priority
-
+        return first_level_priority, second_level_priority, third_level_priority  # , fifth_level_priority
 
     # Method for acquiring the g path-cost value. It is based on the counting the cuts present in the
     # logical sequence which value is True
     # @node: Node object of to be evaluated to get the path-cost value
     def g(self, node):
-    
+
         x = 0
         for dimension_index in range(node.state.get_dimensions_number()):
             for cut in node.state.get_dimension(dimension_index):
@@ -116,21 +113,19 @@ class DCStarProblem(Problem):
                     x += 1
         return x
 
-
     # Method for acquiring the heuristic value. It is based on the sum of first-level and second-level heuristic values
     # @node: Node object of to be evaluated to get the second-level heuristic
     def h(self, node):
 
-        #first_heuristic = self.__get_first_level_heuristic_value(node)
-        #second_heuristic = self.__get_second_level_heuristic_value(node)
-        #return first_heuristic, second_heuristic
+        # first_heuristic = self.__get_first_level_heuristic_value(node)
+        # second_heuristic = self.__get_second_level_heuristic_value(node)
+        # return first_heuristic, second_heuristic
         first_heuristic = self.__get_first_level_heuristic_value(node)
         return first_heuristic
 
-
     # Method for acquiring if the node is a result of clustering process. Is based on the fact that each hyperbox
-    # produced by the passed binary cuts sequence is pure, i.e. it contains a set of prototypes belonging to the same class
-    # @state: DimensionalSequenceBinary object of to be evaluated to get the second-level priority
+    # produced by the passed binary cuts sequence is pure, i.e. it contains a set of prototypes belonging to the same
+    # class @state: DimensionalSequenceBinary object of to be evaluated to get the second-level priority
     def goal(self, state):
 
         # create a selected cuts sequence using the binary sequence of passed node
@@ -139,12 +134,11 @@ class DCStarProblem(Problem):
 
         # generate an HyperboxesSet object from the newly created selected cuts sequence and using the prototype points list
         hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
-                                                                         m_d = self.__boundary_points[0],
-                                                                         M_d = self.__boundary_points[1])
+                                                                         m_d=self.__boundary_points[0],
+                                                                         M_d=self.__boundary_points[1])
 
         # the return value will be True if the HyperboxesSet object contain only pure hyperboxes, False otherwise
         return True if hyperboxes_set.get_impure_hyperboxes_number() == 0 else False
-
 
     # Method for acquiring the list of successors for passed DimensionalSequenceBinary.
     # @state: DimensionalSequenceBinary object to be evaluated to get the successors list.
@@ -152,8 +146,7 @@ class DCStarProblem(Problem):
         node = SelectedDimensionalSequenceNumeric()
         node.from_binary(self.__cuts_sequences, state)
         return self.succ_struct(node)
-        #return [successor for successor in state.get_successors()]
-
+        # return [successor for successor in state.get_successors()]
 
     def succ_struct(self, node):
 
@@ -182,24 +175,27 @@ class DCStarProblem(Problem):
         # un numero naturale, partendo da 0 ed arrivando al valore elements_number - 1. Se un determinato taglio
         # è presente tra gli elementi delle sequenze di tagli del nodo passato, allora si acquisisce il valore
         # dell'indice e lo si inserisce nella struttura della mappatura
-        mapped_elements = [np.where(complete_structure[dimension] == evaluated_node[dimension][element])[0][0] + dimension_offsets[dimension]
-                           for dimension in range(dimensions_number)
-                           for element in range(len(evaluated_node[dimension]))]
+        mapped_elements = [
+            np.where(complete_structure[dimension] == evaluated_node[dimension][element])[0][0] + dimension_offsets[
+                dimension]
+            for dimension in range(dimensions_number)
+            for element in range(len(evaluated_node[dimension]))]
 
         # genera i successori di node mappati come lista di interi
         # generazione dei successori come una lista di tagli mappati. La lista dei successori conterrà un insieme di
         # elementi che saranno differenti tra loro unicamente per un taglio (l'ultimo, per esattezza).
         mapped_successors = [mapped_elements + [new_cut]
-                             for new_cut in range(max(mapped_elements, default = -1) + 1, elements_number)]
+                             for new_cut in range(max(mapped_elements, default=-1) + 1, elements_number)]
 
         # definizione della dimensione associata a ciascun taglio. Per ogni taglio (definito da un elemento naturale)
         # si determina a quale dimensione appartiene: in particolare, se il valore del taglio supera un certo
         # numero di offset (intesi come numeri interi che indicano il taglio, o meglio il suo indice, di partenza per
         # una data dimensione), si determina la dimensione ad esso associato prendendo l'offset minore (ovvero
         # l'indice della dimensione a cui appartiene)
-        dimensions = [[min([enum_index - 1 for enum_index, dim_offset in enumerate(dimension_offsets) if dim_offset > cut_index])
-                 for cut_index in mapped_successor]
-                for mapped_successor in mapped_successors]
+        dimensions = [
+            [min([enum_index - 1 for enum_index, dim_offset in enumerate(dimension_offsets) if dim_offset > cut_index])
+             for cut_index in mapped_successor]
+            for mapped_successor in mapped_successors]
 
         # definizione degli indici dei tagli all'interno delle dimensioni di appartenenza. Essi, pertanto, indicano
         # le posizioni nelle quali i tagli andranno ad essere inseriti. Dato che i tagli all'interno di
@@ -208,8 +204,8 @@ class DCStarProblem(Problem):
         # bisogna che ci si riconduca agli indici "locali" nelle dimensioni sottraendo a global_cut_index il valore
         # del dimension_offset della dimensione a cui appartiene
         local_cut_indexes = [[global_cut_index - dimension_offsets[dimensions[enum_successor_index][enum_cut_index]]
-                        for enum_cut_index, global_cut_index in enumerate(successor)]
-                       for enum_successor_index, successor in enumerate(mapped_successors)]
+                              for enum_cut_index, global_cut_index in enumerate(successor)]
+                             for enum_successor_index, successor in enumerate(mapped_successors)]
 
         # definizione della mappatura inversa per la creazione dei successori. La mappatura inversa avviene
         # in questo modo: si acquisiscono i valori dei tagli effettivi (non i valori degli indici) dalla struttura
@@ -220,22 +216,20 @@ class DCStarProblem(Problem):
         # sulla base degli indici trovati. Infine, tutti i successori numerici vengono convertiti in oggetti di tipo
         # DimensionalSequenceBinary e restituiti come output del metodo
         numeric_successors = [[[complete_structure[struct_dim][local_cut_indexes[local_cut_dim][cut_index]]
-                                for cut_index in filter(lambda i: dimensions[local_cut_dim][i] == struct_dim, range(len(dimensions[local_cut_dim])))]
+                                for cut_index in filter(lambda i: dimensions[local_cut_dim][i] == struct_dim,
+                                                        range(len(dimensions[local_cut_dim])))]
                                for struct_dim in range(dimensions_number)]
                               for local_cut_dim in range(len(dimensions))]
         return [DimensionalSequenceBinary(element, self.__cuts_sequences.elements) for element in numeric_successors]
-
-
 
     # Method for acquiring the value of first-level priority for the successor node. The first-level priority
     # is a value based on the sum of cost value and heuristic value.
     # @node: Node object of to be evaluated to get the first-level priority
     def __get_first_level_priority(self, node):
 
-        #g = self.g(node)
-        #h = self.h(node)
+        # g = self.g(node)
+        # h = self.h(node)
         return self.g(node) + self.h(node)
-
 
     # Method for acquiring the value of second-level priority for the successor node. The second-level priority is a
     # value based on the thickness of a space that is defined using the newly added cut: greater the value,
@@ -311,7 +305,6 @@ class DCStarProblem(Problem):
         due = t_k_next - t_k
         return min(uno, due)
 
-
     # Method for acquiring the value of third-level priority for the successor node. The third-level priority is a
     # value based on the number of different feature used for defining an hyperboxes. It is the number of dimensions
     # (features) in the binary cuts sequence that contain at least one cut. The value is subsequently negated,
@@ -328,7 +321,6 @@ class DCStarProblem(Problem):
                 value -= 1
         return value
 
-
     # Method for acquiring the first-level heuristic value. It is based on the minimum value of cuts
     # to be defined so that all hyperboxes defined by node are pure. It iterates over the impure hyperboxes,
     # starting from the one with the maximum number of different class labels. Once an hyperbox is selected,
@@ -344,16 +336,16 @@ class DCStarProblem(Problem):
 
         # generate an HyperboxesSet object from the newly created selected cuts sequence and using the prototype points list
         hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
-                                                                         m_d = self.__boundary_points[0],
-                                                                         M_d = self.__boundary_points[1])
+                                                                         m_d=self.__boundary_points[0],
+                                                                         M_d=self.__boundary_points[1])
 
         # all impure hyperboxes are captured by the HyperboxesSet object and placed in a list and is evaluated
         # the minimum number of cuts (for single hyperbox) to be added to transform them in pure hyperboxes.
         # The list is then sorted according to the value of the number of cuts to be added.
         # On the list of impure hyperboxes will be based the evaluation of the value of the first level heuristics.
-        hyperboxes = [(hyperbox, self.__get_cuts_number_to_add(hyperbox) )
+        hyperboxes = [(hyperbox, self.__get_cuts_number_to_add(hyperbox))
                       for hyperbox in hyperboxes_set.get_hyperboxes() if hyperbox.is_impure()]
-        #hyperboxes.sort(key = lambda element : element[1])
+        # hyperboxes.sort(key = lambda element : element[1])
 
         # initializing the heuristic value to 0. Later, until the list of impure hyperboxes is not empty,
         # heuristic_value is incremented using the remaining hyperboxes
@@ -377,14 +369,14 @@ class DCStarProblem(Problem):
             # in the most_impure_hyperbox. Subsequently, each hyperbox connected to the most_impure_hyperbox (thus also
             # the most_impure_hyperbox itself) is deleted from the list and the evaluation of the remaining hyperboxes continue
             heuristic_value += most_impure_hyperboxes[1]
-            hyperboxes = [hyperbox for hyperbox in hyperboxes if most_impure_hyperboxes[0].is_connected(hyperbox[0]) is False]
+            hyperboxes = [hyperbox for hyperbox in hyperboxes if
+                          most_impure_hyperboxes[0].is_connected(hyperbox[0]) is False]
             counter += 1
 
         assert counter == heuristic_value, print("Error in calculating heuristic_value")
 
         # finally, the heuristic_value calculated is passed as return value
         return heuristic_value
-
 
     # TODO DA TRADURRE I COMMENTI IN INGLESE
     def __optimized_first_level_heuristic_value(self, node):
@@ -395,14 +387,14 @@ class DCStarProblem(Problem):
 
         # generate an HyperboxesSet object from the newly created selected cuts sequence and using the prototype points list
         hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
-                                                                         m_d = self.__boundary_points[0],
-                                                                         M_d = self.__boundary_points[1])
+                                                                         m_d=self.__boundary_points[0],
+                                                                         M_d=self.__boundary_points[1])
 
         # acquisizione degli hyperboxes impuri per l'oggetto SelectedDimensionalSequenceNumeric e calcolo del
         # valore del numero minimo di tagli da aggiungere per rendere puri tali hyperboxes. Tutti gli hyperboxes impuri
         # sono salvati all'interno di un dizionario per velocizzare l'accesso ad essi. Il dizionario segue la struttura
         # (hyperbox, n_B_C) : lista di hyperboxes collegati.
-        connected_hyperboxes = {(hyperbox, self.__get_cuts_number_to_add(hyperbox)) : []
+        connected_hyperboxes = {(hyperbox, self.__get_cuts_number_to_add(hyperbox)): []
                                 for hyperbox in hyperboxes_set.get_hyperboxes() if hyperbox.is_impure()}
 
         # definizione della lista degli hyperboxes connessi per ognuno degli hyperboxes del dizionario
@@ -423,7 +415,7 @@ class DCStarProblem(Problem):
             # acquisizione del valore massimo di n_B_C associato a tutti gli hyperboxes. Tale valore è associato
             # al valore degli hyperboxes che in questa iterazione verranno valutati, ovvero gli hyperboxes a cui si
             # associa il valore massimo di tagli da aggiungere per poter diventare puri
-            max_n_B_C_value = max(connected_hyperboxes.keys(), key = lambda key:key[1])[1]
+            max_n_B_C_value = max(connected_hyperboxes.keys(), key=lambda key: key[1])[1]
 
             # definizione della lista degli hyperboxes che dovranno essere valutati in tale iterazione. Il processo
             # di acquisizione degli hyperbox è semplice: si acquisiscono unicamente gli hyperboxes che possiedono
@@ -468,7 +460,8 @@ class DCStarProblem(Problem):
                 # quello definito da best_hyperbox (presente come chiave nel dizionario) e quelli presenti nella
                 # lista degli hyperboxes collegati per il detto best_hyperbox (salvato come attributo del dizionario)
                 hyperboxes_to_be_removed = set(hyperbox_to_remove for hyperbox_to_remove
-                                               in connected_hyperboxes.get(best_hyperbox)[dimension_with_most_connected])
+                                               in
+                                               connected_hyperboxes.get(best_hyperbox)[dimension_with_most_connected])
                 hyperboxes_to_be_removed.add(best_hyperbox)
 
             # se esiste un solo iperbox con un certo valore massimo di n_B_C, allora lo si aggiunge all'insieme degli
@@ -490,7 +483,6 @@ class DCStarProblem(Problem):
 
         # ritorno del valore di euristica calcolato
         return heuristic_value
-
 
     # Method for acquiring the second-level heuristic value. It is based on Jaccard's dissimilarity.
     # When genetic guide is not called acts as a dummy method
@@ -527,16 +519,14 @@ class DCStarProblem(Problem):
                 intersection_value += len(set(numerical_node.get_dimension(dimension)).
                                           intersection(set(genetic_individual.get_dimension(dimension))))
                 union_value += len(set(numerical_node.get_dimension(dimension)).
-                                       union(set(genetic_individual.get_dimension(dimension))))
+                                   union(set(genetic_individual.get_dimension(dimension))))
 
             # return Jaccard dissimilarity
             return 1 - intersection_value / union_value
 
-
     # Method for acquiring the value of cuts sequences
     def get_cuts_sequences(self):
         return self.__cuts_sequences
-
 
     # Method for acquiring the number of cuts to add for every dimension to transform a passed
     # impure hyperbox into a pure hyperbox
@@ -568,14 +558,14 @@ class DCStarProblem(Problem):
         # first dimension (this process is guaranteed by the mod operator) and check again the number of necessary_cuts
         # for this dimension. The cyclic evaluation of the various dimensions ends when the initial condition
         # (i.e. if the number of cuts to be added is less than the number of different classes  in hyperbox) occurs.
-        while np.prod([cuts_in_dimension + 1 for cuts_in_dimension in necessary_cuts]) < hyperbox.get_different_classes_number():
+        while np.prod([cuts_in_dimension + 1 for cuts_in_dimension in
+                       necessary_cuts]) < hyperbox.get_different_classes_number():
             dimension_index = (dimension_index % len(necessary_cuts)) + 1
             if necessary_cuts[dimension_index - 1] < max_cuts[dimension_index - 1]:
                 necessary_cuts[dimension_index - 1] += 1
 
         # the list of the number of cuts for each dimension is returned
         return sum(necessary_cuts)
-
 
     # Method for generate a genetic DimensionalSequenceBinary individual to be used as guide for A* computation
     # @gg_parameters: dictionary of parameters to initialize genetic guide
@@ -645,7 +635,6 @@ class DCStarProblem(Problem):
 
         return sequence, time.time() - start_time
 
-
     # Method for initialize the genetic guide into DCStarProblem if needed
     # @gg_parameters: dictionary of parameters to initialize genetic guide
     def __initialize_gg(self, gg_parameters):
@@ -675,7 +664,6 @@ class DCStarProblem(Problem):
                                                         self.__boundary_points[0], self.__boundary_points[1])
 
         return genetic_guide, gg_parameters["generations"], population_size, gg_parameters["selected_best"]
-
 
     def get_genetic_guide_individual(self):
         return self.__genetic_guide_individual

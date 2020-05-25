@@ -5,12 +5,13 @@ import matplotlib.colors as colors
 import random
 import time
 
+
 class DoubleClusteringStar:
 
-    def __init__(self, prototypes, m_d, M_d, verbose = False, genetic_guide_parameters = None):
+    def __init__(self, prototypes, m_d, M_d, verbose=False, genetic_guide_parameters=None):
 
-        self.problem = dcstar_problem.DCStarProblem(prototypes, m_d = m_d, M_d = M_d, verbose = verbose,
-                                                    gg_parameters = genetic_guide_parameters)
+        self.problem = dcstar_problem.DCStarProblem(prototypes, m_d=m_d, M_d=M_d, verbose=verbose,
+                                                    gg_parameters=genetic_guide_parameters)
         self.prototypes = prototypes
         self.m_d = m_d
         self.M_d = M_d
@@ -20,10 +21,9 @@ class DoubleClusteringStar:
         self.branches_taken = 0
         self.time = 0
 
+    def predict(self, save_log=False):
 
-    def predict(self, save_log = False):
-
-        binary_result, self.branches_taken, self.time, evaluated_nodes = astar.astar(problem = self.problem)
+        binary_result, self.branches_taken, self.time, evaluated_nodes = astar.astar(problem=self.problem)
         self.result.from_binary(self.cuts_sequences, binary_result)
 
         if self.problem.verbose:
@@ -36,8 +36,6 @@ class DoubleClusteringStar:
             self.__save_log(evaluated_nodes)
 
         return self.result, self.branches_taken, self.time
-
-
 
     def plot_result(self):
 
@@ -58,7 +56,7 @@ class DoubleClusteringStar:
             classes = set([p.get_label() for p in self.prototypes])
             colors_list = list(colors._colors_full_map.values())
             random.shuffle(colors_list)
-            colored_class = {label : color for label, color in zip(classes, colors_list)}
+            colored_class = {label: color for label, color in zip(classes, colors_list)}
 
             for point in self.prototypes:
                 if point.get_label() == 1.0:
@@ -67,11 +65,10 @@ class DoubleClusteringStar:
                     color = "green"
                 else:
                     color = "blue"
-                plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color = color)
+                plt.scatter(point.get_coordinate(0), point.get_coordinate(1), color=color)
 
             # showing the plot to video
             plt.show()
-
 
     def __save_log(self, evaluated_nodes):
 
@@ -87,7 +84,8 @@ class DoubleClusteringStar:
 
         if self.problem.get_genetic_guide_individual() is not None:
             file.write("\n# Genetic sequences\n")
-            file.write(repr(self.problem.get_genetic_guide_individual().elements).replace("\n", "").replace("\t", "") + "\n")
+            file.write(
+                repr(self.problem.get_genetic_guide_individual().elements).replace("\n", "").replace("\t", "") + "\n")
             file.write("\n# Genetic purity\n")
             file.write(repr(self.problem.get_genetic_guide_purity()) + "\n")
             file.write("\n# Genetic algoritm's time\n")
@@ -110,6 +108,3 @@ class DoubleClusteringStar:
         file.write(repr(self.branches_taken) + "\n")
 
         file.close()
-
-
-

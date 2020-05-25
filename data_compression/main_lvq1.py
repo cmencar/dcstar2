@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 
 
 col_ionosphere = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-            'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19',
-            'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28',
-            'f29', 'f30', 'f31', 'f32', 'f33', 'species')
+                  'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19',
+                  'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28',
+                  'f29', 'f30', 'f31', 'f32', 'f33', 'species')
 col_shuttle = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species')
 col_iris = ('f1', 'f2', 'f3', 'f4', 'species')
 
-original_dataset = pd.read_csv('dataset_ndimensionali/ionosphere.csv', names=col_ionosphere)
+original_dataset = pd.read_csv('dataset_ndimensionali/iris.csv', names=col_iris)
 n_p = 21
 
 start = pd.Timestamp.now()
@@ -33,12 +33,12 @@ else:
 print("Esecuzione in corso!")
 
 compression.set_strategy(lvq1)
-# prototypes = compression.do_compression()
+prototypes = compression.do_compression()
 end = datetime.now()
 print("Timer algoritmo completo:")
 timer = pd.Timestamp.now() - start
 print(timer)
-# m_d, M_d = lvq1.get_boundary(prototypes)
+m_d, M_d = lvq1.get_boundary(prototypes)
 # lvq1.create_json(m_d, M_d, prototypes)
 # scatterPlot(norm, 0.4)
 # lvq1.draw_prototypes(prototypes, 0.8)

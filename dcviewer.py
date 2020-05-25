@@ -27,7 +27,6 @@ class App(QMainWindow):
 
         self.initUI()
 
-
     def initUI(self):
 
         self.setWindowTitle(self.title)
@@ -130,7 +129,6 @@ class App(QMainWindow):
 
         self.show()
 
-
     def open_log_file(self):
 
         options = QFileDialog.Options()
@@ -156,7 +154,6 @@ class App(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
 
-
     def __parse_log_file(self, filename):
 
         if ".dcl" in filename:
@@ -179,13 +176,13 @@ class App(QMainWindow):
                 elif line != "\n":
 
                     formatted_line = line.replace("array([", "[").replace("[[", "[") \
-                        .replace("])", "]").replace("]]","]").replace("\n", "") \
+                        .replace("])", "]").replace("]]", "]").replace("\n", "") \
                         .replace("0. ", "0").replace("1. ", "1")
 
                     dictionary_objects = []
                     if element_key == "Prototypes":
                         parsed_string = formatted_line.split(";")
-                        coordinates = [ float(coord) for coord in parsed_string[0].strip('][').split(",")]
+                        coordinates = [float(coord) for coord in parsed_string[0].strip('][').split(",")]
                         dictionary_objects = [coordinates, parsed_string[1]]
 
                     elif element_key == "T_d_sequences":
@@ -198,7 +195,7 @@ class App(QMainWindow):
                         sequences = parsed_string[0].replace("], [", ";").strip('][').split(";")
                         sequences = [[True if "True" in cut else False for cut in sequence.split(",")]
                                      for sequence in sequences]
-                        costs = parsed_string[1].replace(")", "").replace("(","").split(",")
+                        costs = parsed_string[1].replace(")", "").replace("(", "").split(",")
                         costs = [float(cost) for cost in costs]
                         dictionary_objects = [sequences, costs]
 
@@ -220,14 +217,12 @@ class App(QMainWindow):
 
         return None
 
-
     def plot_next_sequence(self):
 
         if len(self.elements.get("S_d_sequences")) > self.current_node + 1:
             self.current_node += 1
             self.plot.plot_S_d_sequence(self.elements, self.filename, self.current_node)
             self.show_costs()
-
 
     def plot_previous_sequence(self):
 
@@ -236,13 +231,11 @@ class App(QMainWindow):
             self.plot.plot_S_d_sequence(self.elements, self.filename, self.current_node)
             self.show_costs()
 
-
     def plot_t_d_sequence(self):
 
         self.reset_costs()
         self.current_node = 0
         self.plot.plot_T_d_sequence(self.elements, self.filename)
-
 
     def plot_gg_sequence(self):
 
@@ -250,12 +243,10 @@ class App(QMainWindow):
         self.current_node = 0
         self.plot.plot_gg_sequence(self.elements, self.filename)
 
-
     def plot_s_d_sequence(self):
 
         self.plot.plot_S_d_sequence(self.elements, self.filename, self.current_node)
         self.show_costs()
-
 
     def plot_s_d_sequence_jumped(self):
 
@@ -264,13 +255,11 @@ class App(QMainWindow):
             self.plot.plot_S_d_sequence(self.elements, self.filename, self.current_node)
             self.show_costs()
 
-
     def plot_last_s_d_sequence_jumped(self):
 
         self.current_node = len(self.elements.get("S_d_sequences")) - 1
         self.plot.plot_S_d_sequence(self.elements, self.filename, self.current_node)
         self.show_costs()
-
 
     def show_costs(self):
 
@@ -286,7 +275,6 @@ class App(QMainWindow):
         if len(costs) >= 5:
             self.fifth_priority_cost_label.setText("dimensions' cost: \t" + str(costs[4]))
 
-
     def reset_costs(self):
 
         self.first_priority_cost_label.setText("g+h's cost: \t")
@@ -296,10 +284,9 @@ class App(QMainWindow):
         self.fifth_priority_cost_label.setText("dimensions' cost: \t")
 
 
-
 class PlotCanvas(FigureCanvas):
 
-    def __init__(self, parent = None, width = 5, height = 4, dpi = 100):
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
 
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.subplot = fig.add_subplot(111)
@@ -314,7 +301,6 @@ class PlotCanvas(FigureCanvas):
 
         self.colored_class = dict()
 
-
     def define_colors(self, prototypes):
 
         classes = set([prototype[1] for prototype in prototypes])
@@ -322,13 +308,11 @@ class PlotCanvas(FigureCanvas):
         random.shuffle(colors_list)
         self.colored_class = {label: color for label, color in zip(classes, colors_list)}
 
-
     def __starting_plot(self):
 
         ax = self.figure.add_subplot(111)
         ax.set_title('No log loaded')
         self.draw()
-
 
     def plot_T_d_sequence(self, elements, title):
 
@@ -353,7 +337,6 @@ class PlotCanvas(FigureCanvas):
         self.subplot.set_title(title)
 
         self.draw()
-
 
     def plot_gg_sequence(self, elements, title):
 
@@ -387,7 +370,6 @@ class PlotCanvas(FigureCanvas):
         self.subplot.set_title(title)
 
         self.draw()
-
 
     def plot_S_d_sequence(self, elements, title, node):
 
@@ -427,4 +409,3 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
-
