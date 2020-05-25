@@ -584,7 +584,7 @@ class DCStarProblem(Problem):
         start_time = time.time()
 
         # initialize the genetic guide
-        genetic_guide, population_size, generations, selected_best = self.__initialize_gg(gg_parameters)
+        genetic_guide, generations, population_size, selected_best = self.__initialize_gg(gg_parameters)
 
         # create an empty binary sequence
         sequence = DimensionalSequenceBinary()
@@ -604,22 +604,13 @@ class DCStarProblem(Problem):
         if hbs.get_impure_hyperboxes_number() != 0:
             print("evaluated genetic individual is an impure one\n")
             self.__genetic_individual_purity = False
-
-        '''
-        # Process of sequence purification
-        # create a selected cuts sequence with given genetic guide binary sequence
-        s_d = SelectedDimensionalSequenceNumeric()
-        s_d.from_binary(self.__cuts_sequences, sequence)
-        # generate hyperboxes of created selected cuts sequence
-        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
-        # if solution sequence is not fully pure
-        if hbs.get_impure_hyperboxes_number() != 0:
-            print("Impure DGG sequence generated, purification in process")
+            '''
+            # purification process
             # set solution not found
             found = False
             # generate successors of genetic binary sequence with added random cut
             successors = sequence.get_successors()
-            #successors = self.successors(sequence)
+            # successors = self.successors(sequence)
             # while is not found a pure solution
             while not found and successors != []:
                 # for every generated successor
@@ -636,7 +627,7 @@ class DCStarProblem(Problem):
                         sequence = successor
                     # generate other successors
                     successors = successor.get_successors()
-        '''
+            '''
 
         # show genetic guide sequence
         if self.verbose:

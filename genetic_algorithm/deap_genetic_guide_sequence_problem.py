@@ -95,23 +95,12 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         for gene in range(individual_dim):
             genome.append(False)
 
-        # definition of a random number of genes to be modified
-        random_set_genes = random.randint(2, individual_dim)
-
-        # for "random_set_genes" times
-        for i in range(random_set_genes):
-
-            # definition of a random index where to change the gene
-            random_index = random.randint(0, individual_dim - 1)
-
-            # if in the given index there's a gene already changed, define a new index
-            while genome[random_index]:
-                random_index = random.randint(0, individual_dim - 1)
-
-            # change the value of the evaluated gene with the defined index
-            genome[random_index] = True
-
-        # print("\nINDIVIDUAL GENERATED: \n", genome)
+        # for every element into genome
+        for index in range(individual_dim):
+            # if generated float is bigger than 0.5
+            if random.random() > 0.5:
+                # set gene with evaluated index to True
+                genome[index] = True
 
         # return the individual with the created genome
         return individual_class(genome)
@@ -198,6 +187,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
 
+        # TODO - valutazione fitness, da togliere
+        fit_behave = list(tuple())
+
         # for each generation
         for epoch in range(generations):
 
@@ -211,6 +203,18 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             son_fitness = list()
             for son in offsprings:
                 son_fitness.append(self.fitness(son))
+
+            # TODO - valutazione fitness, da togliere
+            temp_max = 0
+            temp_min = 2
+            temp_avg = 0
+            for i in range(len(son_fitness)):
+                if son_fitness[i] > temp_max:
+                    temp_max = son_fitness[i]
+                if son_fitness[i] < temp_min:
+                    temp_min = son_fitness[i]
+                temp_avg += son_fitness[i]
+            fit_behave.append((temp_min, temp_avg / len(son_fitness), temp_max))
 
             # map each fitness value to the corresponding offspring
             for fit, ind in zip(son_fitness, offsprings):
@@ -226,6 +230,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # convert individual from monodimensional list to "binary cuts sequence"
         converted_best_individual = self.from_list_to_sequence(best_individuals[0],
                                                                self.elements_per_dimension)
+
+        # TODO - valutazione fitness, da togliere
+        print(fit_behave)
 
         # return converted best individual
         return converted_best_individual

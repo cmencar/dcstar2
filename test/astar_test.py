@@ -6,7 +6,7 @@ import doubleclusteringstar as dcstar
 # loading of prototypes point list and dimensional boundaries
 loader = PrototypesCreator()
 
-point_list, m_d, M_d = loader.load("created point lists/chessboard_k5.json")
+point_list, m_d, M_d = loader.load("created point lists/wbc_100_60_norm.json")
 
 # declaration of DeapGeneticGuideSequenceProblem parameters
 gg_args_test_01 = {"selected_for_tournament": 5,
@@ -35,8 +35,8 @@ gg_args_test_05 = {"selected_for_tournament": 5,
                    "selected_best": 10}
 
 clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d,
-                                         genetic_guide_parameters=gg_args_test_05, verbose=True)
-clustering.predict(save_log=True)
+                                         genetic_guide_parameters=None, verbose=True)
+clustering.predict(save_log=False)
 clustering.plot_result()
 
 pass
