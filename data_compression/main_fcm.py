@@ -3,7 +3,7 @@ from data_compression.compression import compression
 from data_compression.fcm import fcm
 from datetime import datetime
 
-colnames = ('f1', 'f2', 'species')
+colnames = ('f1', 'f2', 'label')
 original_dataset = pd.read_csv('dataset_bidimensionali/datacerchiconcentrici_3classi(pieni)(classiNum).csv', names=colnames)
 
 start = pd.Timestamp.now()

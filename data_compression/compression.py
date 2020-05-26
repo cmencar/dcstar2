@@ -1,6 +1,6 @@
-from sklearn import preprocessing
-import pandas as pd
-import numpy as np
+import random
+from matplotlib import colors
+import matplotlib.pyplot as plt
 from data_compression.compression_strategy import compression_strategy
 
 
@@ -25,7 +25,7 @@ class compression:
 
     # Delete duplicates from dataset labels to get unique labels
     def get_unique_labels(self):
-        return self.data["species"].unique()
+        return self.data[:, -1].unique()
 
     def get_minimum_boundary(self, data):
         minValues = data.min()
@@ -42,11 +42,21 @@ class compression:
         return M_d
 
     def normalized_dataset(self):
-        features = self.data.iloc[:, :-1]
-        labels = self.data.iloc[:, -1]
-        data_normal = (features - features.min()) / (features.max() - features.min())
-        data_normal['species'] = labels
+        data_normal = (self.features - self.features.min()) / (self.features.max() - self.features.min())
+        data_normal['label'] = self.labels
         return data_normal
+
+    def draw_data(self):
+        labels = set(self.labels)
+        labels = list(labels)
+        for row in self.normalized_dataset().itertuples():
+            if row[-1] == labels[0]:
+                color = "red"
+            elif row[-1] == labels[1]:
+                color = "green"
+            else:
+                color = "blue"
+            plt.scatter(row[1], row[2], color=color, alpha=0.2)
 
     def do_compression(self):
         results = self._strategy.algorithm()

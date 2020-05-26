@@ -71,29 +71,29 @@ class lvq1(compression_strategy):
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species'])
         return prototypes
 
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
 
-    def draw_prototypes(self, prototypes, alpha):
-        groups = prototypes.groupby("species")
-        n_p = len(prototypes)
-        for name, group in groups:
-            plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
+    def draw_prototypes(self, prototypes):
+        labels = set(prototypes[:, -1])
+        labels = list(labels)
+        data = pd.DataFrame(data=prototypes)
+        for row in data.itertuples():
+            if row[-1] == labels[0]:
+                color = "red"
+            elif row[-1] == labels[1]:
+                color = "green"
+            else:
+                color = "blue"
+            plt.scatter(row[1], row[2], color=color, alpha=1)
 
-        filename = "prove"
-        plt.legend()
-        plt.savefig(filename)
-
-    def create_json(self, m_d, M_d, prototypes):
-        prototypes = prototypes.to_numpy()
-        n_p = len(prototypes)
+    def create_json(self, prototypes, filename):
         point_coordinates = prototypes[:, :-1].tolist()
-        # print(point_coordinates)
         point_labels = prototypes[:, -1].tolist()
-        # print(point_labels)
+        m_d = self.get_min_boundary(prototypes).tolist()
+        M_d = self.get_max_boundary(prototypes).tolist()
         point_id = list()
         for i in point_coordinates:
             point_id.append(point_coordinates.index(i))
@@ -107,17 +107,13 @@ class lvq1(compression_strategy):
                 'name': "point" + str(point_id[i] + 1)
             })
 
-        filename = "ionosphere_100_20.json"
         with open(filename, 'w') as output:
             json.dump(data, output, indent=1)
 
-    def get_boundary(self, prototypes):
-        minValues = prototypes.min()
-        m_d = tuple()
-        for i in (range(len(minValues) - 1)):
-            m_d = m_d + (minValues[i],)
-        maxValues = prototypes.max()
-        M_d = tuple()
-        for i in (range(len(maxValues) - 1)):
-            M_d = M_d + (maxValues[i],)
-        return m_d, M_d
+    def get_min_boundary(self, prototypes):
+        minValues = np.amin(prototypes[:, 0:-1], axis=0)
+        return minValues
+
+    def get_max_boundary(self, prototypes):
+        maxValues = np.amax(prototypes[:, 0:-1], axis=0)
+        return maxValues
