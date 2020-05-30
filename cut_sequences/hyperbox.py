@@ -80,3 +80,11 @@ class Hyperbox:
     # @hyperbox: element that is needed to evaluate for the connection
     def is_connected(self, hyperbox, dimension):
         return hyperbox.get_boundaries()[dimension] == self.__boundaries[dimension]
+
+
+    def is_in_boundaries(self, point):
+
+        for index in range(len(self.__boundaries)):
+            if self.__boundaries[index][0] > point.get_coordinate(index) or self.__boundaries[index][1] < point.get_coordinate(index):
+                return False
+        return True
