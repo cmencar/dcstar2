@@ -101,7 +101,10 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             if random.random() > 0.5:
                 # set gene with evaluated index to True
                 genome[index] = True
-
+        '''
+        for _ in range(int(individual_dim / 2)):
+            genome[random.randint(0, individual_dim - 1)] = True
+        '''
         # return the individual with the created genome
         return individual_class(genome)
 
