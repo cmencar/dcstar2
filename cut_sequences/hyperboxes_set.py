@@ -98,9 +98,11 @@ class HyperboxesSet:
     def get_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items()})
 
+
     # Method for counting pure hyperboxes
     def get_pure_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items() if not hyperbox.is_impure()})
+
 
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
@@ -112,3 +114,11 @@ class HyperboxesSet:
     # occurences as attributes in the dictionary of points
     def get_hyperboxes(self):
         return list({hyperbox for point, hyperbox in self.__points.items()})
+
+
+    def predict_hyperbox(self, point):
+
+        hyperboxes = set(self.__points.values())
+        for hyperbox in hyperboxes:
+            boundaries = hyperbox.get_boundaries()
+
