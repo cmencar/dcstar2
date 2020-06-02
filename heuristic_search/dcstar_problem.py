@@ -648,6 +648,7 @@ class DCStarProblem(Problem):
         # calculate mutation rate
         # N.B.: mutation rate is calculated by reciprocating the number of genes
         mutation_rate = 1 / genes_number
+        # mutation_rate = 0.9
 
         # define DGG object to create the genetic guide with monodimensional lists
         genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],
