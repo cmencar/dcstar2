@@ -71,7 +71,10 @@ class lvq1(compression_strategy):
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species'])
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species']) # dataset bidimensionali
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species']) # dataset iris
+        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species']) # dataset glass, wisconsin
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'species']) # dataset wine
         return prototypes
 
     def get_unique_labels(self):

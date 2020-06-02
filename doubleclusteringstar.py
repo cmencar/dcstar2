@@ -55,17 +55,26 @@ class DoubleClusteringStar:
 
 
     # @TODO N.B. FATTA AD-HOC PER IRIS, QUINDI MODIFICARE STRUTTURA DI GESTIONE DEL DATASET
-    def evaluate_classificator(self, dataset):
+    def evaluate_classificator(self, dataset, results):
+
+        hbs = self.result.generate_hyperboxes_set(point_list=self.prototypes, m_d=self.m_d, M_d=self.M_d)
+        for hb in hbs.get_hyperboxes():
+            if hb.is_impure():
+                print("IMPURE HB!\n")
 
         counter = 0
-        for index in range(len(dataset.f1)):
-            element = [dataset.f1[index], dataset.f2[index], dataset.f3[index], dataset.f4[index]]
-            class_ = dataset.species[index]
+        nonecounter = 0
+        for element, result in zip(dataset, results):
             cl = self.predict(element)
-            if class_ == cl:
+            if result == cl:
                 counter += 1
+            elif cl is None:
+                nonecounter += 1
 
-        print("Classificator accuracy:", counter/len(dataset.f1) * 100, "%")
+        print("Classificator accuracy:", counter/len(dataset) * 100, "% (", counter, ")")
+        print("Classificator accuracy (None):", nonecounter/len(dataset) * 100, "% (", nonecounter, ")")
+
+        return counter/len(dataset)*100
 
 
     def plot_result(self):
@@ -138,5 +147,9 @@ class DoubleClusteringStar:
 
         file.write("\n# Number of evaluated nodes\n")
         file.write(repr(self.branches_taken) + "\n")
+
+        hbs = self.result.generate_hyperboxes_set(point_list=self.prototypes, m_d=self.m_d, M_d=self.M_d).get_hyperboxes()
+        file.write("\n# Number of hyperboxes created\n")
+        file.write(repr(len(hbs)) + "\n")
 
         file.close()

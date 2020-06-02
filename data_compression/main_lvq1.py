@@ -13,7 +13,8 @@ col_ionosphere = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
 col_shuttle = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species')
 col_iris = ('f1', 'f2', 'f3', 'f4', 'species')
 
-original_dataset = pd.read_csv('dataset_ndimensionali/iris.csv', names=col_iris)
+
+original_dataset = pd.read_csv('dataset_ndimensionali/glass.csv', names=col_glass)
 n_p = 21
 
 start = pd.Timestamp.now()
