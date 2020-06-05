@@ -39,8 +39,8 @@ for dimension in range(T_d_example.get_dimensions_number()):
     print("Cuts in dimension ", dimension + 1, ":", len(T_d_example.get_dimension(dimension)))
 
 # set m_d and M_d limits
-m_d = 0
-M_d = 1
+m_d = [0, 0]
+M_d = [1, 1]
 print("----------------------Limits in S_d-----------------------",
       "\nm_d: ", m_d, "   M_d: ", M_d)
 # calculate the total number of genes that the genome will have
@@ -78,9 +78,10 @@ print("------------------------Parameters------------------------",
       "\nNumber of best individuals to choose from: ", selected_best)
 
 # define DGG object to create the genetic guide with monodimensional lists
-genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, mating_rate, selected_for_tournament, T_d_example,
-                                                points_example, genes_per_dimension, m_d, M_d)
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, mating_rate, selected_for_tournament,
+                                                T_d_example, points_example, genes_per_dimension, m_d, M_d)
 
+'''
 # evolution and acquisition of the best individual from genetic guide with monodimensional lists
 best_individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
 
@@ -210,3 +211,8 @@ for times in range(10):
 out_file.write("\n\nIMPURES IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
 out_file.write(str(impures_per_iter))
 out_file.close()
+'''
+
+genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
+
+print("FIN")

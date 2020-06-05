@@ -5,6 +5,8 @@ from deap import creator, base, tools, algorithms
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
+from matplotlib import pyplot as plt
+import numpy as np
 
 
 # Class for utilization of genetic guide using DEAP
@@ -53,7 +55,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
 
         # define mutation method of individuals' son shuffling genes with "mutation_rate" percentage
-        self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mutation_rate)
+        # self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mutation_rate)
+        self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method using selection for tournament between "selected_individuals" individuals
         self.toolbox.register("select", tools.selTournament, tournsize=selected_individuals)
@@ -101,9 +104,10 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             if random.random() > 0.5:
                 # set gene with evaluated index to True
                 genome[index] = True
-        '''
+        
         for _ in range(int(individual_dim / 2)):
             genome[random.randint(0, individual_dim - 1)] = True
+        '''
 
         # return the individual with the created genome
         return individual_class(genome)
@@ -120,6 +124,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # for each generation
         for epoch in range(generations):
 
+            print(population)
             # offsprings are generated using the varAnd algorithm, in which are passed the population, mating rate and
             # mutation rate
             # in this are used the previous defined methods in the toolbox, such as mutation, crossover, evaluation and
@@ -235,7 +240,20 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                                                                self.elements_per_dimension)
 
         # TODO - valutazione fitness, da togliere
-        print(fit_behave)
+        # print(fit_behave)
+        min_ = list()
+        avg_ = list()
+        max_ = list()
+        for fits in fit_behave:
+            min_.append(fits[0])
+            avg_.append(fits[1])
+            max_.append(fits[2])
+        x = np.linspace(0, generations, generations)
+        plt.plot(x, min_, marker='o', color='red')
+        plt.plot(x, avg_, marker='o', color='green')
+        plt.plot(x, max_, marker='o', color='blue')
+        plt.grid(True)
+        plt.show()
 
         # return converted best individual
         return converted_best_individual

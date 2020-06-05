@@ -35,8 +35,14 @@ loader = PrototypesCreator()
 
 point_list, m_d, M_d = loader.load(filename)
 
-clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, verbose=True)
-clustering.train(save_log=True)
+gg_args_test = {"selected_for_tournament": 5,
+                "generations": 20,
+                "mating_rate": 0.7,
+                "selected_best": 10}
+
+clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, genetic_guide_parameters=gg_args_test,
+                                         verbose=True)
+clustering.train(save_log=False)
 clustering.plot_result()
 
 used_dataset = used_dataset.sample(frac=1).reset_index(drop=True)
