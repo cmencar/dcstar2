@@ -63,6 +63,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # define selection method using selection for tournament between "selected_for_tournament" individuals
         self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        # self.toolbox.register("select", self.sequence_tournament_selection, tournsize=selected_for_tournament)
 
         # define evaluation method with given "evaluate_fun" function
         self.toolbox.register("evaluate", self.evaluate)
@@ -293,13 +294,14 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         aspirants = tools.selRandom(individuals, tournsize)
         first = True
         taken = False
-        p = random.random()
+        p = 1/56
         for _ in range(k):
             if first:
                 i = 0
                 while not taken:
                     if random.random() >= p:
                         chosen.append(aspirants[i])
+                        taken = True
                     elif i < len(aspirants):
                         i += 1
                     else:
@@ -309,6 +311,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 while not taken:
                     if random.random() >= p*((1 - p) ^ k):
                         chosen.append(aspirants[i])
+                        taken = True
                     elif i < len(aspirants):
                         i += 1
                     else:
