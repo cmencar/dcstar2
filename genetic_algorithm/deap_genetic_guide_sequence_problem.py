@@ -61,7 +61,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mutation_rate)
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
-        # define selection method using selection for tournament between "selected_individuals" individuals
+        # define selection method using selection for tournament between "selected_for_tournament" individuals
         self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
 
         # define evaluation method with given "evaluate_fun" function
@@ -282,8 +282,35 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             return new_offsprings
 
     def sequence_tournament_selection(self, individuals, k, tournsize, fit_attr="fitness"):
+
+        # chosen = []
+        # for i in range(k):
+        #     aspirants = tools.selRandom(individuals, tournsize)
+        #     chosen.append(max(aspirants, key=getattr(aspirants, fit_attr)))
+        # return chosen
+
         chosen = []
-        for i in range(k):
-            aspirants = tools.selRandom(individuals, tournsize)
-            chosen.append(max(aspirants, key=getattr(aspirants, fit_attr)))
+        aspirants = tools.selRandom(individuals, tournsize)
+        first = True
+        taken = False
+        p = random.random()
+        for _ in range(k):
+            if first:
+                i = 0
+                while not taken:
+                    if random.random() >= p:
+                        chosen.append(aspirants[i])
+                    elif i < len(aspirants):
+                        i += 1
+                    else:
+                        i = 0
+            else:
+                i = 0
+                while not taken:
+                    if random.random() >= p*((1 - p) ^ k):
+                        chosen.append(aspirants[i])
+                    elif i < len(aspirants):
+                        i += 1
+                    else:
+                        i = 0
         return chosen
