@@ -36,6 +36,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # define mating rate of individual
         self.mating_rate = mating_rate
 
+        # define how many individuals are to be selected for tournament
+        self.selected_for_tournament = selected_for_tournament
+
         # create object defining max fitness value
         creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 
@@ -123,15 +126,18 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # TODO - valutazione fitness, da togliere
         fit_behave = list(tuple())
+        bestfit = 0
+        bestind = "empty"
 
         # for each generation
-        for epoch in range(generations):
+        for epoch in range(generations - 1):
 
             # offsprings are generated using the varAnd algorithm, in which are passed the population, mating rate and
             # mutation rate
             # in this are used the previous defined methods in the toolbox, such as mutation, crossover, evaluation and
             # selection
-            offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
+            offsprings = self.sequence_offspring_generator(population, population_size, self.toolbox, self.mating_rate,
+                                                           self.mutation_rate)
 
             # create a list of fitness values of the offsprings
             son_fitness = list()
@@ -152,18 +158,21 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # map each fitness value to the corresponding offspring
             for fit, ind in zip(son_fitness, offsprings):
+                if fit > bestfit:  # TODO - valutazione fitness, da togliere
+                    bestfit = fit
+                    bestind = ind
                 ind.fitness.value = fit
 
             # select a number of offsprings equal to the number of individuals in the population
             # the selection is defined on a "selected_individual" number of offsprings
-            population = self.toolbox.select(offsprings, k=5)
+            population = self.toolbox.select(offsprings, k=self.selected_for_tournament)
 
         # select the "selected_best" number of best individuals with the highest fitness value
-        best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
+        # best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
 
         # convert individual from monodimensional list to "binary cuts sequence"
-        converted_best_individual = self.from_list_to_sequence(best_individuals[0],
-                                                               self.elements_per_dimension)
+        # converted_best_individual = self.from_list_to_sequence(best_individuals[0],
+        #                                                       self.elements_per_dimension)
 
         # TODO - valutazione fitness, da togliere
         # print(fit_behave)
@@ -174,15 +183,19 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             min_.append(fits[0])
             avg_.append(fits[1])
             max_.append(fits[2])
-        x = np.linspace(0, generations, generations)
+        x = np.linspace(0, generations - 1, generations - 1)
         plt.plot(x, min_, marker='o', color='red')
         plt.plot(x, avg_, marker='o', color='green')
         plt.plot(x, max_, marker='o', color='blue')
         plt.grid(True)
         plt.show()
 
+        print(bestfit, bestind)
+        best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
+
         # return converted best individual
-        return converted_best_individual
+        # return converted_best_individual
+        return best_individual
 
     # Method defining the fitness value of an individual
     # @individual: individual's genome
@@ -239,22 +252,38 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
-    # Method for the worst case scenario, generates a sequence with all the possible cuts active
-    # @elements_per_dimension: number of cuts per dimension
-    def worst_case_scenario(self, elements_per_dimension):
-        # create support lists
-        sequence = list()
-        dimension = list()
+    def sequence_offspring_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
+        offsprings = [toolbox.clone(ind) for ind in population]
+        new_offsprings = list()
+        # Apply crossover and mutation on the offspring
+        for i in range(1, population_size):
+            if random.random() < mating_rate:
+                if len(offsprings) > self.selected_for_tournament:
+                    offsprings[i - 1], offsprings[i] = toolbox.mate(offsprings[i - 1], offsprings[i])
+                else:
+                    offspring_a, offspring_b = \
+                        toolbox.mate(offsprings[random.randint(0, self.selected_for_tournament - 1)],
+                                     offsprings[random.randint(0, self.selected_for_tournament - 1)])
+                    new_offsprings.append(offspring_a)
+                    new_offsprings.append(offspring_b)
 
-        # for each dimension
-        for dim in range(len(elements_per_dimension)):
-            # clear the "dimension" support list
-            dimension.clear()
+                # del offspring[i - 1].fitness.values, offspring[i].fitness.values
 
-            # for each element in given dimension
-            for num in range(elements_per_dimension[dim]):
-                # append True into dimension
-                dimension.append(True)
-            # append a copy of the newly created dimension into sequence
-            sequence.append(dimension.copy())
-        return sequence
+        for i in range(population_size):
+            if random.random() < mutation_rate:
+                if len(offsprings) > self.selected_for_tournament:
+                    offsprings[i], = toolbox.mutate(offsprings[i])
+                else:
+                    new_offsprings[i], = toolbox.mutate(new_offsprings[i])
+                # del offspring[i].fitness.values
+        if len(offsprings) > self.selected_for_tournament:
+            return offsprings
+        else:
+            return new_offsprings
+
+    def sequence_tournament_selection(self, individuals, k, tournsize, fit_attr="fitness"):
+        chosen = []
+        for i in range(k):
+            aspirants = tools.selRandom(individuals, tournsize)
+            chosen.append(max(aspirants, key=getattr(aspirants, fit_attr)))
+        return chosen
