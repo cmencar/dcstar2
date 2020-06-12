@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import random
-from deap import creator, base, tools, algorithms
+from operator import attrgetter
+from deap import creator, base, tools
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
@@ -58,12 +59,15 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
 
         # define mutation method of individuals' son shuffling genes with "mutation_rate" percentage
-        # self.toolbox.register("mutate", tools.mutShuffleIndexes, indpb=mutation_rate)
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method using selection for tournament between "selected_for_tournament" individuals
-        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
-        # self.toolbox.register("select", self.sequence_tournament_selection, tournsize=selected_for_tournament)
+        # TODO - "relazione a distanza"
+        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        # TODO - "vicini di casa"
+        # self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
+        # TODO - "vecchi"
+        self.toolbox.register("select", self.tournament_selection_with_old_gen, tournsize=selected_for_tournament)
 
         # define evaluation method with given "evaluate_fun" function
         self.toolbox.register("evaluate", self.evaluate)
@@ -124,6 +128,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
+        old_gen = self.toolbox.population(n=self.selected_for_tournament)
+        for ind in old_gen:
+            ind.fitness.value = 0
 
         # TODO - valutazione fitness, da togliere
         fit_behave = list(tuple())
@@ -137,6 +144,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # mutation rate
             # in this are used the previous defined methods in the toolbox, such as mutation, crossover, evaluation and
             # selection
+            # offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
             offsprings = self.sequence_offspring_generator(population, population_size, self.toolbox, self.mating_rate,
                                                            self.mutation_rate)
 
@@ -166,7 +174,10 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # select a number of offsprings equal to the number of individuals in the population
             # the selection is defined on a "selected_individual" number of offsprings
-            population = self.toolbox.select(offsprings, k=self.selected_for_tournament)
+            # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
+            # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
+            population = self.toolbox.select(offsprings, k=2, previous_winners=old_gen)
+            old_gen = population
 
         # select the "selected_best" number of best individuals with the highest fitness value
         # best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
@@ -253,67 +264,49 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
+    # TODO - generatore di figli
     def sequence_offspring_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
-        offsprings = [toolbox.clone(ind) for ind in population]
-        new_offsprings = list()
+        clones = [toolbox.clone(ind) for ind in population]
+        offsprings = list()
+        dummy_ind = max(clones, key=attrgetter("fitness"))
+        for _ in range(population_size):
+            offsprings.append(dummy_ind)
         # Apply crossover and mutation on the offspring
         for i in range(1, population_size):
             if random.random() < mating_rate:
-                if len(offsprings) > self.selected_for_tournament:
-                    offsprings[i - 1], offsprings[i] = toolbox.mate(offsprings[i - 1], offsprings[i])
-                else:
-                    offspring_a, offspring_b = \
-                        toolbox.mate(offsprings[random.randint(0, self.selected_for_tournament - 1)],
-                                     offsprings[random.randint(0, self.selected_for_tournament - 1)])
-                    new_offsprings.append(offspring_a)
-                    new_offsprings.append(offspring_b)
-
-                # del offspring[i - 1].fitness.values, offspring[i].fitness.values
+                offsprings[i - 1], offsprings[i] = \
+                        toolbox.mate(clones[random.randint(0, len(population) - 1)],
+                                     clones[random.randint(0, len(population) - 1)])
 
         for i in range(population_size):
             if random.random() < mutation_rate:
-                if len(offsprings) > self.selected_for_tournament:
-                    offsprings[i], = toolbox.mutate(offsprings[i])
-                else:
-                    new_offsprings[i], = toolbox.mutate(new_offsprings[i])
-                # del offspring[i].fitness.values
-        if len(offsprings) > self.selected_for_tournament:
-            return offsprings
-        else:
-            return new_offsprings
+                offsprings[i], = toolbox.mutate(offsprings[i])
 
-    def sequence_tournament_selection(self, individuals, k, tournsize, fit_attr="fitness"):
+        return offsprings
 
-        # chosen = []
-        # for i in range(k):
-        #     aspirants = tools.selRandom(individuals, tournsize)
-        #     chosen.append(max(aspirants, key=getattr(aspirants, fit_attr)))
-        # return chosen
-
+    # TODO - prova selezione per torneo "vicini di casa", da togliere
+    def tournament_selection_1_tournament(self, individuals, k, tournsize, fit_attr="fitness"):
         chosen = []
         aspirants = tools.selRandom(individuals, tournsize)
-        first = True
-        taken = False
-        p = 1/56
-        for _ in range(k):
-            if first:
-                i = 0
-                while not taken:
-                    if random.random() >= p:
-                        chosen.append(aspirants[i])
-                        taken = True
-                    elif i < len(aspirants):
-                        i += 1
-                    else:
-                        i = 0
-            else:
-                i = 0
-                while not taken:
-                    if random.random() >= p*((1 - p) ^ k):
-                        chosen.append(aspirants[i])
-                        taken = True
-                    elif i < len(aspirants):
-                        i += 1
-                    else:
-                        i = 0
+        for i in range(k):
+            winner = max(aspirants, key=attrgetter(fit_attr))
+            chosen.append(winner)
+            aspirants.remove(winner)
+        return chosen
+
+    # TODO - prova selezione del torneo "con vecchi", da togliere
+    def tournament_selection_with_old_gen(self, individuals, k, tournsize, previous_winners, fit_attr="fitness"):
+        chosen = []
+        aspirants = tools.selRandom(individuals, tournsize)
+        for i in range(k):
+            j = 0
+            found = False
+            while j < k and not found:
+                if getattr(aspirants[i], fit_attr) < getattr(previous_winners[j], fit_attr):
+                    aspirants[i] = previous_winners[j]
+                    j += 1
+        for i in range(k):
+            winner = max(aspirants, key=attrgetter(fit_attr))
+            chosen.append(winner)
+            aspirants.remove(winner)
         return chosen
