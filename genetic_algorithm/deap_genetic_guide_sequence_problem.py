@@ -62,12 +62,12 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method using selection for tournament between "selected_for_tournament" individuals
-        # TODO - "relazione a distanza"
-        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
-        # TODO - "vicini di casa"
+        # TODO - "relazione a distanza", test
+        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        # TODO - "vicini di casa", test
         # self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
-        # TODO - "vecchi"
-        self.toolbox.register("select", self.tournament_selection_with_old_gen, tournsize=selected_for_tournament)
+        # TODO - "vecchi", da togliere
+        # self.toolbox.register("select", self.tournament_selection_with_old_gen, tournsize=selected_for_tournament)
 
         # define evaluation method with given "evaluate_fun" function
         self.toolbox.register("evaluate", self.evaluate)
@@ -105,48 +105,35 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # initializing the genome with all genes to False
         for gene in range(individual_dim):
             genome.append(False)
-        '''
-        # for every element into genome
-        for index in range(individual_dim):
-            # if generated float is bigger than 0.5
-            if random.random() > 0.5:
-                # set gene with evaluated index to True
-                genome[index] = True
-        
-        for _ in range(int(individual_dim / 2)):
-            genome[random.randint(0, individual_dim - 1)] = True
-        '''
 
         # return the individual with the created genome
         return individual_class(genome)
 
     # Method generating best individuals by the genetic algorithm without <worst_case_scenario>
-    # @population_size: size fo population to generate
+    # @population_size: size of population to generate
     # @generations: number of generations to create
     # @selected_best: number of best individuals to generate
-    def evolve(self, population_size, generations, selected_best):
+    def evolve(self, population_size, generations):
 
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
-        old_gen = self.toolbox.population(n=self.selected_for_tournament)
-        for ind in old_gen:
-            ind.fitness.value = 0
+        # TODO - "imbucato", da togliere
+        # old_gen = self.toolbox.population(n=self.selected_for_tournament)
+        # for ind in old_gen:
+        #     ind.fitness.value = 0
 
         # TODO - valutazione fitness, da togliere
         fit_behave = list(tuple())
         bestfit = 0
-        bestind = "empty"
+        bestind = None
 
         # for each generation
         for epoch in range(generations - 1):
 
-            # offsprings are generated using the varAnd algorithm, in which are passed the population, mating rate and
-            # mutation rate
-            # in this are used the previous defined methods in the toolbox, such as mutation, crossover, evaluation and
-            # selection
-            # offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
-            offsprings = self.sequence_offspring_generator(population, population_size, self.toolbox, self.mating_rate,
-                                                           self.mutation_rate)
+            # offsprings are generated using the offsprings_generator method, in which are passed the population,
+            # population_size, toolbox, mating rate and mutation rate
+            offsprings = self.offsprings_generator(population, population_size, self.toolbox, self.mating_rate,
+                                                   self.mutation_rate)
 
             # create a list of fitness values of the offsprings
             son_fitness = list()
@@ -172,22 +159,16 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestind = ind
                 ind.fitness.value = fit
 
-            # select a number of offsprings equal to the number of individuals in the population
-            # the selection is defined on a "selected_individual" number of offsprings
-            # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
+            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
+            # generated individuals
+            # the selection is defined on a "selected_for_tournament" number of offsprings
+            population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
             # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            population = self.toolbox.select(offsprings, k=2, previous_winners=old_gen)
-            old_gen = population
+            # TODO - "imbucato", da togliere
+            # population = self.toolbox.select(offsprings, k=2, previous_winners=old_gen)
+            # old_gen = population
 
-        # select the "selected_best" number of best individuals with the highest fitness value
-        # best_individuals = tools.selBest(population, selected_best, fit_attr="fitness.value")
-
-        # convert individual from monodimensional list to "binary cuts sequence"
-        # converted_best_individual = self.from_list_to_sequence(best_individuals[0],
-        #                                                       self.elements_per_dimension)
-
-        # TODO - valutazione fitness, da togliere
-        # print(fit_behave)
+        # TODO - grafico valutazione fitness, da togliere
         min_ = list()
         avg_ = list()
         max_ = list()
@@ -196,17 +177,16 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             avg_.append(fits[1])
             max_.append(fits[2])
         x = np.linspace(0, generations - 1, generations - 1)
-        plt.plot(x, min_, marker='o', color='red')
-        plt.plot(x, avg_, marker='o', color='green')
-        plt.plot(x, max_, marker='o', color='blue')
+        plt.plot(x, min_, marker='.', color='red')
+        plt.plot(x, avg_, marker='.', color='green')
+        plt.plot(x, max_, marker='.', color='blue')
         plt.grid(True)
         plt.show()
 
         print(bestfit, bestind)
         best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 
-        # return converted best individual
-        # return converted_best_individual
+        # return the converted best individual
         return best_individual
 
     # Method defining the fitness value of an individual
@@ -264,8 +244,13 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
-    # TODO - generatore di figli
-    def sequence_offspring_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
+    # Method that generates a offspring population of population_size using "mate" and "mutate" methods
+    # @population: list of individuals
+    # @population_size: size of population to generate
+    # @toolbox: container of utility functions
+    # @mating_rate: mating ratio
+    # @mutation_rate: mutation_ratio
+    def offsprings_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
         clones = [toolbox.clone(ind) for ind in population]
         offsprings = list()
         dummy_ind = max(clones, key=attrgetter("fitness"))
@@ -294,7 +279,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             aspirants.remove(winner)
         return chosen
 
-    # TODO - prova selezione del torneo "con vecchi", da togliere
+    # TODO - prova selezione del torneo "imbucato", da togliere
     def tournament_selection_with_old_gen(self, individuals, k, tournsize, previous_winners, fit_attr="fitness"):
         chosen = []
         aspirants = tools.selRandom(individuals, tournsize)

@@ -37,8 +37,7 @@ point_list, m_d, M_d = loader.load(filename)
 
 gg_args_test = {"selected_for_tournament": 5,
                 "generations": 20,
-                "mating_rate": 0.7,
-                "selected_best": 10}
+                "mating_rate": 0.7}
 
 clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, genetic_guide_parameters=gg_args_test,
                                          verbose=True)
