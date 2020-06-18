@@ -621,13 +621,13 @@ class DCStarProblem(Problem):
         for dimension in range(self.__cuts_sequences.get_dimensions_number()):
             genes_per_dimension.append(len(self.__cuts_sequences.get_dimension(dimension)))
 
-        # calculate the total number of genes that the genome will have
+        # calculate the total number of genes that the chromosome will have
         genes_number = 0
         for num in genes_per_dimension:
             genes_number += num
 
         # calculate population
-        # N.B.: population is given by duplicating the number of genes in the genome
+        # N.B.: population is given by duplicating the number of genes in the chromosome
         population_size = 2 * genes_number
 
         # calculate mutation rate
@@ -640,7 +640,7 @@ class DCStarProblem(Problem):
         # mutation_rate = 0.1
         # mutation_rate = 0.9
         # TODO stampa mutation_rate, da togliere
-        print(mutation_rate)
+        print("Mutation rate calculated: ", mutation_rate)
 
         # define DGG object to create the genetic guide with monodimensional lists
         genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],

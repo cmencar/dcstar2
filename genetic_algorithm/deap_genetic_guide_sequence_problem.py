@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import random
+from math import fabs
 from operator import attrgetter
-from deap import creator, base, tools
+from deap import creator, base, tools, algorithms
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
@@ -21,7 +22,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # (selection by tournament)
     # @cuts_sequence: sequence of cuts T_d
     # @points_list: list of prototypes
-    # @elements_per_dimension: number of elements per dimension of given cuts_sequence for convertion from list
+    # @elements_per_dimension: number of elements per dimension of given cuts_sequence for convertion from chromosome
     # to sequence
     # @min_cut: m_d cut that will go into S_d
     # @max_cut: M_d cut that will go into S_d
@@ -73,12 +74,12 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("evaluate", self.evaluate)
 
         # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
-        # monodimensional list to sequence in "pureness" function
+        # chromosome to sequence
         self.T_d = cuts_sequence
         self.points_list = points_list
         self.individual_size = individual_size
         self.elements_per_dimension = elements_per_dimension
-        # save m_d and M_d limits to generate S_d sequence in "pureness" function
+        # save m_d and M_d limits to generate S_d sequence
         self.m_d = min_cut
         self.M_d = max_cut
 
@@ -109,7 +110,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # return the individual with the created genome
         return individual_class(genome)
 
-    # Method generating best individuals by the genetic algorithm without <worst_case_scenario>
+    # Method generating the best individual possible by the genetic algorithm
     # @population_size: size of population to generate
     # @generations: number of generations to create
     # @selected_best: number of best individuals to generate
@@ -117,23 +118,25 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
-        # TODO - "imbucato", da togliere
-        # old_gen = self.toolbox.population(n=self.selected_for_tournament)
-        # for ind in old_gen:
-        #     ind.fitness.value = 0
 
-        # TODO - valutazione fitness, da togliere
-        fit_behave = list(tuple())
+        fit_behave = list(tuple())  # TODO - valutazione fitness, da togliere
         bestfit = 0
         bestind = None
 
+        epoch = 0
+        stabilized_gens = 0
+        previous_avg_fit = 0
+
         # for each generation
-        for epoch in range(generations - 1):
+        # for epoch in range(generations - 1):
+        # TODO - aggiunto altro criterio di stop "stabilizzazione", test
+        while epoch in range(generations - 1) and stabilized_gens < 10:
 
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate
             offsprings = self.offsprings_generator(population, population_size, self.toolbox, self.mating_rate,
                                                    self.mutation_rate)
+            # offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
 
             # create a list of fitness values of the offsprings
             son_fitness = list()
@@ -141,20 +144,30 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 son_fitness.append(self.fitness(son))
 
             # TODO - valutazione fitness, da togliere
-            temp_max = 0
-            temp_min = 1
+            current_max_fit = 0
+            current_min_fit = 1
             temp_avg = 0
             for i in range(len(son_fitness)):
-                if son_fitness[i] > temp_max:
-                    temp_max = son_fitness[i]
-                if son_fitness[i] < temp_min:
-                    temp_min = son_fitness[i]
+                if son_fitness[i] > current_max_fit:
+                    current_max_fit = son_fitness[i]
+                if son_fitness[i] < current_min_fit:
+                    current_min_fit = son_fitness[i]
                 temp_avg += son_fitness[i]
-            fit_behave.append((temp_min, temp_avg / len(son_fitness), temp_max))
+                current_avg_fit = temp_avg / population_size
+            fit_behave.append((current_min_fit, current_avg_fit, current_max_fit))
+
+            # TODO - aggiunto altro criterio di stop "stabilizzazione", test
+            if fabs(previous_avg_fit - current_avg_fit) <= previous_avg_fit * 0.1:
+                stabilized_gens += 1
+            else:
+                stabilized_gens = 0
+            previous_avg_fit = current_avg_fit
 
             # map each fitness value to the corresponding offspring
             for fit, ind in zip(son_fitness, offsprings):
-                if fit > bestfit:  # TODO - valutazione fitness, da togliere
+                # if an individual had better fitness than the best found so far
+                if fit > bestfit:
+                    # save the better individual
                     bestfit = fit
                     bestind = ind
                 ind.fitness.value = fit
@@ -164,9 +177,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # the selection is defined on a "selected_for_tournament" number of offsprings
             population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
             # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            # TODO - "imbucato", da togliere
-            # population = self.toolbox.select(offsprings, k=2, previous_winners=old_gen)
-            # old_gen = population
+            # population = self.toolbox.select(offsprings, k=int(population_size/4))  # TODO - "assembramento", da test
+
+            epoch += 1
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
@@ -176,33 +189,35 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             min_.append(fits[0])
             avg_.append(fits[1])
             max_.append(fits[2])
-        x = np.linspace(0, generations - 1, generations - 1)
+        x = np.linspace(0, len(fit_behave), len(fit_behave))
         plt.plot(x, min_, marker='.', color='red')
         plt.plot(x, avg_, marker='.', color='green')
         plt.plot(x, max_, marker='.', color='blue')
         plt.grid(True)
         plt.show()
 
-        print(bestfit, bestind)
+        print("Best fitness: ", bestfit)  # TODO - valutazione fitness, da togliere
+        print("Halt at generation:", epoch)  # TODO - doppio criterio di fermata "evolve", da togliere
+        # convert individual into sequence
         best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
         return best_individual
 
     # Method defining the fitness value of an individual
-    # @individual: individual's genome
+    # @individual: individual
     def fitness(self, individual):
         # return the calculated fitness value
         return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual), 5)
 
     # Method that calculates the pureness of a given individual's genome
-    # @individual: individual's genome
+    # @individual: individual
     def pureness(self, individual):
         # initializing selected cuts and binary cuts sequences
         S_d = SelectedDimensionalSequenceNumeric()
         S_d_b = DimensionalSequenceBinary()
 
-        # convert individual from monodimensional list to "multidimensional cut sequence"
+        # convert individual into sequence
         converted_individual = self.from_list_to_sequence(individual, self.elements_per_dimension)
 
         # create binary cuts sequence
@@ -217,7 +232,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
 
     # Method converting individual's genome from list to "multidimensional cuts sequence" (list of lists)
-    # @individual: individual's genome
+    # @individual: individual
     # @genes_per_dimension: numbers of genes per dimension
     def from_list_to_sequence(self, individual, genes_per_dimension):
         # create support lists
