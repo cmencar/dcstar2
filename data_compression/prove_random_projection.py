@@ -11,7 +11,7 @@ ionosphere = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
               'f29', 'f30', 'f31', 'f32', 'f33', 'label')
 original_dataset = pd.read_csv('dataset_ndimensionali/ionosphere.csv', names=ionosphere)
 
-X = original_dataset.values[:, :33]
+X = original_dataset.values[:, :-1]
 
 data_normal = (X - X.min()) / (X.max() - X.min())
 
