@@ -71,38 +71,30 @@ class lvq1(compression_strategy):
             i = i + 1
             # Update learning_rate
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species']) # dataset bidimensionali
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species']) # dataset iris
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'species']) # dataset newthyroid
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'species']) # dataset bupa
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'species']) # dataset appendicitis
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species']) # dataset glass, wisconsin
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'species']) # dataset pageblocks
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'species']) # dataset wine
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28', 'f29', 'f30', 'f31', 'f32', 'f33', 'species'])  # dataset ionosphere
-        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28', 'f29', 'f30', 'f31', 'f32', 'f33', 'f34', 'f35', 'f36', 'f37', 'f38', 'f39', 'f40', 'f41', 'f42', 'f43', 'f44', 'f45', 'f46', 'f47', 'f48', 'f49', 'f50', 'f51', 'f52', 'f53', 'f54', 'f55', 'f56', 'f57', 'f58', 'f59', 'f60', 'species'])  # dataset sonar
+            print(type(prototypes))
         return prototypes
 
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
 
     def draw_prototypes(self, prototypes, alpha):
-        groups = prototypes.groupby(prototypes.iloc[-1])
-        n_p = len(prototypes)
-        for name, group in groups:
-            plt.plot(group["f1"], group["f2"], marker="o", alpha=alpha, linestyle="", label=name)
+        labels = set(prototypes[:, -1])
+        labels = list(labels)
+        data = pd.DataFrame(data=prototypes)
+        for row in data.itertuples():
+            if row[-1] == labels[0]:
+                color = "red"
+            elif row[-1] == labels[1]:
+                color = "green"
+            else:
+                color = "blue"
+            plt.scatter(row[1], row[2], color=color, alpha=alpha)
 
-        filename = "prove"
-        plt.legend()
-        plt.savefig(filename)
-
-    def create_json(self, m_d, M_d, prototypes, filename):
-        prototypes = prototypes.to_numpy()
-        n_p = len(prototypes)
+    def create_json(self, prototypes, filename):
         point_coordinates = prototypes[:, :-1].tolist()
-        # print(point_coordinates)
         point_labels = prototypes[:, -1].tolist()
-        # print(point_labels)
+        m_d = self.get_min_boundary(prototypes).tolist()
+        M_d = self.get_max_boundary(prototypes).tolist()
         point_id = list()
         for i in point_coordinates:
             point_id.append(point_coordinates.index(i))
@@ -119,24 +111,10 @@ class lvq1(compression_strategy):
         with open(filename, 'w') as output:
             json.dump(data, output, indent=1)
 
-    # TODO l'ho modificato a manina io (Dino) perche i valori erano sballati, modificalo nuovamente tu
-    def get_boundary(self, prototypes):
-        '''
-        minValues = prototypes.min()
-        m_d = tuple()
-        for i in (range(len(minValues) - 1)):
-            m_d = m_d + (minValues[i],)
-        maxValues = prototypes.max()
-        M_d = tuple()
-        for i in (range(len(maxValues) - 1)):
-            M_d = M_d + (maxValues[i],)
-        return m_d, M_d
-        '''
-        minValues = -1.0
-        maxValues = 1.5
+    def get_min_boundary(self, prototypes):
+        minValues = np.amin(prototypes[:, 0:-1], axis=0)
+        return minValues
 
-        features = len(prototypes.dtypes) - 1
-        m_d = [minValues for _ in range(features)]
-        M_d = [maxValues for _ in range(features)]
-        return m_d, M_d
-
+    def get_max_boundary(self, prototypes):
+        maxValues = np.amax(prototypes[:, 0:-1], axis=0)
+        return maxValues
