@@ -481,23 +481,14 @@ class DCStarProblem(Problem):
             numerical_node = SelectedDimensionalSequenceNumeric()
             numerical_node.from_binary(self.__cuts_sequences, node.state)
 
-            '''
             # for each dimension into evaluated node
-            for dimension in range(node.state.get_dimensions_number()):
+            for dimension in range(genetic_individual.get_dimensions_number()):
                 # increment intersection cardinality by the one of the intersection of both
                 # evaluated node and genetic guide sequence
-                intersection_value += len(
-                    set(node.state.get_dimension(dimension)).intersection(
-                        set(self.__genetic_guide_individual.get_dimension(dimension))))
-                # increment union cardinality by the one of the union of both
-                # evaluated node and genetic guide sequence
-                union_value += len(
-                    set(node.state.get_dimension(dimension)).union(
-                        set(self.__genetic_guide_individual.get_dimension(dimension))))
-            '''
-            for dimension in range(genetic_individual.get_dimensions_number()):
                 intersection_value += len(set(numerical_node.get_dimension(dimension)).
                                           intersection(set(genetic_individual.get_dimension(dimension))))
+                # increment union cardinality by the one of the union of both
+                # evaluated node and genetic guide sequence
                 union_value += len(set(numerical_node.get_dimension(dimension)).
                                    union(set(genetic_individual.get_dimension(dimension))))
 
@@ -513,25 +504,19 @@ class DCStarProblem(Problem):
         start_time = time.time()
 
         # initialize the genetic guide
-        genetic_guide, generations, population_size, selected_best = self.__initialize_gg(gg_parameters)
+        genetic_guide, generations, population_size = self.__initialize_gg(gg_parameters)
 
         # create an empty binary sequence
         sequence = DimensionalSequenceBinary()
 
-        # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
-        # sequence.from_binary(genetic_guide.evolve(population_size, generations, selected_best))
-
-        # generate pure genetic sequence forcing "worst_case_scenario" method
-        # sequence.from_binary(DeapGeneticGuide.worst_case_scenario(genetic_guide, genetic_guide.elements_per_dimension))
-
         # generate genetic sequence with impure possibility
-        sequence.from_binary(genetic_guide.evolve_without_wsc(population_size, generations, selected_best))
+        sequence.from_binary(genetic_guide.evolve(population_size, generations))
 
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
         hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
         if hbs.get_impure_hyperboxes_number() != 0:
-            print("evaluated genetic individual is an impure one\n")
+            print("Evaluated genetic individual is an impure one\n")
             self.__genetic_individual_purity = False
             '''
             # purification process
@@ -587,7 +572,14 @@ class DCStarProblem(Problem):
         # calculate mutation rate
         # N.B.: mutation rate is calculated by reciprocating the number of genes
         mutation_rate = 1 / genes_number
+        # TODO mutation_rate prefissati, test da togliere
+        # mutation_rate = 0.3
+        # mutation_rate = 0.2
+        # mutation_rate = 0.15
+        # mutation_rate = 0.1
         # mutation_rate = 0.9
+        # TODO stampa mutation_rate, da togliere
+        print(mutation_rate)
 
         # define DGG object to create the genetic guide with monodimensional lists
         genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],
@@ -595,7 +587,7 @@ class DCStarProblem(Problem):
                                                         self.__points_list, genes_per_dimension,
                                                         self.__boundary_points[0], self.__boundary_points[1])
 
-        return genetic_guide, gg_parameters["generations"], population_size, gg_parameters["selected_best"]
+        return genetic_guide, gg_parameters["generations"], population_size
 
 
     def get_genetic_guide_individual(self):
