@@ -1,133 +1,120 @@
 from heuristic_search.pqueue import PriorityQueue
 from heuristic_search.node import Node
+import sys
+import time
 
-# Algoritmo A* per la ricerca del percorso ottimale
-# da uno stato iniziale ad uno finale
-def astar(problem):
 
-    # variabile per la valutazione dei rami valutati dall'algoritmo
-    branches_taken = 0
-    
-    # la coda con priorità per inserire i percorsi gia valutati
-    closed = PriorityQueue()
 
-    # la coda con piorità per inserire i percorsi da valutare
-    front = PriorityQueue()  
+# Class including A* algorithm
+class AStar:
 
-    # definisce il nodo di partenza del grafo
-    start_node =  Node(problem.start_state)
+    # Method for the execution of A* algorithm for the clustering problem
+    @staticmethod
+    def astar(problem):
 
-    # in primo luogo, definisce i percorsi che dal nodo di partenza porta agli altri nodi figli.
-    # Di questi percorsi ne stima un costo in base alla funzione estimate_cost.
-    # Infine definisce una tupla in cui sono presenti la lista dei costi stimati dei percorsi calcolati
-    # e il nodo iniziale definito in precedenza
-    estimated_node = (problem.estimate_cost(start_node.path()), start_node) 
+        # initialization of the evaluated nodes' cuts sequence list
+        evaluated_nodes = []
 
-    # inserisce all'interno della coda dei percorsi da valutare i percorsi stimati
-    front.put(estimated_node)
+        # initialization of timer (used to measure the time taken in the computation) and number of branches taken
+        start_time = time.time()
+        branches_taken = 0
 
-    # finchè nella coda dei percorsi da valutare sarà presente almeno un percorso
-    while not front.empty():
-        
-        # incremento del contatore dei rami valutati
-        branches_taken = branches_taken + 1
+        # initialization of priority queues
+        closed = PriorityQueue()
+        front = PriorityQueue()
 
-        # si acquisisce una tupla relativa al nodo corrente che si sta analizzando
-        # momentaneamente e il costo stimato del percorso in cui il nodo
-        # corrente ne fa da radice. Il percorso acquisito ha il prezzo minore nella
-        # coda con priorità 'front'
-        (path_estimated_cost, current_node) = front.get()
+        # definition of the starting node for the evaluation and its starting cost. The starting node is now defined
+        # as the first estimated node to be evaluated in problem computation
+        start_node = Node(problem.start_state)
+        estimated_node = ((0, 0, 0), start_node)
+        front.put(estimated_node)
 
-        # acquisisce lo stato del nodo corrente
-        current_state = current_node.state
+        # if the front priority queue is not empty means that are more nodes to be evaluated
+        while not front.empty():
 
-        # se il nodo analizzato non è un nodo finale, ovvero ha più adiacenti
-        if not problem.unique_successors:
+            # incrementing the branches taken counter
+            branches_taken = branches_taken + 1
 
-            # allora si inserisce nella coda con priorità 'closed'
-            # il nodo corrente e il relativo percorso con costo stimato
-            closed.put((path_estimated_cost, current_node))
+            # depending if the verbose mode is chosen, the correct on-screen printing is shown
+            if problem.verbose:
+                sys.stdout.write('\r' + "Evaluating node #" + str(branches_taken))
+            else:
+                sys.stdout.write('\r' + "Evaluating" + str('.' * (branches_taken % 5)))
 
-        # se lo stato del nodo corrente è quello che si ricercava
-        if problem.goal(current_state):
+            # acquiring the most promising node from front priority queue, i.e. the node with the best estimated_cost,
+            # and initialize the current_state variable with the most promising node state (a DimensionalSequenceBinary object)
+            (estimated_cost, current_node) = front.get()
+            current_state = current_node.state
 
-            # allora si restituisce il percorso del nodo corrente
-            # poiche è quello giusto
-            return (current_node.path(), branches_taken)
+            # adding the current evaluated node into the evaluated_node list
+            evaluated_nodes.append([repr(current_state.elements), repr(estimated_cost)])
 
-        else:
-            
-            # acquisisce i nodi adiacenti del nodo corrente per effettuare una valutazione
-            successors = problem.successors(current_state)
+            # if it is not a unique successor then insert the current_node in closed queue. unique_successor means that
+            # is impossible to find cycles in the evaluated path: consequently, the paths taken by the A* algorithm
+            # are simple paths and, therefore, the macrostructure can be related back to a tree
+            if not problem.unique_successors:
+                closed.put((estimated_cost, current_node))
 
-            # per ogni nodo nella lista dei nodi adiacenti del nodo corrente
-            for successor_state in successors:
+            # if the evaluated current_state is a possible result then return it and finish the execution early.
+            # The information on current_State as a possible result is given by the goal function, which returns True
+            # if the cut sequence defined by the state generates a set of hyperboxes all pure
+            if problem.goal(current_state):
+                return current_node.state, branches_taken, time.time() - start_time, evaluated_nodes
 
-                # viene creata una istanza di nodo, definito come 'successore' 
-                # in cui lo stato del nodo è uguale allo stato del nodo adiacente
-                # valutato e il suo 'parente' è uguale al nodo corrente valutato
-                successor_node = Node(successor_state, parent_node=current_node)
+            # if the evaluated current_State is not a possible result then define the list of successors of the
+            # evaluated current_state. Those successors will be evaluated in the next steps.
+            else:
 
-                # definizione del costo stimato del percorso dal nodo di partenza al nodo 'successore'  
-                path_estimated_cost = problem.estimate_cost(successor_node.path())
+                # define a list of successors taking the current_state and evaluate them one-by-one. The successors
+                # are DimensionalSequenceBinary objects created by successors() method
+                successors = problem.successors(current_state)
+                for successor_state in successors:
 
-                # se il nodo analizzato non è un nodo finale, ovvero ha nodi adiacenti
-                if not problem.unique_successors:
+                    # create a Node object using the successor_state evaluated, i.e. a DimensionalSequenceBinary, and
+                    # estimate a cost using the three-levels priority values
+                    successor_node = Node(successor_state, parent_node = current_node)
+                    estimated_cost = problem.estimate_cost(successor_node)
 
-                    # acquisisci la lista dei nodi adiacenti del nodo 'successori' non valutati
-                    estimated_node = front.find(successor_state)
+                    # if it is not a unique successor then there could be a duplicate node, i.e. a front priority
+                    # queue's node that has the same state as one of the newly created successors
+                    if not problem.unique_successors:
 
-                    # se ci sono nodi adiacenti al nodo successore
-                    if estimated_node is not None:
-
-                        # se il percorso del nodo adiacente è migliore del percorso ottimale
-                        # preso a priori (poiche la coda con priorità definisce come primo
-                        # elemento il percorso migliore tra la lista dei nodi 'successivi')
-                        if path_estimated_cost < estimated_node[0]:
-
-                            # viene rimosso dalla lista dei nodi da valutare i percorsi
-                            # dei nodi adiacenti
-                            front.remove(estimated_node)
-
-                            # si inserisce nella lista dei nodi da valutare il percorso
-                            # dell'adiacente migliore
-                            front.put((path_estimated_cost, successor_node))
-
-                    # se non ci sono nodi adiacenti
-                    else:
-
-                        # acquisisci la lista dei nodi adiacenti del nodo 'successori' gia valutati
-                        estimated_node = closed.find(successor_state)
-
-                        # se ci sono nodi adiacenti
+                        # Search if the evaluated successor state, i.e. a certain cut configuration defined by
+                        # DimensionalSequenceBinary, is already present in a node in the front priority queue.
+                        # If so (and, therefore, the value defined by estimated_node is different from None) then
+                        # compare the cost value associated to this node with the cost value of the successor state,
+                        # i.e. the amount defined by estimated_cost. If the cost value associated to the successor_state
+                        # is lower than the value of the node already present, then the second is removed and the node
+                        # of the evaluated successor_state replace it
+                        estimated_node = front.find(successor_state)
                         if estimated_node is not None:
+                            if estimated_cost < estimated_node[0]:
+                                front.remove(estimated_node)
+                                front.put((estimated_cost, successor_node))
 
-                            # se il percorso del nodo adiacente è migliore del percorso ottimale
-                            # preso a priori (poiche la coda con priorità definisce come primo
-                            # elemento il percorso migliore tra la lista dei nodi 'successivi')
-                            if path_estimated_cost < estimated_node[0]:
-
-                                # si inserisce nella lista dei nodi da valutare il percorso
-                                # dell'adiacente migliore
-                                front.put((path_estimated_cost, successor_node))
-
-                                # viene rimosso dalla lista dei nodi valutati i percorsi
-                                # dei nodi adiacenti
-                                closed.remove(estimated_node)
-                        
-                        # se invece non ci sono nodi adiacenti
+                        # if the evaluated successor state is not present in a node in the front priority queue then
+                        # search that node in the closed priority queue. If the evaluated successor_state is present in
+                        # closed priority queue (and, therefore, the value defined by estimated_node is different from None)
+                        # then compare the cost value associated to this node with the cost value of the successor state,
+                        # i.e. the amount defined by estimated_cost. If the cost value associated to the successor_state
+                        # is lower than the value of the node already present, then the second is inserted in front
+                        # priority queue (with the already defined estimated_cost) and it is removed from closed priority queue.
+                        # If the evaluated successor_state is not present in closed priority queue is a is a node that
+                        # has not yet been evaluated (and consequently inserted in closed). So it is inserted in the front
+                        # priority queue with the already defined estimated_cost and it could be evaluated in the next steps.
                         else:
+                            estimated_node = closed.find(successor_state)
+                            if estimated_node is not None:
+                                if estimated_cost < estimated_node[0]:
+                                    front.put((estimated_cost, successor_node))
+                                    closed.remove(estimated_node)
+                            else:
+                                front.put((estimated_cost, successor_node))
 
-                            # inseriamo all'interno della coda con priorità 'front'
-                            # il nodo 'successore' e il costo del suo percorso
-                            front.put((path_estimated_cost, successor_node))
-                
-                # se il nodo analizzato è un nodo finale, ovvero non ha nodi adiacenti
-                else:
+                    # if unique_successor is equal to false then the node is simply inserted in the front priority queue
+                    # with the estimated_cost value previously calculated
+                    else:
+                        front.put((estimated_cost, successor_node))
 
-                    # si inserisce all'interno della coda con priorità 'front'
-                    # il nodo 'successore' e il costo del suo percorso
-                    front.put((path_estimated_cost, successor_node))
-
-    # nessun risultato trovato
-    return (None, branches_taken)
+        # if there are no possible results then it must return a None value for the result field
+        return None, branches_taken, time.time() - start_time, evaluated_nodes

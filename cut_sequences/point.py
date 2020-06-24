@@ -1,111 +1,60 @@
 import numpy as np
 
-
-# Class for the definition of a given point
+# Class for the definition of a given point (prototype)
 # into the features space
 class Point:
 
     # Class constructor
-    def __init__(self, coordinates_array = None, label = None, name = None):
+    # @coordinates_array: points' coordinates for every dimension
+    # @label: point label
+    # @name: point name
+    def __init__(self, coordinates, label = None, name = None):
 
-        # if coordinates' array is not empty
-        if coordinates_array is not None:
+        # control for define if the passed parameter is an iterable object
+        # If parameter isn't iterable object then the constructor fail and
+        # show an error message
+        try:
+            _ = (element for element in coordinates)
+        except TypeError:
+            print("Error in creating Point. Passed non-iterable parameter")
+            return
 
-            # if coordinates' array is an NumPy array, set
-            # the coordinates' class array with passed array
-            if isinstance(coordinates_array, np.ndarray):
-                self.coordinates = coordinates_array
+        # acquire every coordinate, insert them in a list
+        # and convert the list into a NumPy array
 
-            # if coordinates' array is not a NumPy array
-            else:
-
-                # initialize the coordinates' array with a NumPy array
-                self.coordinates = np.ndarray(shape=(len(coordinates_array),))
-
-                # initialize the array index
-                array_index = 0
-
-                # for each coordinate into the coordinates' array,
-                # insert it as new element of coordinates' class array
-                for coordinate in coordinates_array:
-                    self.coordinates.put(array_index, coordinate)
-                    array_index = array_index + 1
-
-        # if coordinates' array is empty, set an empty NumPy array
-        # as coordinates' class array
-        else:
-            self.coordinates = np.array([])
+        self.__coordinates = np.array([coordinate for coordinate in coordinates])
 
         # initialize label information
-        self.label = label
+        self.__label = label
 
         # initialize name information
-        self.name = name
+        self.__name = name
 
 
     # Method for acquiring all dimensions' coordinates
     def get_coordinates(self):
-        return self.coordinates
+        return self.__coordinates
 
 
     # Method for acquiring coordinate for specific dimension
+    # @dimension: dimension correlated to coordinate to be get
     def get_coordinate(self, dimension):
 
+        # if the indexes refers to a non-existent coordinate then print
+        # an error message, elsewhere return the correct value
         try:
-
-            # return the coordinates for specific dimension
-            return self.coordinates[dimension - 1]
-
+            return self.__coordinates[dimension]
         except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found")
-
-
-    # Method for setting coordinate for specific dimension
-    def set_coordinate(self, dimension, coordinate):
-
-        try:
-
-            # set the coordinates for specific dimension
-            self.coordinates[dimension - 1] = coordinate
-
-        except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found")
-
-
-    # Method for setting coordinate for specific dimension
-    def add_coordinate(self, dimension, coordinate):
-
-        try:
-
-            # add the coordinate for specific dimension
-            self.coordinates.insert(dimension - 1, coordinate)
-
-        except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found")
+            print("Coordinate not found, impossible to get")
 
 
     # Method for acquiring point label
     def get_label(self):
-        return self.label
-
-
-    # Method for setting point label
-    def set_label(self, label):
-        self.label = label
+        return self.__label
 
 
     # Method for acquiring point associated name
     def get_name(self):
-        return self.name
+        return self.__name
 
-
-    # Method for setting point associated name
-    def set_name(self, name):
-        self.name = name
 

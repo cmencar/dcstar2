@@ -21,14 +21,11 @@ compression = compression(original_dataset)
 choice = input('Normalizzare?[S/N]: ')
 if choice == "S":
     norm = compression.normalized_dataset()
-    # m_d = compression.get_minimum_boundary(norm)
-    # M_d = compression.get_maximum_boundary(norm)
+    scatterPlot(norm, 0.4)
     lvq1 = lvq1(norm, n_p)
 else:
-    # m_d = compression.get_minimum_boundary(original_dataset)
-    # M_d = compression.get_maximum_boundary(original_dataset)
+    scatterPlot(original_dataset, 0.4)
     lvq1 = lvq1(original_dataset, n_p)
-    print(original_dataset)
 print("Esecuzione in corso!")
 
 compression.set_strategy(lvq1)

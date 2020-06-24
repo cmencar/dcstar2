@@ -1,0 +1,174 @@
+{
+  "points": [
+    {
+      "coordinates": [
+        0.1330480618,
+        0.781310669
+      ],
+      "class": 1,
+      "name": "point_1"
+    },
+    {
+      "coordinates": [
+        0.0609098154,
+        0.5628676188
+      ],
+      "class": 1,
+      "name": "point_2"
+    },
+    {
+      "coordinates": [
+        0.2497211055,
+        0.6478740487
+      ],
+      "class": 1,
+      "name": "point_3"
+    },
+    {
+      "coordinates": [
+        0.1428872607,
+        0.1712581315
+      ],
+      "class": 1,
+      "name": "point_4"
+    },
+    {
+      "coordinates": [
+        0.1941754138,
+        0.412379869
+      ],
+      "class": 1,
+      "name": "point_5"
+    },
+    {
+      "coordinates": [
+        0.2680092326,
+        0.9073460399
+      ],
+      "class": 1,
+      "name": "point_6"
+    },
+    {
+      "coordinates": [
+        0.0751339715,
+        0.9448966536
+      ],
+      "class": 1,
+      "name": "point_7"
+    },
+    {
+      "coordinates": [
+        0.4944433927,
+        0.7215700259
+      ],
+      "class": 2,
+      "name": "point_8"
+    },
+    {
+      "coordinates": [
+        0.4040964175,
+        0.2243180376
+      ],
+      "class": 2,
+      "name": "point_9"
+    },
+    {
+      "coordinates": [
+        0.4700060866,
+        0.0706169097
+      ],
+      "class": 2,
+      "name": "point_10"
+    },
+    {
+      "coordinates": [
+        0.3833651996,
+        0.3861103409
+      ],
+      "class": 2,
+      "name": "point_11"
+    },
+    {
+      "coordinates": [
+        0.3653776073,
+        0.7104013695
+      ],
+      "class": 2,
+      "name": "point_12"
+    },
+    {
+      "coordinates": [
+        0.4276619012,
+        0.5563728623
+      ],
+      "class": 2,
+      "name": "point_13"
+    },
+    {
+      "coordinates": [
+        0.4878837682,
+        0.2834693096
+      ],
+      "class": 2,
+      "name": "point_14"
+    },
+    {
+      "coordinates": [
+        0.7624531229,
+        0.339362539
+      ],
+      "class": 3,
+      "name": "point_15"
+    },
+    {
+      "coordinates": [
+        0.7350336114,
+        0.1312184234
+      ],
+      "class": 3,
+      "name": "point_16"
+    },
+    {
+      "coordinates": [
+        0.6495459505,
+        0.9143714565
+      ],
+      "class": 3,
+      "name": "point_17"
+    },
+    {
+      "coordinates": [
+        0.6626563568,
+        0.612258776
+      ],
+      "class": 3,
+      "name": "point_18"
+    },
+    {
+      "coordinates": [
+        0.7686629514,
+        0.8966025146
+      ],
+      "class": 3,
+      "name": "point_19"
+    },
+    {
+      "coordinates": [
+        0.5559056878,
+        0.3794447297
+      ],
+      "class": 3,
+      "name": "point_20"
+    },
+    {
+      "coordinates": [
+        0.8485143549,
+        0.6966157316
+      ],
+      "class": 3,
+      "name": "point_21"
+    }
+  ],
+  "m_d": [0.06, 0.07],
+  "M_d": [0.85, 0.95]
+}

@@ -76,7 +76,7 @@ class lvq1(compression_strategy):
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
 
-    def draw_prototypes(self, prototypes):
+    def draw_prototypes(self, prototypes, alpha):
         labels = set(prototypes[:, -1])
         labels = list(labels)
         data = pd.DataFrame(data=prototypes)
@@ -87,7 +87,7 @@ class lvq1(compression_strategy):
                 color = "green"
             else:
                 color = "blue"
-            plt.scatter(row[1], row[2], color=color, alpha=1)
+            plt.scatter(row[1], row[2], color=color, alpha=alpha)
 
     def create_json(self, prototypes, filename):
         point_coordinates = prototypes[:, :-1].tolist()

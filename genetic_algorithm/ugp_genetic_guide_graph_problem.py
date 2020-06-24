@@ -1,0 +1,349 @@
+# -*- coding: utf-8 -*-
+import sys
+sys.path.append('../')
+
+import random
+from genetic_algorithm.genetic_evolution import GeneticEvolution
+from genetic_algorithm.genetic_guide_problem import GeneticGuideProblem
+from genetic_algorithm.second_level_heuristic import SecondLevelHeuristic
+from genetic_algorithm.ugp_genetic_guide import UGPGeneticGuide
+from genetic_algorithm.levenshtein import levenshtein
+from heuristic_search.node import Node
+
+
+# Classe per la definizione di un nodo
+# utile all'interno del grafo
+class GraphNode(Node):
+    
+    # Costruttore della classe
+    def __init__(self, state, parent_node=None):
+
+        self.state = state
+        self.parent = parent_node
+        self.adiacent_nodes = []
+        
+    # Metodo per l'acquisizione del percorso del nodo
+    def path(self):
+
+        if self.parent is None:
+            return [self.state]
+        else:
+            return self.parent.path() + [self.state]
+        
+    # Metodo per l'acquisizione degli adiacenti del nodo
+    def add_adiacent (self, adiacent):
+        
+        for node in adiacent:
+            self.adiacent_nodes.append(node)
+        
+    # Metodo di servizio per la valutazione "minore di"
+    def __lt__ (self, other):
+        
+        return self.state[1] < other.state[1]
+    
+    # Metodo di servizio per la valutazione "uguale a"
+    def __eq__(self, other):
+        
+        if other is None:
+            return False
+        if not isinstance(other, GraphNode):
+            return False
+        return self.state[1] == other.state[1]
+
+# ----------------------------------------------------------------------------  
+       
+    
+# Classe per la definizione di un Problem
+# inerente ad un grafo utilizzando la guida genetica
+class UGPGeneticGuideGraphProblem(GeneticGuideProblem):
+    
+    # Costruttore della classe Problem
+    def __init__ (self, state_list, adiacent_list, distance_list, start_state, end_state):
+        
+        # definizione della lista dei nodi
+        self.state_list = state_list
+        
+        # definizione delle adiacenze dei nodi
+        self.adiacent_list = adiacent_list
+        
+        # definizione delle distanze dei nodi
+        self.distance_list = distance_list
+        
+        # stato di partenza
+        self.start_state = start_state
+        
+        # stato di arrivo
+        self.end_state = end_state
+        
+        # nodo iniziale, dato dalla coppia data dallo stato iniziale 
+        # e la distanza di partenza (presa 0 di default in quanto è la
+        # distanza da se stesso)
+        self.start_node = GraphNode((self.start_state, 0))
+        
+        # flag per definire se un nodo ha più
+        # di un nodo adiacente (usato per efficienza)
+        self.unique_successors = False
+        
+        # lista di tutti i nodi presenti
+        self.node_list = []
+        
+        # definisce il grafo sul quale lavorare per determinare il
+        # percorso migliore 
+        self.connect_nodes (self.adiacent_list)
+    
+    
+    # Metodo per il calcolo del costo del percorso
+    def estimate_cost (self, path):
+        
+        # valutazione del costo del percorso e della seconda euristica
+        g = self.g(path)
+        
+        # valutazione della prima e della seconda euristica
+        (h1, h2) = self.h(path)
+        
+        # ritorno del costo stimato
+        return (g + h1, h2)
+    
+    
+    # Metodo per la restituzione della lunghezza del percorso
+    def g (self, path):
+        
+        # inizializzazione della lunghezza complessiva del percorso
+        path_length = 0
+        
+        # se il percorso acquisito ha più di un nodo
+        if (len(path) > 1):
+            
+            # per ogni nodo presente all'interno del percorso
+            # che non sia il nodo radice
+            for node in range (1, len(path)):
+                
+                # acquisizione dello stato e della distanza
+                (state, distance) = path[node]
+                
+                # somma della lunghezza finora calcolata
+                # con la distanza dal nodo
+                path_length  = path_length + distance
+        
+        # restituzione della lunghezza del percorso
+        return path_length
+
+    
+    # Metodo per la restituzione dell'euristica di primo
+    # livello del percorso passato
+    def h1(self, path):
+        
+        # se la lista delle distanze è None allora ritorna un valore arbritario
+        if self.distance_list is None:
+            return 0
+        
+        # altrimenti effettua una valutazione basata sulle distanze tra nodi
+        else:
+            
+            # definizione dello stato di partenza del percorso analizzato
+            start_state_index = self.state_list.index(path[-1][0])
+            
+            # definizione dello stato di fine del percorso analizzato
+            end_state_index = self.end_state.index(self.end_state)
+            
+            # valutazione dell'euristica di secondo livello semplicemente
+            # prendendo il valore della distanza tra lo stato di inizio
+            # e quello di fine del percorso
+            heuristic_cost = self.distance_list[start_state_index][end_state_index]
+            
+            # restituzione dell'euristica di primo livello
+            return heuristic_cost
+    
+    
+    # Metodo per la restituzione dell'euristica di secondo
+    # livello del percorso passato
+    def h2(self, path):
+        
+        # estrazione della stringa dal percorso per valutare
+        # l'euristica di secondo livello
+        string_path = self.stringfy_path(path)
+        
+        # definizione del valore dell'euristica di secondo livello.
+        # Tale valutazione viene effettuata passando al generatore
+        # di euristica il percorso sotto forma di stringa che verrà
+        # confrontata (usando la funzione di euristica definita nel
+        # costruttore, in questo caso l'algoritmi di Levenshtein)
+        # con l'individuo generato dall'algoritmo genetico
+        second_level_heuristic = self.second_level_heuristic_gen.get(string_path)
+        
+        # Restituisce la lunghezza del percorso insieme
+        # all'euristica di secondo livello
+        return second_level_heuristic
+    
+    
+    
+    # Metodo per definire se lo stato analizzato è
+    # quello definito come obiettivo finale
+    def goal (self, state):
+        
+        # Ritorna true se sono uguali, false altrimenti
+        return state[0] == self.end_state
+    
+    
+    # Metodo per definire la lista di successori
+    # di un determinato stato
+    # Ritorna la lista degli elementi adiacenti al nodo
+    def successors (self, state):
+        
+        # lista dei successori da restituire
+        successors = []
+        
+        # lista dei nodi da analizzare 
+        nodes = []
+        
+        # per ogni nodo presente nella lista dei nodi
+        for node in self.node_list:
+            
+            # se lo stato del nodo analizzato è uguale
+            # a quello fornito alla funzione
+            if node.state == state[0]:
+                
+                # aggiunta del nodo alla lista dei nodi da analizzare
+                nodes.append(node)
+        
+        # per ogni nodo da analizzare
+        # (questo ciclo viene effettuato per scompattare gli
+        # elementi presenti nelle liste, altrimenti difficili
+        # da gestire per l'algoritmo A*)
+        for node in nodes:
+            
+            # e per ogni nodo adiacente al nodo da analizzare
+            for adiacent in node.adiacent_nodes:
+                
+                # aggiunta del nodo adiacente alla lista
+                successors.append(adiacent)
+            
+        # restituzione della lista dei successori
+        return successors
+
+
+    # Metodo per l'inizializzazione della guida genetica
+    # Vengono passati in input valori utili all'inizializzazione
+    # della guida genetica, quali le generazioni totali di esecuzione,
+    # la dimensione della popolazione, il grado di mutazione, ecc.
+    def initializing_genetic_guide (self, file_path):
+        
+        # definisce il generatore dell'euristica di secondo livello
+        self.second_level_heuristic_gen = self.create_second_level_heuristic(file_path)   
+    
+
+    # Metodo per definire l'euristica di secondo
+    # livello inerente al Problem
+    # Ritorna un oggetto SecondLevelHeuristic in cui
+    # sono presenti l'individuo e la funzione
+    # valutatrice della seconda euristica (valutazione
+    # che viene effettuata dalla funzione g)
+    def create_second_level_heuristic (self, file_path):
+        
+        # creazione di una nuova istanza dell'individuo
+        self.individual = UGPGeneticGuide(file_path)
+        
+        # definizione dell'individuo come una stringa
+        # Poiche, durante la creazione della classe UGPGeneticGuide
+        # viene effettuata la scrematura dei caratteri non voluti
+        # in questo caso viene acquisito direttamente il "genoma"
+        # dell'individuo
+        string_individual = self.individual.genome 
+
+         # stampa della stringa valutata
+        print("Evaluated individual: ", string_individual)
+
+        # definizione della secondo livello di euristica passando l'individuo
+        # e l'algoritmo di Levenshtein
+        second_level_heuristic = SecondLevelHeuristic(levenshtein, string_individual)
+        
+        # restituzione del secondo livello di euristica
+        return second_level_heuristic
+
+
+    # Metodo per convertire il percorso di un ramo
+    # in una lista di stati inerenti al Problem.
+    # Ritorna il percorso in una lista di stati
+    def stringfy_path (self, path):
+        
+        # derfinizione della lista
+        string_path = []
+        
+        # per ogni stato presente nel percorso
+        for state in path:
+            
+            # si aggiunge in append alla lista lo stato trovato
+            string_path.append(state[0])
+        
+        # restituzione della lista di stati
+        return string_path
+    
+
+    # Metodo per convertire l'individuo ricavato
+    # dall'algoritmo genentico in una lista di stati
+    # inerenti al Problem.
+    # Ritorna l'individuo in una lista di stati    
+    def stringfy_individual (self, individual, initializator):
+        
+        # definizione della lista
+        string_individual = []
+
+        # per ogni gene presente nell'individuo, si setta
+        # con il valore dell'inizializzatore la lista
+        for i in range(0, len(individual)):
+            string_individual.append(initializator)        
+        
+        # per ogni gene presente nell'individuo
+        for i in range(0, len(individual)):
+            
+            # si acquisisce l'indice definito nel gene
+            # dell'individuo
+            state_index = individual[i]
+            
+            # se esso è diverso da zero, ovvero
+            # lo stato associato a tale indice esiste
+            # nell'individuo
+            if state_index != 0:
+            
+                # si acquisisce lo stato alla posizione definita
+                state = self.state_list[i]
+                
+                # si cambia lo stato nella lista dal valore
+                # di inizializzazione al valore dello stato
+                string_individual[state_index-1] = state
+        
+        # cancellazione di tutti i valori inizializzatori
+        # Ciò viene fatto per ottenere un individuo avente
+        # geni che si riferiscono unicamente a stati
+        string_individual = [x for x in string_individual if x != initializator]
+        
+        # restituzione della stringa
+        return string_individual
+
+
+    # Metodo per la creazione del grafo definendo i 
+    # collegamenti tra i nodi
+    def connect_nodes (self, adiacent_list):
+        
+        # per ogni stato passato alla classe Problem in
+        # fase di creazione
+        for state in self.state_list:
+            
+            # definizione di un nuova istanza di Node
+            node = GraphNode(state)
+            
+            # aggiunta dell'istanza alla lista dei nodi
+            self.node_list.append(node)
+  
+        # scandendo nuovamente la lista degli stati 
+        for state in self.state_list:
+            
+            # per ogni nodo inserito nella lista
+            for node in self.node_list:
+                
+                # se lo stato del nodo è uguale allo stato analizzato
+                if node.state == state:
+                
+                    # aggiunta di uno stato adiacente al nodo preso in esame
+                    node.add_adjacent(adiacent_list[state])
+    

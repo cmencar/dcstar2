@@ -1,0 +1,16 @@
+forced "worst_case scenario" runs
+Found node in 14760 evaluation in 195.05274081230164 sec.
+Found node in 15289 evaluation in 238.29446864128113 sec.
+Found node in 15055 evaluation in 230.771475315094 sec.
+Found node in 15585 evaluation in 252.81302738189697 sec.
+Found node in 15181 evaluation in 221.66952276229858 sec.
+Found node in 15810 evaluation in 251.8307409286499 sec.
+Found node in 14695 evaluation in 209.4657003879547 sec.
+Found node in 15330 evaluation in 253.35343742370605 sec.
+Found node in 15770 evaluation in 240.13853406906128 sec.
+Found node in 15723 evaluation in 240.90082097053528 sec.
+
+"evolve" with "worst_case_scenario" runs
+
+
+"evolve" without "worst_case_scenario" and impure individual "purification" runs

@@ -5,8 +5,9 @@ from data_compression.compression import compression
 from data_compression.fcm import fcm
 from datetime import datetime
 
-colnames = ('f1', 'f2', 'label')
-original_dataset = pd.read_csv('dataset_bidimensionali/datacerchiconcentrici_3classi(pieni)(classiNum).csv', names=colnames)
+colnames = ('f1', 'f2', 'species')
+original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=colnames)
+X = original_dataset.values[:, :2]
 
 start = pd.Timestamp.now()
 compression = compression(original_dataset)
@@ -23,6 +24,10 @@ else:
 print("Esecuzione in corso!")
 compression.set_strategy(fcm)
 cluster_label, cluster_center = compression.do_compression()
+
+silhouette_avg = silhouette_score(X, cluster_label)
+print("The average silhouette_score is :", silhouette_avg)
+
 end = datetime.now()
 print("Timer algoritmo completo:")
 print(pd.Timestamp.now() - start)

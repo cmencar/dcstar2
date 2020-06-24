@@ -1,37 +1,35 @@
-
-# La classe Node equivale al singolo nodo del grafo.
+# Class that define a single node in the A* computation.
 class Node:
 
-    # Si definisce il costruttore, definendo le variabili 'state', 'parent'
-    # e la lista dei nodi adiacenti
-    def __init__(self, state, parent_node=None):
-
+    # Class constructor
+    # @state: state included in node
+    # @parent_node: ancestor node of this node
+    def __init__(self, state, parent_node = None):
         self.state = state
         self.parent = parent_node
 
 
-    # La funzione path ritorna i percorsi inerenti ai nodi figli partendo dal 
-    # nodo analizzato come radice. 
-    # Se il nodo non ha figli allora ritorna il suo stato, altrimenti ritorna
-    # il suo stato e in aggiunta, in modo ricorsivo, la lista dei figli con 
-    # i propri percorsi fino a giungere ai nodi finali.
+    # The path function returns the paths inherent to the child nodes starting from the analysed node as root.
+    # If the node has no children then it returns its state, otherwise it returns its state and in addition,
+    # in a recursive way, the list of children with its own paths to the final nodes.
     def path(self):
-
         if self.parent is None:
             return [self.state]
         else:
             return self.parent.path() + [self.state]
-       
-    def __lt__ (self, other):
-        
-        return self.state[1] < other.state[1]
-    
+
+
+    # Method for overriding the 'lower-than' operator
+    def __lt__(self, other):
+        return self.state < other.state
+
+
+    # Method for overriding the 'greater-than' operator
+    def __gt__(self, other):
+        return self.state > other.state
+
+
+    # Method for overriding the 'equal-to' operator
     def __eq__(self, other):
-        
-        if other is None:
-            return False
-        if not isinstance(other, Node):
-            return False
-        return self.state[1] == other.state[1]    
-    
-    
+        return self.state == other.state
+
