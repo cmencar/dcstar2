@@ -73,8 +73,14 @@ class lvq1(compression_strategy):
             self.learning_rate = self.learning_rate - (self.learning_rate / self.n_epochs)
         #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'species']) # dataset bidimensionali
         #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'species']) # dataset iris
-        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species']) # dataset glass, wisconsin
+        prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'species']) # dataset newthyroid
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'species']) # dataset bupa
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'species']) # dataset appendicitis
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'species']) # dataset glass, wisconsin
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'species']) # dataset pageblocks
         #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'species']) # dataset wine
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28', 'f29', 'f30', 'f31', 'f32', 'f33', 'species'])  # dataset ionosphere
+        #prototypes = pd.DataFrame(prototypes, columns=['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28', 'f29', 'f30', 'f31', 'f32', 'f33', 'f34', 'f35', 'f36', 'f37', 'f38', 'f39', 'f40', 'f41', 'f42', 'f43', 'f44', 'f45', 'f46', 'f47', 'f48', 'f49', 'f50', 'f51', 'f52', 'f53', 'f54', 'f55', 'f56', 'f57', 'f58', 'f59', 'f60', 'species'])  # dataset sonar
         return prototypes
 
     def get_unique_labels(self):
@@ -113,7 +119,9 @@ class lvq1(compression_strategy):
         with open(filename, 'w') as output:
             json.dump(data, output, indent=1)
 
+    # TODO l'ho modificato a manina io (Dino) perche i valori erano sballati, modificalo nuovamente tu
     def get_boundary(self, prototypes):
+        '''
         minValues = prototypes.min()
         m_d = tuple()
         for i in (range(len(minValues) - 1)):
@@ -123,3 +131,12 @@ class lvq1(compression_strategy):
         for i in (range(len(maxValues) - 1)):
             M_d = M_d + (maxValues[i],)
         return m_d, M_d
+        '''
+        minValues = -1.0
+        maxValues = 1.5
+
+        features = len(prototypes.dtypes) - 1
+        m_d = [minValues for _ in range(features)]
+        M_d = [maxValues for _ in range(features)]
+        return m_d, M_d
+

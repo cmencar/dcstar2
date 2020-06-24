@@ -82,51 +82,6 @@ class DimensionalSequenceBinary(DimensionalSequence):
             print("Dimension not found, impossible to initialize")
 
 
-    # Method for creating successors of selected cuts sequence in binary form
-    def get_successors(self):
-
-        # initialize a successors empty list
-        successors = list()
-
-        # initialize the index used to identify the specific dimension
-        # of the cut to be set to True (i.e. the cut that differentiates an
-        # S_d_bin element from his successor)
-        dimension_index = 0
-
-        # each dimension is evaluated in order to analyze each possible editable cut
-        for S_d_bin in self.elements:
-
-            # the index used to identify the specific cut to be set to True
-            cut_index = 0
-
-            # for each cut in the evaluated dimension, if it is equal to False
-            # then it can be modified in order to create a successor.
-            for cut in S_d_bin:
-
-                # if the evaluated cut binary value is False
-                if not cut:
-
-                    # copy every logical cut value from S_d_bin and create
-                    # the successor binary structure. Then, set the specific
-                    # evaluated cut from False to True
-                    binary_successor = [np.array([cut for cut in S_d_bin_copied]) for S_d_bin_copied in self.elements]
-                    binary_successor[dimension_index][cut_index] = True
-
-                    # the logical raw sequence is used to create a
-                    # DimensionalSequenceBinary object. The object is
-                    # then added to successors' list
-                    successor = DimensionalSequenceBinary()
-                    successor.from_binary(binary_successor)
-                    successors.append(successor)
-
-                # increment the cut_index value
-                cut_index += 1
-
-            # increment the dimension_index value
-            dimension_index += 1
-
-        return successors
-
     # Method for the definition of 'lower-than' operator
     def __lt__(self, other):
         return len([cut for sequences in self.elements for cut in sequences if cut == True]) < \

@@ -88,12 +88,6 @@ class HyperboxesSet:
         return tuple(hyperbox_boundaries)
 
 
-    # Method for acquiring particular hyperbox starting by point
-    # @point: point associated with the hyperbox to find
-    def get_hyperbox_by_point(self, point):
-        return self.__points.get(point)
-
-
     # Method for counting hyperboxes
     def get_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items()})
@@ -115,10 +109,4 @@ class HyperboxesSet:
     def get_hyperboxes(self):
         return list({hyperbox for point, hyperbox in self.__points.items()})
 
-
-    def predict_hyperbox(self, point):
-
-        hyperboxes = set(self.__points.values())
-        for hyperbox in hyperboxes:
-            boundaries = hyperbox.get_boundaries()
 
