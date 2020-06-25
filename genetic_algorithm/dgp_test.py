@@ -64,11 +64,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # define selection method using selection for tournament between "selected_for_tournament" individuals
         # TODO - "relazione a distanza", test
-        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
         # TODO - "vicini di casa", test
-        # self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
-        # TODO - "vecchi", da togliere
-        # self.toolbox.register("select", self.tournament_selection_with_old_gen, tournsize=selected_for_tournament)
+        self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
 
         # define evaluation method with given "evaluate_fun" function
         self.toolbox.register("evaluate", self.evaluate)
@@ -114,7 +112,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # @population_size: size of population to generate
     # @generations: number of generations to create
     # @selected_best: number of best individuals to generate
-    def evolve(self, population_size, generations):
+    def evolve(self, population_size, generations, dataset):
 
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
@@ -134,25 +132,28 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate
-            # offsprings = self.offsprings_generator(population, population_size, self.toolbox, self.mating_rate,
-            #                                        self.mutation_rate)
-            offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
+            offsprings = self.offsprings_generator(population, population_size, self.toolbox, self.mating_rate,
+                                                   self.mutation_rate)
+            # offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
 
-            # create a list of fitness values of the offsprings
-            son_fitness = list()
+            # definizione di una mappa che conterrà i valori delle
+            # valutazioni degli individui della progenie
+            fitness = self.toolbox.map(self.fitness, offsprings)
+
+            eval_fitness = list()
             for son in offsprings:
-                son_fitness.append(self.fitness(son))
+                eval_fitness.append(self.fitness(son))
 
             # TODO - valutazione fitness, da togliere
             current_max_fit = 0
             current_min_fit = 1
             temp_avg = 0
-            for i in range(len(son_fitness)):
-                if son_fitness[i] > current_max_fit:
-                    current_max_fit = son_fitness[i]
-                if son_fitness[i] < current_min_fit:
-                    current_min_fit = son_fitness[i]
-                temp_avg += son_fitness[i]
+            for i in range(len(eval_fitness)):
+                if eval_fitness[i] > current_max_fit:
+                    current_max_fit = eval_fitness[i]
+                if eval_fitness[i] < current_min_fit:
+                    current_min_fit = eval_fitness[i]
+                temp_avg += eval_fitness[i]
                 current_avg_fit = temp_avg / population_size
             fit_behave.append((current_min_fit, current_avg_fit, current_max_fit))
 
@@ -164,7 +165,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # previous_avg_fit = current_avg_fit
 
             # map each fitness value to the corresponding offspring
-            for fit, ind in zip(son_fitness, offsprings):
+            for fit, ind in zip(fitness, offsprings):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
                     # save the better individual
@@ -175,9 +176,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
             # generated individuals
             # the selection is defined on a "selected_for_tournament" number of offsprings
-            # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
+            population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
             # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            population = self.toolbox.select(offsprings, k=int(population_size))  # TODO - "assembramento", da test
+            # population = self.toolbox.select(offsprings, k=int(population_size))  # TODO - "assembramento", da test
 
             epoch += 1
 
@@ -194,7 +195,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         plt.plot(x, avg_, marker='.', color='green')
         plt.plot(x, max_, marker='.', color='blue')
         plt.grid(True)
-        plt.show()
+        # plt.show()
+        plt.savefig(dataset + ".svg", transparent=True)
+        plt.close()
 
         print("Best fitness: ", bestfit)  # TODO - valutazione fitness, da togliere
         print("Halt at generation:", epoch)  # TODO - doppio criterio di fermata "evolve", da togliere
@@ -259,6 +262,15 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
+    def tournament_selection_1_tournament(self, individuals, k, tournsize, fit_attr="fitness"):
+        chosen = []
+        aspirants = tools.selRandom(individuals, tournsize)
+        for i in range(k):
+            winner = max(aspirants, key=attrgetter(fit_attr))
+            chosen.append(winner)
+            aspirants.remove(winner)
+        return chosen
+
     # Method that generates a offspring population of population_size using "mate" and "mutate" methods
     # @population: list of individuals
     # @population_size: size of population to generate
@@ -283,30 +295,3 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 offsprings[i], = toolbox.mutate(offsprings[i])
 
         return offsprings
-
-    # TODO - prova selezione per torneo "vicini di casa", da togliere
-    def tournament_selection_1_tournament(self, individuals, k, tournsize, fit_attr="fitness"):
-        chosen = []
-        aspirants = tools.selRandom(individuals, tournsize)
-        for i in range(k):
-            winner = max(aspirants, key=attrgetter(fit_attr))
-            chosen.append(winner)
-            aspirants.remove(winner)
-        return chosen
-
-    # TODO - prova selezione del torneo "imbucato", da togliere
-    def tournament_selection_with_old_gen(self, individuals, k, tournsize, previous_winners, fit_attr="fitness"):
-        chosen = []
-        aspirants = tools.selRandom(individuals, tournsize)
-        for i in range(k):
-            j = 0
-            found = False
-            while j < k and not found:
-                if getattr(aspirants[i], fit_attr) < getattr(previous_winners[j], fit_attr):
-                    aspirants[i] = previous_winners[j]
-                    j += 1
-        for i in range(k):
-            winner = max(aspirants, key=attrgetter(fit_attr))
-            chosen.append(winner)
-            aspirants.remove(winner)
-        return chosen
