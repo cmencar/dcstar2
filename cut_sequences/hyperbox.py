@@ -58,23 +58,6 @@ class Hyperbox:
         return len({point.get_label() for point in self.__points})
 
 
-    # Method for acquiring if the passed hyperbox and this hyperbox
-    # are 'connected'. The term 'connected' refers to the fact that
-    # the two hb have at least one pair of boundaries in common
-    # @hyperbox: element that is needed to evaluate for the connection
-    #def is_connected(self, hyperbox):
-
-        # if at least one pair of boundary (defined as a tuple of two elements,
-        # left boundary and right boundary) is the same for both this hyperbox and
-        # passed hyperbox boundaries, it means that they are 'connected', so the
-        # method returns True. If no pair of boundaries are found in common,
-        # then they are not 'connected' and the method returns False
-        #for dimension, passed_hyperbox_dimension in zip(self.__boundaries, hyperbox.get_boundaries()):
-        #    if dimension == passed_hyperbox_dimension:
-        #        return True
-
-        #return False
-
     # Method for acquiring if the passed hyperbox and this hyperbox are 'connected'. The term 'connected' refers to
     # the fact that the two hb have at least one pair of boundaries in common
     # @hyperbox: element that is needed to evaluate for the connection
@@ -82,8 +65,9 @@ class Hyperbox:
         return hyperbox.get_boundaries()[dimension] == self.__boundaries[dimension]
 
 
+    # Method for acquiring if the passed element is a possible element of the evaluated hyperbox. Useful for prediction.
+    # @point: element that is evaluated to know if it is part of the hyperbox
     def is_in_boundaries(self, point):
-
         for index in range(len(self.__boundaries)):
             if self.__boundaries[index][0] > point.get_coordinate(index) or self.__boundaries[index][1] < point.get_coordinate(index):
                 return False

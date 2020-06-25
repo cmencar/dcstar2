@@ -1,5 +1,4 @@
 from cut_sequences.point import Point
-from heuristic_search.prototypes_creators import PrototypesCreator
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 import doubleclusteringstar as dcstar
 import pandas as pd
@@ -70,13 +69,11 @@ compression.set_strategy(lvq1)
 prototypes = compression.do_compression()
 m_d, M_d = lvq1.get_boundary(prototypes)
 '''
-filename = "created point lists/iris_100_48.json"
+filename = "created point lists/wine_100_42.json"
 #lvq1.create_json(m_d, M_d, prototypes, filename)
 
 # loading of prototypes point list and dimensional boundaries
-loader = PrototypesCreator()
-
-point_list, m_d, M_d = loader.load(filename)
+point_list, m_d, M_d = dcstar.DoubleClusteringStar.load(filename)
 
 for _ in range(10):
 
