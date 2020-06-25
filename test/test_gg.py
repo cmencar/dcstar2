@@ -1,212 +1,370 @@
-# -*- coding: utf-8 -*-
-import random
-from genetic_algorithm.deap_genetic_guide import DeapGeneticGuide
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
-from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
-from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
-from cut_sequences.point import Point
-from matplotlib import pyplot as plt
-import sys
-sys.path.append('../')
+# from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
+# from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
+from genetic_algorithm.dgp_dummy import DeapGeneticGuideSequenceProblem
+from heuristic_search.prototypes_creators import PrototypesCreator
 
+gg_args_test = {
+    "selected_for_tournament": 5,
+    "generations": 100,
+    "mating_rate": 0.7
+}
 
-# TESTING CLASS DEAPGENETICGUIDE (WITHOUT A*)
+# TODO mutation_rate prefissati, test da togliere
+# mutation_rate = 0.1
+# mutation_rate = 0.15
+# mutation_rate = 0.2
+# mutation_rate = 0.3
+# mutation_rate = 0.9
 
-# define of example prototypes and cuts
-points_example = [
-    Point(coordinates=[.2354, .34], label="prototype_1", name="point_A"),
-    Point(coordinates=[.3345, .3421], label="prototype_1", name="point_B"),
-    Point(coordinates=[.351, .3453], label="prototype_2", name="point_C"),
-    Point(coordinates=[.45235, .00009], label="prototype_1", name="point_D"),
-    Point(coordinates=[.9, .5444], label="prototype_1", name="point_E"),
-    Point(coordinates=[.999, .4], label="prototype_2", name="point_F"),
-    Point(coordinates=[.799, .24], label="prototype_1", name="point_G")
-]
-T_d_example = DimensionalSequenceNumeric([[.28495, .34275, .40225, .625675, .8495, .9495], [.120045, .29, .34105, .3437,
-                                                                                            .37265, .4722]])
-print("------------------------Prototypes------------------------")
-for point in points_example:
-    print("Point coordinates: ", point.get_coordinates(),
-          "\nPoint label: ", point.get_label(),
-          "\nPoint name: ", point.get_name())
-print("---------------------Cuts sequence T_d--------------------")
-T_d_example.debug_print()
+print("banana")
+filename = "created point lists/banana_100_30.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
 
-# calculate the size of each dimension of cuts sequence
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
 genes_per_dimension = list()
-for dimension in range(T_d_example.get_dimensions_number()):
-    genes_per_dimension.append(len(T_d_example.get_dimension(dimension)))
-    print("Cuts in dimension ", dimension + 1, ":", len(T_d_example.get_dimension(dimension)))
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
 
-# set m_d and M_d limits
-m_d = 0
-M_d = 1
-print("----------------------Limits in S_d-----------------------",
-      "\nm_d: ", m_d, "   M_d: ", M_d)
-# calculate the total number of genes that the genome will have
 genes_number = 0
 for num in genes_per_dimension:
     genes_number += num
 
-# set number of individuals for tournament selection
-selected_for_tournament = 5
-
-# calculate population
-# N.B.: population is given by duplicating the number of genes in the genome
 population_size = 2 * genes_number
 
-# set number of generations
-generations = 20
-
-# calculate mutation rate
-# N.B.: mutation rate is calculated by reciprocating the number of genes
 mutation_rate = 1 / genes_number
 
-# set mating rate
-mating_rate = 0.7
+print("Mutation rate calculated: ", mutation_rate)
 
-# set number of best individuals to choose from
-selected_best = 10
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
 
-print("------------------------Parameters------------------------",
-      "\nIndividual dimension: ", genes_number,
-      "\nNumber of individuals for tournament selection: ", selected_for_tournament,
-      "\nPopulation size: ", population_size,
-      "\nGenerations to create: ", generations,
-      "\nMutation rate: ", mutation_rate,
-      "\nMating rate: ", mating_rate,
-      "\nNumber of best individuals to choose from: ", selected_best)
+genetic_guide.evolve(population_size, gg_args_test["generations"], "banana")
 
-# define DGG object to create the genetic guide with monodimensional lists
-genetic_guide = DeapGeneticGuide(genes_number, mutation_rate, mating_rate, selected_for_tournament, T_d_example,
-                                 points_example, genes_per_dimension, m_d, M_d)
+print("bandiera")
+filename = "created point lists/bandiera_100_30.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
 
-# evolution and acquisition of the best individual from genetic guide with monodimensional lists
-best_individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
 
-# print the best possible individual
-print("\nBEST POSSIBLE PURE INDIVIDUAL: \n", best_individual)
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
 
-# best_case_scenario_example = [[False, False, False, False, False, False], [False, False, False, True, False, True]]
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
 
-# create selected sequence with generated dimensional sequence
-S_d_bin_example = DimensionalSequenceBinary()
-S_d_bin_example.from_binary(best_individual)
-S_d_example = SelectedDimensionalSequenceNumeric()
-S_d_example.from_binary(T_d_example, S_d_bin_example)
+population_size = 2 * genes_number
 
-# create the plot
-for cut in S_d_example.get_dimension(0):
-    plt.plot([cut, cut], [0, 1], 'k', linestyle='--', color='black')
+mutation_rate = 1 / genes_number
 
-for cut in S_d_example.get_dimension(1):
-    plt.plot([0, 1], [cut, cut], linestyle='--', color='black')
+print("Mutation rate calculated: ", mutation_rate)
 
-for point in points_example:
-    color = 'ko'
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
 
-    if point.get_label() == "prototype_1":
-        color = 'ro'
-    elif point.get_label() == "prototype_2":
-        color = 'bo'
+genetic_guide.evolve(population_size, gg_args_test["generations"], "bandiera")
 
-    plt.plot(point.get_coordinate(0), point.get_coordinate(1), color)
+print("glass")
+filename = "created point lists/glass_100_18.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
 
-# show the plot
-plt.show()
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
 
-out_file = open("n_cuts_evaluation.txt", "a")
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
 
-out_file.write("Evaluating average of active cuts for 100 individuals in 10 iterations")
-# evaluate the average of active cuts with given random seed
-total_avgs_cuts = list()
-for times in range(10):
-    # generate a new seed for each iteration
-    random.seed()
-    out_file.write("\n\n----------------------------------- ")
-    out_file.write(str(times + 1))
-    out_file.write(" ----------------------------------------\n")
-    generated_individuals = list()
-    cuts_generated = 0
-    for i in range(100):
-        individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
-        out_file.write("\nN° ")
-        out_file.write(str(i + 1))
-        out_file.write(" individual: ")
-        out_file.write(str(individual))
-        active_cuts_ind = 0
-        for dimension in individual:
-            for gene in dimension:
-                if gene:
-                    active_cuts_ind += 1
-        out_file.write("\nActive cuts into individual: ")
-        out_file.write(str(active_cuts_ind))
-        cuts_generated += active_cuts_ind
-    avg_cuts_generated = cuts_generated / 100
-    out_file.write("\nAVERAGE ACTIVE CUTS: ")
-    out_file.write(str(avg_cuts_generated))
-    total_avgs_cuts.append(avg_cuts_generated)
-out_file.write("\n\nAVERAGE CUT USAGES IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
-out_file.write(str(total_avgs_cuts))
-out_file.close()
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
 
-out_file = open("wsc_evaluation.txt", "a")
+population_size = 2 * genes_number
 
-out_file.write("Evaluating <worst_case_scenario> occurrences for 100 individuals in 10 iterations")
-# evaluate how many times @worst_case_scenario is called with given random seed
-wcs_calls = list()
-for times in range(10):
-    # generate a new seed for each iteration
-    random.seed()
-    out_file.write("\n\n----------------------------------- ")
-    out_file.write(str(times + 1))
-    out_file.write(" ----------------------------------------\n")
-    generated_individuals = list()
-    worst_freq = 0
-    for i in range(100):
-        individual, worst = genetic_guide.evolve(population_size, generations, selected_best)
-        out_file.write("\nN° ")
-        out_file.write(str(i + 1))
-        out_file.write(" individual: ")
-        out_file.write(str(individual))
-        if worst:
-            worst_freq += 1
-    out_file.write("\nWORST CASE SCENARIO OCCURRENCES: ")
-    out_file.write(str(worst_freq))
-    wcs_calls.append(worst_freq)
-out_file.write("\n\nWSC CALLS IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
-out_file.write(str(wcs_calls))
-out_file.close()
+mutation_rate = 1 / genes_number
 
-out_file = open("no_wsc_evaluation.txt", "a")
+print("Mutation rate calculated: ", mutation_rate)
 
-out_file.write("Evaluating average of impures for 100 individuals in 10 iterations")
-# evaluate how many times @worst_case_scenario is called and the average of active cuts with given random seed
-impures_per_iter = list()
-for times in range(10):
-    # generate a new seed for each iteration
-    random.seed()
-    out_file.write("\n\n----------------------------------- ")
-    out_file.write(str(times + 1))
-    out_file.write(" ----------------------------------------\n")
-    generated_individuals = list()
-    impure_freq = 0
-    for i in range(100):
-        individual = genetic_guide.evolve_without_wsc(population_size, generations, selected_best)
-        S_d = SelectedDimensionalSequenceNumeric()
-        S_d_b = DimensionalSequenceBinary()
-        S_d_b.from_binary(individual)
-        S_d.from_binary(T_d_example, S_d_b)
-        hyperboxes = S_d.generate_hyperboxes_set(points_example, m_d, M_d)
-        if hyperboxes.get_impure_hyperboxes_number() > 0:
-            impure_freq += 1
-        out_file.write("\nN° ")
-        out_file.write(str(i + 1))
-        out_file.write(" individual: ")
-        out_file.write(str(individual))
-    out_file.write("\nIMPURE INDIVIDUALS: ")
-    out_file.write(str(impure_freq))
-    impures_per_iter.append(impure_freq)
-out_file.write("\n\nIMPURES IN 100 INDIVIDUALS FOR 10 ITERATIONS (WITH DIFFERENT SEEDS)\n")
-out_file.write(str(impures_per_iter))
-out_file.close()
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "glass")
+
+print("iono")
+filename = "created point lists/ionosphere_100_20_norm.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
+
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
+
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
+
+population_size = 2 * genes_number
+
+mutation_rate = 1 / genes_number
+
+print("Mutation rate calculated: ", mutation_rate)
+
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "iono")
+
+print("iris")
+filename = "created point lists/iris_100_42_norm.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
+
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
+
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
+
+population_size = 2 * genes_number
+
+mutation_rate = 1 / genes_number
+
+print("Mutation rate calculated: ", mutation_rate)
+
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "iris")
+
+print("shuttle")
+filename = "created point lists/shuttle_100_21_norm.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
+
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
+
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
+
+population_size = 2 * genes_number
+
+mutation_rate = 1 / genes_number
+
+print("Mutation rate calculated: ", mutation_rate)
+
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "shuttle")
+
+print("wbc")
+filename = "created point lists/wbc_100_60_norm.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
+
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
+
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
+
+population_size = 2 * genes_number
+
+mutation_rate = 1 / genes_number
+
+print("Mutation rate calculated: ", mutation_rate)
+
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "wbc")
+
+print("wine")
+filename = "created point lists/wine_100_42.json"
+loader = PrototypesCreator()
+point_list, m_d, M_d = loader.load(filename)
+
+numerical_cuts_sequence = list()
+for dimension_index in range(len(point_list[0].get_coordinates())):
+    sorted_point_list = sorted(point_list, key=lambda point: point.get_coordinate(dimension_index))
+    projections_on_d = dict()
+    for point in sorted_point_list:
+        if projections_on_d.get(point.get_coordinate(dimension_index)) is None:
+            projections_on_d.__setitem__(point.get_coordinate(dimension_index), {point.get_label()})
+        else:
+            projections_on_d.get(point.get_coordinate(dimension_index)).add(point.get_label())
+    sorted_projections_on_d = sorted([(point_coordinate, set(point_classes)) for point_coordinate, point_classes in
+                                      projections_on_d.items()])
+    cuts_in_d = [
+        (sorted_projections_on_d[projection_idx][0] + sorted_projections_on_d[projection_idx + 1][0]) / 2
+        for projection_idx in range(len(sorted_projections_on_d) - 1)
+        if sorted_projections_on_d[projection_idx][1] != sorted_projections_on_d[projection_idx + 1][1]
+        or len(sorted_projections_on_d[projection_idx][1]) > 1]
+    numerical_cuts_sequence.append(cuts_in_d)
+cuts_sequence = DimensionalSequenceNumeric(numerical_cuts_sequence)
+
+genes_per_dimension = list()
+for dimension in range(cuts_sequence.get_dimensions_number()):
+    genes_per_dimension.append(len(cuts_sequence.get_dimension(dimension)))
+
+genes_number = 0
+for num in genes_per_dimension:
+    genes_number += num
+
+population_size = 2 * genes_number
+
+mutation_rate = 1 / genes_number
+
+print("Mutation rate calculated: ", mutation_rate)
+
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+                                                gg_args_test["selected_for_tournament"], cuts_sequence,
+                                                point_list, genes_per_dimension, m_d, M_d)
+
+genetic_guide.evolve(population_size, gg_args_test["generations"], "wine")

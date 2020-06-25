@@ -27,6 +27,7 @@ class DimensionalSequenceNumeric(DimensionalSequence):
         # the newly created NumPy array in elements
         self.elements = [np.array([cut for cut in T_d]) for T_d in cuts_list]
 
+
     # Function for creating a general cut sequence to
     # a logical cut sequence, where each element (corresponding to
     # an element of cuts sequences) is a False logical value

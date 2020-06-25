@@ -10,6 +10,7 @@ class DimensionalSequence(ABC):
         # initialization of list of cuts
         self.elements = list()
 
+
     # Method for returning the values of a single dimension
     # @dimension: index of the dimension to be get
     def get_dimension(self, dimension):
@@ -21,9 +22,11 @@ class DimensionalSequence(ABC):
         except IndexError:
             print("Dimension not found, impossible to initialize")
 
+
     # Method for returning the number of dimensions
     def get_dimensions_number(self):
         return len(self.elements)
+
 
     # Method for returning the value of the size of single dimension
     # @dimension: index of the dimension to be get its size
@@ -35,6 +38,7 @@ class DimensionalSequence(ABC):
             return len(self.elements[dimension])
         except IndexError:
             print("Dimension not found, impossible to get")
+
 
     # Method for a debug print of sequence cuts
     def debug_print(self):

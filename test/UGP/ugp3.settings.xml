@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <context name="evolution">
+    <!-- The seed for the pseudo-random number generator. If missing or 0 use epoch. -->
+    <option name="randomSeed" value="42" />
+    <!-- For each population, its name and the file where the population parameters are defined. -->
+    <option name ="populations">
+      <population name="P1" value="gg.population.settings.xml" />
+	  <population name="P2" value="gg.population.settings.xml" />
+	  <population name="P3" value="gg.population.settings.xml" />
+	  <population name="P4" value="gg.population.settings.xml" />
+	  <population name="P5" value="gg.population.settings.xml" />
+	  <population name="P6" value="gg.population.settings.xml" />
+	  <population name="P7" value="gg.population.settings.xml" />
+	  <population name="P8" value="gg.population.settings.xml" />
+	  <population name="P9" value="gg.population.settings.xml" />
+	  <population name="P10" value="gg.population.settings.xml" />
+	  <population name="P11" value="gg.population.settings.xml" />
+	  <population name="P12" value="gg.population.settings.xml" />
+	  <population name="P13" value="gg.population.settings.xml" />
+	  <population name="P14" value="gg.population.settings.xml" />
+	  <population name="P15" value="gg.population.settings.xml" />
+	  <population name="P16" value="gg.population.settings.xml" />
+	  <population name="P17" value="gg.population.settings.xml" />
+	  <population name="P18" value="gg.population.settings.xml" />
+	  <population name="P19" value="gg.population.settings.xml" />
+	  <population name="P20" value="gg.population.settings.xml" />
+	  <population name="P21" value="gg.population.settings.xml" />
+	  <population name="P22" value="gg.population.settings.xml" />
+	  <population name="P23" value="gg.population.settings.xml" />
+	  <population name="P24" value="gg.population.settings.xml" />
+	  <population name="P25" value="gg.population.settings.xml" />
+	  <population name="P26" value="gg.population.settings.xml" />
+	  <population name="P27" value="gg.population.settings.xml" />
+	  <population name="P28" value="gg.population.settings.xml" />
+	  <population name="P29" value="gg.population.settings.xml" />
+	  <population name="P30" value="gg.population.settings.xml" />
+	  <population name="P31" value="gg.population.settings.xml" />
+	  <population name="P32" value="gg.population.settings.xml" />
+	  <population name="P33" value="gg.population.settings.xml" />
+	  <population name="P34" value="gg.population.settings.xml" />
+	  <population name="P35" value="gg.population.settings.xml" />
+	  <population name="P36" value="gg.population.settings.xml" />
+	  <population name="P37" value="gg.population.settings.xml" />
+	  <population name="P38" value="gg.population.settings.xml" />
+	  <population name="P39" value="gg.population.settings.xml" />
+	  <population name="P40" value="gg.population.settings.xml" />
+	  <population name="P41" value="gg.population.settings.xml" />
+	  <population name="P42" value="gg.population.settings.xml" />
+	  <population name="P43" value="gg.population.settings.xml" />
+	  <population name="P44" value="gg.population.settings.xml" />
+	  <population name="P45" value="gg.population.settings.xml" />
+	  <population name="P46" value="gg.population.settings.xml" />
+	  <population name="P47" value="gg.population.settings.xml" />
+	  <population name="P48" value="gg.population.settings.xml" />
+	  <population name="P49" value="gg.population.settings.xml" />
+	  <population name="P50" value="gg.population.settings.xml" />
+	  <population name="P51" value="gg.population.settings.xml" />
+	  <population name="P52" value="gg.population.settings.xml" />
+	  <population name="P53" value="gg.population.settings.xml" />
+	  <population name="P54" value="gg.population.settings.xml" />
+	  <population name="P55" value="gg.population.settings.xml" />
+	  <population name="P56" value="gg.population.settings.xml" />
+	  <population name="P57" value="gg.population.settings.xml" />
+	  <population name="P58" value="gg.population.settings.xml" />
+	  <population name="P59" value="gg.population.settings.xml" />
+	  <population name="P60" value="gg.population.settings.xml" />
+	  <population name="P61" value="gg.population.settings.xml" />
+	  <population name="P62" value="gg.population.settings.xml" />
+	  <population name="P63" value="gg.population.settings.xml" />
+	  <population name="P64" value="gg.population.settings.xml" />
+	  <population name="P65" value="gg.population.settings.xml" />
+	  <population name="P66" value="gg.population.settings.xml" />
+	  <population name="P67" value="gg.population.settings.xml" />
+	  <population name="P68" value="gg.population.settings.xml" />
+	  <population name="P69" value="gg.population.settings.xml" />
+	  <population name="P70" value="gg.population.settings.xml" />
+	  <population name="P71" value="gg.population.settings.xml" />
+	  <population name="P72" value="gg.population.settings.xml" />
+	  <population name="P73" value="gg.population.settings.xml" />
+	  <population name="P74" value="gg.population.settings.xml" />
+	  <population name="P75" value="gg.population.settings.xml" />
+	  <population name="P76" value="gg.population.settings.xml" />
+	  <population name="P77" value="gg.population.settings.xml" />
+	  <population name="P78" value="gg.population.settings.xml" />
+	  <population name="P79" value="gg.population.settings.xml" />
+	  <population name="P80" value="gg.population.settings.xml" />
+	  <population name="P81" value="gg.population.settings.xml" />
+	  <population name="P82" value="gg.population.settings.xml" />
+	  <population name="P83" value="gg.population.settings.xml" />
+	  <population name="P84" value="gg.population.settings.xml" />
+	  <population name="P85" value="gg.population.settings.xml" />
+	  <population name="P86" value="gg.population.settings.xml" />
+	  <population name="P87" value="gg.population.settings.xml" />
+	  <population name="P88" value="gg.population.settings.xml" />
+	  <population name="P89" value="gg.population.settings.xml" />
+	  <population name="P90" value="gg.population.settings.xml" />
+	  <population name="P91" value="gg.population.settings.xml" />
+	  <population name="P92" value="gg.population.settings.xml" />
+	  <population name="P93" value="gg.population.settings.xml" />
+	  <population name="P94" value="gg.population.settings.xml" />
+	  <population name="P95" value="gg.population.settings.xml" />
+	  <population name="P96" value="gg.population.settings.xml" />
+	  <population name="P97" value="gg.population.settings.xml" />
+	  <population name="P98" value="gg.population.settings.xml" />
+	  <population name="P99" value="gg.population.settings.xml" />
+	  <population name="P100" value="gg.population.settings.xml" />
+    </option>
+    <!-- The file where the statistics on the evolution are saved. -->
+    <option name="statisticsPathName" value="statistics.csv" />
+    <!-- Merges two populations together specifying their indexes separated by whitespaces (e.g. '0 1; 1 2' tells to merge population 1 into population 0 and then population 2 in population 1.) -->
+    <!--option name="merge" value="0 1; 1 2; 0 3" /-->
+	
+  </context>
+  <context name="recovery">
+    <!-- The name of the file where the state of the algorthm is saved at the end of every generation. -->
+    <option name="recoveryOutput" value="status.xml" />
+    <!-- When set to true, overwrites the previous state file, otherwise saves it to another file. -->
+    <option name="recoveryOverwriteOutput" value="true" />
+    <!-- When set to true, discards the fitness contained in the state file and re-evaluates the individuals. -->
+    <option name="recoveryDiscardFitness" value="true" />
+</context>
+
+  <context name="logging">
+    <!-- Only essential information on standard output -->
+    <option name="std::cout" value="info; brief" />
+    <option name="debug.log" value="debug; brief" />
+    <!-- <option name="info-verbose.txt" value="info; extended" /> -->
+  </context>
+  
+</settings>

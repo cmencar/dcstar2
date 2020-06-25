@@ -1,0 +1,177 @@
+N_Prototipi:3
+0 days 00:00:02.555428
+
+N_Prototipi:6
+0 days 00:00:04.052506
+
+N_Prototipi:9
+0 days 00:00:05.487622
+
+N_Prototipi:12
+0 days 00:00:06.919741
+
+N_Prototipi:15
+0 days 00:00:08.376841
+
+N_Prototipi:18
+0 days 00:00:09.799967
+
+N_Prototipi:21
+0 days 00:00:11.275058
+
+N_Prototipi:24
+0 days 00:00:12.662204
+
+N_Prototipi:27
+0 days 00:00:14.085326
+
+N_Prototipi:30
+0 days 00:00:15.544428
+
+N_Prototipi:33
+0 days 00:00:16.981544
+
+N_Prototipi:36
+0 days 00:00:18.445642
+
+N_Prototipi:39
+0 days 00:00:20.055650
+
+N_Prototipi:42
+0 days 00:00:21.381834
+
+N_Prototipi:45
+0 days 00:00:22.759985
+
+N_Prototipi:48
+0 days 00:00:24.597853
+
+N_Prototipi:51
+0 days 00:00:25.767133
+
+N_Prototipi:54
+0 days 00:00:27.184261
+
+N_Prototipi:57
+0 days 00:00:28.478464
+
+N_Prototipi:60
+0 days 00:00:29.926574
+
+N_Prototipi:63
+0 days 00:00:31.433645
+
+N_Prototipi:66
+0 days 00:00:32.884749
+
+N_Prototipi:69
+0 days 00:00:34.376832
+
+N_Prototipi:72
+0 days 00:00:35.824938
+
+N_Prototipi:75
+0 days 00:00:37.147125
+
+N_Prototipi:78
+0 days 00:00:38.571249
+
+N_Prototipi:81
+0 days 00:00:40.099307
+
+N_Prototipi:84
+0 days 00:00:41.501446
+
+N_Prototipi:87
+0 days 00:00:43.790036
+
+N_Prototipi:90
+0 days 00:00:46.134280
+
+N_Prototipi:93
+0 days 00:00:46.637315
+
+N_Prototipi:96
+0 days 00:00:47.913497
+
+N_Prototipi:99
+0 days 00:00:48.432197
+
+N_Prototipi:102
+0 days 00:00:50.658805
+
+N_Prototipi:105
+0 days 00:00:52.337772
+
+N_Prototipi:108
+0 days 00:00:53.686949
+
+N_Prototipi:111
+0 days 00:00:54.738293
+
+N_Prototipi:114
+0 days 00:00:56.995928
+
+N_Prototipi:117
+0 days 00:00:58.551953
+
+N_Prototipi:120
+0 days 00:00:59.900126
+
+N_Prototipi:123
+0 days 00:01:00.734090
+
+N_Prototipi:126
+0 days 00:01:01.980867
+
+N_Prototipi:129
+0 days 00:01:04.435335
+
+N_Prototipi:132
+0 days 00:01:05.655667
+
+N_Prototipi:135
+0 days 00:01:06.525035
+
+N_Prototipi:138
+0 days 00:01:08.001131
+
+N_Prototipi:141
+0 days 00:01:10.451672
+
+N_Prototipi:144
+0 days 00:01:11.526969
+
+N_Prototipi:147
+0 days 00:01:13.798073
+
+N_Prototipi:150
+0 days 00:01:15.002809
+
+N_Prototipi:153
+0 days 00:01:16.009392
+
+N_Prototipi:156
+0 days 00:01:17.566236
+
+N_Prototipi:159
+0 days 00:01:18.805482
+
+N_Prototipi:162
+0 days 00:01:19.880829
+
+N_Prototipi:165
+0 days 00:01:22.227899
+
+N_Prototipi:168
+0 days 00:01:23.583755
+
+N_Prototipi:171
+0 days 00:01:22.944925
+
+N_Prototipi:174
+0 days 00:01:24.818770
+
+N_Prototipi:177
+0 days 00:01:27.172322
+

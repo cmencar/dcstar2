@@ -1,6 +1,5 @@
 from cut_sequences.hyperbox import Hyperbox
 
-
 # Class for define set of hyperboxes
 class HyperboxesSet:
 
@@ -17,6 +16,7 @@ class HyperboxesSet:
 
         # initialization of hyperboxes
         self.__set_hyperboxes(points)
+
 
     # Method for defining all hyperboxes in hyperboxes set
     # @points: points list passed to constructor
@@ -36,6 +36,7 @@ class HyperboxesSet:
 
             hyperbox.set_belonging_point(point)
             self.__points.__setitem__(point, hyperbox)
+
 
     # Method for defining particular hyperbox starting by point
     # @point: point associated with the hyperbox to find
@@ -65,11 +66,17 @@ class HyperboxesSet:
                 # get the evaluated cut
                 cut = S_d[cut_index]
 
-                # if cut value is greater than point coordinate value
-                # then insert that cut and previous cut in the
-                # dimensional order as one of hyperbox dimensional boundaries
+
+                # if cut value is greater than point coordinate value then insert that cut and previous cut in the
+                # dimensional order as one of hyperbox dimensional boundaries. Instead, if cut value is equal to the
+                # point coordinate value then insert that cut and following cut in the dimensional order as one of
+                # hyperbox dimensional boundaries
                 if coordinate <= cut:
-                    hyperbox_boundaries.append((S_d[cut_index - 1], cut))
+                    if cut_index == 0:
+                        hyperbox_boundaries.append((cut, S_d[cut_index + 1]))
+                    else:
+                        hyperbox_boundaries.append((S_d[cut_index - 1], cut))
+
                     found = True
 
                 # increment cut index
@@ -80,25 +87,26 @@ class HyperboxesSet:
 
         return tuple(hyperbox_boundaries)
 
-    # Method for acquiring particular hyperbox starting by point
-    # @point: point associated with the hyperbox to find
-    def get_hyperbox_by_point(self, point):
-        return self.__points.get(point)
 
     # Method for counting hyperboxes
     def get_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items()})
 
+
     # Method for counting pure hyperboxes
     def get_pure_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items() if not hyperbox.is_impure()})
 
+
     # Method for counting impure hyperboxes
     def get_impure_hyperboxes_number(self):
         return len({hyperbox for point, hyperbox in self.__points.items() if hyperbox.is_impure()})
+
 
     # Method for acquiring all hyperboxes as a list.
     # The hyperboxes are taken once and only once, regardless of
     # occurences as attributes in the dictionary of points
     def get_hyperboxes(self):
         return list({hyperbox for point, hyperbox in self.__points.items()})
+
+

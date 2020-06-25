@@ -1,14 +1,13 @@
 import numpy as np
 
-
-# Class for the definition of a given point
+# Class for the definition of a given point (prototype)
 # into the features space
 class Point:
 
     # Class constructor
     # @coordinates_array: points' coordinates for every dimension
-    # label: point label
-    # name: point name
+    # @label: point label
+    # @name: point name
     def __init__(self, coordinates, label = None, name = None):
 
         # control for define if the passed parameter is an iterable object
@@ -22,40 +21,40 @@ class Point:
 
         # acquire every coordinate, insert them in a list
         # and convert the list into a NumPy array
-        self.coordinates = np.array([ coordinate for coordinate in coordinates ])
+
+        self.__coordinates = np.array([coordinate for coordinate in coordinates])
 
         # initialize label information
-        self.label = label
+        self.__label = label
 
         # initialize name information
-        self.name = name
+        self.__name = name
 
 
     # Method for acquiring all dimensions' coordinates
     def get_coordinates(self):
-        return self.coordinates
+        return self.__coordinates
 
 
     # Method for acquiring coordinate for specific dimension
+    # @dimension: dimension correlated to coordinate to be get
     def get_coordinate(self, dimension):
 
+        # if the indexes refers to a non-existent coordinate then print
+        # an error message, elsewhere return the correct value
         try:
-
-            # return the coordinates for specific dimension
-            return self.coordinates[dimension]
-
+            return self.__coordinates[dimension]
         except IndexError:
-
-            # print an error message if the index refers to a non-existent dimension
-            print("Dimension not found")
+            print("Coordinate not found, impossible to get")
 
 
     # Method for acquiring point label
     def get_label(self):
-        return self.label
+        return self.__label
 
 
     # Method for acquiring point associated name
     def get_name(self):
-        return self.name
+        return self.__name
+
 
