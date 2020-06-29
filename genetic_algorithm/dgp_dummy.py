@@ -86,11 +86,15 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     def evaluate(self, individual):
         # initializing evaluation variables
         valutation = 0
-        # every "true" gene increments the valutation
+        total_genes = 0
+        # every "true" gene increments the valutation while the total number of genes is calculated
         valutation += individual.count(True)
-        return valutation
-        '''
+        total_genes += len(individual)
+        # returns the ratio
+        return valutation / total_genes
+    '''
 
+    # '''
     def evaluate(self, individual):
         valutation = 0
         total_genes = 0
@@ -106,7 +110,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
         p = hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()  # pureness ratio
 
-        return (1 - g) * pow(p, 5)
+        return (1 - g) * pow(p, 2)
+    # '''
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
     # @individual_class: class of the individual to create
@@ -194,6 +199,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         plt.close()
 
         print("Best fitness: ", bestfit)
+        print("Total cuts in individual: ", self.individual_size)
+        print("Active cuts in best individual: ", bestind.count(True))
         # convert individual into sequence
         best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 

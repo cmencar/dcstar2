@@ -2,7 +2,7 @@ from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeri
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
 from genetic_algorithm.dgp_dummy import DeapGeneticGuideSequenceProblem
-from heuristic_search.prototypes_creators import PrototypesCreator
+from heuristic_search.prototypes_creator import PrototypesCreator
 
 gg_args_test = {
     "selected_for_tournament": 5,
