@@ -62,14 +62,13 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # define mutation method of individuals' son shuffling genes with "mutation_rate" percentage
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
+        self.toolbox.register("evaluate", self.evaluate)
+
         # define selection method using selection for tournament between "selected_for_tournament" individuals
         # TODO - "relazione a distanza", test
-        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
         # TODO - "vicini di casa", test
-        self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
-
-        # define evaluation method with given "evaluate_fun" function
-        self.toolbox.register("evaluate", self.evaluate)
+        # self.toolbox.register("select", self.tournament_selection_1_tournament, tournsize=selected_for_tournament)
 
         # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
         # chromosome to sequence
@@ -138,13 +137,14 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
-            fitness = self.toolbox.map(self.fitness, offsprings)
+            # fitness = self.toolbox.map(self.fitness, offsprings)
+            for son in offsprings:
+                son.fitness.value = self.fitness(son)
 
+            # TODO - valutazione fitness, da togliere
             eval_fitness = list()
             for son in offsprings:
                 eval_fitness.append(self.fitness(son))
-
-            # TODO - valutazione fitness, da togliere
             current_max_fit = 0
             current_min_fit = 1
             temp_avg = 0
@@ -165,6 +165,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # previous_avg_fit = current_avg_fit
 
             # map each fitness value to the corresponding offspring
+            '''
             for fit, ind in zip(fitness, offsprings):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
@@ -172,13 +173,24 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestfit = fit
                     bestind = ind
                 ind.fitness.value = fit
+            '''
+            for _ in offsprings:
+                if _.fitness.value > bestfit:
+                    # save the better individual
+                    bestfit = _.fitness.value
+                    bestind = _
+
+            offsprings.sort(key=lambda fitness: fitness, reverse=False)
+            print("primo", offsprings[0].fitness.value)
+            print("secondo", offsprings[1].fitness.value)
+            print("terzo", offsprings[2].fitness.value, "\n")
 
             # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
             # generated individuals
             # the selection is defined on a "selected_for_tournament" number of offsprings
-            population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
+            # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
             # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            # population = self.toolbox.select(offsprings, k=int(population_size))  # TODO - "assembramento", da test
+            population = self.toolbox.select(offsprings, k=10)  # TODO - "assembramento", da test
 
             epoch += 1
 
@@ -205,7 +217,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
-        return best_individual
+        # return best_individual
+        return bestind.count(True), self.individual_size
 
     # Method defining the fitness value of an individual
     # @individual: individual
@@ -278,19 +291,23 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # @mating_rate: mating ratio
     # @mutation_rate: mutation_ratio
     def offsprings_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
-        clones = [toolbox.clone(ind) for ind in population]
+        clones = [ind for ind in population]
         offsprings = list()
-        dummy_ind = max(clones, key=attrgetter("fitness"))
+        # dummy_ind = max(clones, key=attrgetter("fitness"))
+        clones.sort(key=lambda fitness: fitness, reverse=False)
+        dummy_ind = clones[0]
         for _ in range(population_size):
+            dummy_ind.fitness.value = 0
+            dummy_ind.fitness.valid = True
             offsprings.append(dummy_ind)
         # Apply crossover and mutation on the offspring
-        for i in range(1, population_size):
+        for i in range(2, population_size):
             if random.random() < mating_rate:
                 offsprings[i - 1], offsprings[i] = \
                         toolbox.mate(clones[random.randint(0, len(population) - 1)],
                                      clones[random.randint(0, len(population) - 1)])
 
-        for i in range(population_size):
+        for i in range(1, population_size):
             if random.random() < mutation_rate:
                 offsprings[i], = toolbox.mutate(offsprings[i])
 

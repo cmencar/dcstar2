@@ -110,7 +110,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
         p = hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()  # pureness ratio
 
-        return (1 - g) * pow(p, 2)
+        return (1 - g) * pow(p, 5)
     # '''
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
@@ -205,7 +205,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
-        return best_individual
+        # return best_individual
+        return bestind.count(True), self.individual_size
 
     # Method converting individual's genome from list to "multidimensional cuts sequence" (list of lists)
     # @individual: individual
