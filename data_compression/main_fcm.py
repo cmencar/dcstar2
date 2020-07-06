@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.metrics import silhouette_score
-
 from data_compression.compression import compression
 from data_compression.fcm import fcm
 from datetime import datetime

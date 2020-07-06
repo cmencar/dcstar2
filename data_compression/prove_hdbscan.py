@@ -1,16 +1,51 @@
-from sklearn.datasets import make_blobs
-import pandas as pd
 import hdbscan
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sklearn.datasets as data
+import pandas as pd
+from sklearn.datasets import make_blobs
 
-ionosphere = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10',
-              'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19',
-              'f20', 'f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27', 'f28',
-              'f29', 'f30', 'f31', 'f32', 'f33', 'label')
-original_dataset = pd.read_csv('dataset_ndimensionali/ionosphere.csv', names=ionosphere)
+sns.set_color_codes()
+plot_kwds = {'alpha': 0.5, 's': 80, 'linewidths': 0}
 
-blobs, labels = make_blobs(n_samples=2000, n_features=10)
+dataset = pd.read_csv("dataset_bidimensionali/bandiera(classiNum).csv", names=['1', '2', 'label'])
 
-dataset = pd.DataFrame(blobs).head()
+new_dataset = dataset.iloc[:, :-1]
 
-clusterer = hdbscan.HDBSCAN()
+X = new_dataset.values
+data_normal = (X - X.min()) / (X.max() - X.min())
 
+# plt.scatter(data_normal.T[0], data_normal.T[1])
+
+clusterer = hdbscan.HDBSCAN(min_cluster_size=10, algorithm='best', alpha=1.0, approx_min_span_tree=True,
+                            gen_min_span_tree=True, leaf_size=40, metric='euclidean')
+clusterer.fit_predict(data_normal)
+
+new_dataset = (new_dataset - new_dataset.min()) / (new_dataset.max() - new_dataset.min())
+new_dataset['Cluster'] = clusterer.labels_
+
+labels = set(clusterer.labels_)
+labels = list(labels)
+print(labels)
+for row in new_dataset.itertuples():
+    if row[-1] == labels[0]:
+        color = "blue"
+    elif row[-1] == labels[1]:
+        color = "red"
+    else:
+        color = "black"
+    """
+    elif row[-1] == labels[2]:
+        color = "yellow"
+    elif row[-1] == labels[3]:
+        color = "brown"
+    elif row[-1] == labels[4]:
+        color = "purple"
+    elif row[-1] == labels[5]:
+        color = "grey"
+    """
+
+    plt.scatter(row[1], row[2], color=color)
+
+plt.show()
