@@ -21,10 +21,8 @@ compression = compression(original_dataset)
 choice = input('Normalizzare?[S/N]: ')
 if choice == "S":
     norm = compression.normalized_dataset()
-    scatterPlot(norm, 0.4)
     lvq1 = lvq1(norm, n_p)
 else:
-    scatterPlot(original_dataset, 0.4)
     lvq1 = lvq1(original_dataset, n_p)
 print("Esecuzione in corso!")
 
@@ -37,5 +35,5 @@ print(timer)
 filename = "bandiera_100_21.json"
 lvq1.create_json(prototypes, filename)
 compression.draw_data()
-lvq1.draw_prototypes(prototypes)
+lvq1.draw_prototypes(prototypes, 1.0)
 plt.show()
