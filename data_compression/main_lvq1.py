@@ -33,7 +33,7 @@ print("Timer algoritmo completo:")
 timer = pd.Timestamp.now() - start
 print(timer)
 filename = "bandiera_100_21.json"
-lvq1.create_json(prototypes, filename)
+# lvq1.create_json(prototypes, filename)
 compression.draw_data()
 lvq1.draw_prototypes(prototypes, 1.0)
 plt.show()

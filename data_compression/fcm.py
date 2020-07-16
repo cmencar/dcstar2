@@ -105,3 +105,32 @@ class fcm(compression_strategy):
         scatter(X[:, 0], X[:, 1], ax=axs[1], hue=cluster_label)
         scatter(cluster_center[:, 0], cluster_center[:, 1], ax=axs[1], marker=">", s=200)
         plt.show()
+
+    def create_json(self, cluster_center, cluster_labels, filename):
+        point_coordinates = cluster_center.tolist()
+        point_labels = list(set(cluster_labels))
+        m_d = self.get_min_boundary(cluster_center).tolist()
+        M_d = self.get_max_boundary(cluster_center).tolist()
+        point_id = list()
+        for i in point_coordinates:
+            point_id.append(point_coordinates.index(i))
+
+        data = {'points': [], 'm_d': m_d, 'M_d': M_d}
+        for i in range(len(point_coordinates)):
+            coordinates = point_coordinates[i]
+            data['points'].append({
+                'coordinates': coordinates,
+                'class': int(point_labels[i]),
+                'name': "cluster_center" + " " + str(point_id[i] + 1)
+            })
+
+        with open(filename, 'w') as output:
+            json.dump(data, output, indent=1)
+
+    def get_min_boundary(self, prototypes):
+        minValues = np.amin(prototypes, axis=0)
+        return minValues
+
+    def get_max_boundary(self, prototypes):
+        maxValues = np.amax(prototypes, axis=0)
+        return maxValues
