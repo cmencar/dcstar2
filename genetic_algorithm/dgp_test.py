@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# OPZIONE 1
 
 import random
 from math import fabs
@@ -137,9 +138,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
-            # fitness = self.toolbox.map(self.fitness, offsprings)
-            for son in offsprings:
-                son.fitness.value = self.fitness(son)
+            fitness = self.toolbox.map(self.fitness, offsprings)
 
             # TODO - valutazione fitness, da togliere
             eval_fitness = list()
@@ -165,7 +164,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # previous_avg_fit = current_avg_fit
 
             # map each fitness value to the corresponding offspring
-            '''
             for fit, ind in zip(fitness, offsprings):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
@@ -173,24 +171,13 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestfit = fit
                     bestind = ind
                 ind.fitness.value = fit
-            '''
-            for _ in offsprings:
-                if _.fitness.value > bestfit:
-                    # save the better individual
-                    bestfit = _.fitness.value
-                    bestind = _
-
-            offsprings.sort(key=lambda fitness: fitness, reverse=False)
-            print("primo", offsprings[0].fitness.value)
-            print("secondo", offsprings[1].fitness.value)
-            print("terzo", offsprings[2].fitness.value, "\n")
 
             # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
             # generated individuals
             # the selection is defined on a "selected_for_tournament" number of offsprings
             # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
             # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            population = self.toolbox.select(offsprings, k=10)  # TODO - "assembramento", da test
+            population = self.toolbox.select(offsprings, k=int(population_size))  # TODO - "assembramento", da test
 
             epoch += 1
 
@@ -224,7 +211,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # @individual: individual
     def fitness(self, individual):
         # return the calculated fitness value
-        return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual), 5)
+        # return (1 - self.toolbox.evaluate(individual)) * pow(self.pureness(individual), 5)
+        return self.toolbox.evaluate(individual)
 
     # Method that calculates the pureness of a given individual's genome
     # @individual: individual
@@ -275,15 +263,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
-    def tournament_selection_1_tournament(self, individuals, k, tournsize, fit_attr="fitness"):
-        chosen = []
-        aspirants = tools.selRandom(individuals, tournsize)
-        for i in range(k):
-            winner = max(aspirants, key=attrgetter(fit_attr))
-            chosen.append(winner)
-            aspirants.remove(winner)
-        return chosen
-
     # Method that generates a offspring population of population_size using "mate" and "mutate" methods
     # @population: list of individuals
     # @population_size: size of population to generate
@@ -291,16 +270,13 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # @mating_rate: mating ratio
     # @mutation_rate: mutation_ratio
     def offsprings_generator(self, population, population_size, toolbox, mating_rate, mutation_rate):
-        clones = [ind for ind in population]
+        clones = [toolbox.clone(ind) for ind in population]
         offsprings = list()
-        # dummy_ind = max(clones, key=attrgetter("fitness"))
+        dummy_ind = max(clones, key=attrgetter("fitness"))
         clones.sort(key=lambda fitness: fitness, reverse=False)
-        dummy_ind = clones[0]
         for _ in range(population_size):
-            dummy_ind.fitness.value = 0
-            dummy_ind.fitness.valid = True
             offsprings.append(dummy_ind)
-        # Apply crossover and mutation on the offspring
+        # Apply crossover and mutation on the offsprings
         for i in range(2, population_size):
             if random.random() < mating_rate:
                 offsprings[i - 1], offsprings[i] = \

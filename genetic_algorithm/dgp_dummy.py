@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# OPZIONE 2 (+ 1)
 
 import random
 from math import fabs
