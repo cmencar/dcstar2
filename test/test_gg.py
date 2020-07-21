@@ -1,9 +1,10 @@
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
-from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
+# from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_dummy import DeapGeneticGuideSequenceProblem
+from genetic_algorithm.gp_test import GeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
-import winsound
+# import winsound
 
 gg_args_test = {
     "selected_for_tournament": 5,
@@ -36,7 +37,7 @@ test_datasets = [
     ("created point lists/wine_100_42.json", "wine")
 ]
 
-'''
+# '''
 for dataset in test_datasets:
     print(dataset[1])
     loader = PrototypesCreator()
@@ -72,12 +73,13 @@ for dataset in test_datasets:
     population_size = 2 * genes_number
 
     mutation_rate = 1 / genes_number
-    crossover = 1 - mutation_rate
+    # crossover = 1 - mutation_rate
 
     print("Mutation rate calculated: ", mutation_rate)
 
-    genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
-                                                    # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, crossover,
+    genetic_guide = GeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+    # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+    # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, crossover,
                                                     gg_args_test["selected_for_tournament"], cuts_sequence,
                                                     point_list, genes_per_dimension, m_d, M_d)
 
@@ -85,8 +87,8 @@ for dataset in test_datasets:
 
     content = str(a) + "/" + str(b) + "\n"
     filecuts.write(content)
+# '''
 '''
-
 print("banana")
 loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/banana_100_30.json")
@@ -134,7 +136,7 @@ a, b = genetic_guide.evolve(population_size, gg_args_test["generations"], "banan
 
 content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
+'''
+# filecuts.close()
 
-filecuts.close()
-
-winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+# winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
