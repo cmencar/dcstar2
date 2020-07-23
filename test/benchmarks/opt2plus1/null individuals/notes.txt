@@ -1,0 +1,23 @@
+BANANA
+comportamento erratico in tutti i casi, tournsize 5 più stabile
+
+BANDIERA
+con tournsize 3 ha avuto un sali e scendi, tournsize 5 inizia in maniera crescente poi l'andamento è erratico, tournsize 10 andamento erratico crescente
+
+GLASS
+con tournsize 3 e 10 andamento crescente ma non converge, tournsize 5 più erratico
+
+IONOSPHERE
+andamento sempre crescente
+
+IRIS
+andamento erratico, con tournsize 10 verso la fine delle generazioni decresce
+
+SHUTTLE
+come iris ma meno erratico
+
+WBC
+andamento crescente in tutti e tre i casi (la media è quasi linea retta), non accenna a convergere
+
+WINE
+comportamento analogo a WBC ma media meno stabile
