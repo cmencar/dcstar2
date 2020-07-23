@@ -64,6 +64,7 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
         self.points_list = points_list
         self.individual_size = individual_size
         self.elements_per_dimension = elements_per_dimension
+
         # save m_d and M_d limits to generate S_d sequence
         self.m_d = min_cut
         self.M_d = max_cut
@@ -136,6 +137,7 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
             sequence.append(dimension.copy())
         return sequence
 
+    # Method that applies tournament selection on given population
     def tournament_selection(self, individuals, k, tournsize):
         chosen = []
         aspirants = []
@@ -143,6 +145,7 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
             for j in range(tournsize):
                 aspirants.append(individuals[random.randint(0, k - 1)])
             chosen.append(max(aspirants, key=attrgetter("fitness")))
+            aspirants.clear()
         return chosen
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
@@ -161,8 +164,8 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
 
     # Method that applies crossover to a couple of individuals
     def mate(self, individual_1, individual_2, cx_rate):
-        chromosome1 = individual_1.get_chromosome()
-        chromosome2 = individual_2.get_chromosome()
+        chromosome1 = individual_1.get_chromosome().copy()
+        chromosome2 = individual_2.get_chromosome().copy()
         for idx in range(self.individual_size):
             if random.random() <= cx_rate:
                 temp = chromosome1[idx]
@@ -170,16 +173,16 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
                 chromosome2[idx] = temp
         individual_1.set_chromosome(chromosome1)
         individual_2.set_chromosome(chromosome2)
-        return individual_1, individual_2
+        # return individual_1, individual_2
 
     # Method that mutates an individual
     def mutate(self, individual, mut_rate):
-        chromosome = individual.get_chromosome()
+        chromosome = individual.get_chromosome().copy()
         for idx in range(self.individual_size):
             if random.random() <= mut_rate:
                 chromosome[idx] = not chromosome[idx]
         individual.set_chromosome(chromosome)
-        return individual
+        # return individual
 
     # Method that generates a offspring population of population_size using "mate" and "mutate" methods
     # @population: list of individuals
@@ -191,12 +194,17 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
     def generate_offsprings(self, population, population_size, cx_rate, mut_rate, elite):
         offsprings = population.copy()
         # Apply crossover and mutation on the offsprings
-        for i in range(1, population_size):
-            if random.random() <= cx_rate:
-                offsprings[i - 1], offsprings[i] = self.mate(offsprings[i - 1], offsprings[i], cx_rate)
+        # for i in range(1, population_size):  # TODO - con elite, test
         for i in range(population_size):
-            if random.random() <= mut_rate:
-                offsprings[i] = self.mutate(offsprings[i], mut_rate)
+            self.mate(offsprings[i - 1], offsprings[i], cx_rate)
+            # if random.random() <= cx_rate:
+                # offsprings[i - 1], offsprings[i] = self.mate(offsprings[i - 1], offsprings[i], cx_rate)
+                # self.mate(offsprings[i - 1], offsprings[i], cx_rate)
+        for i in range(population_size):
+            self.mutate(offsprings[i], mut_rate)
+            # if random.random() <= mut_rate:
+                # offsprings[i] = self.mutate(offsprings[i], mut_rate)
+                # self.mutate(offsprings[i], mut_rate)
         return offsprings
 
     # Method generating the best individual possible by the genetic algorithm
@@ -210,32 +218,32 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
         for _ in range(population_size):
             population.append(self.generate(self.individual_size))
 
-        fit_behave = list(tuple())  # TODO - valutazione fitness, da togliere
+        fit_behave = list(tuple())  # TODO - valutazione fitness, test
+
+        # "elite" initialization
+        # TODO - con elite, test
         elite = Individual(list())
         elite.set_fitness(-1)
 
         epoch = 0
         stabilized_gens = 0
-        # previous_avg_fit = 0
 
-        # for each generation
+        # evolution
         # for epoch in range(generations - 1):
-        # TODO - aggiunto altro criterio di stop "stabilizzazione", test
+        # TODO - con criterio di stop "stabilizzazione", test
         while epoch in range(generations - 1) and stabilized_gens < 10:
 
-            # offsprings are generated using the offsprings_generator method, in which are passed the population,
-            # population_size, mating rate and mutation rate
+            # offsprings generation
             offsprings = self.generate_offsprings(population, population_size, self.cx_rate, self.mut_rate, elite)
 
-            # definizione di una mappa che conterrà i valori delle
-            # valutazioni degli individui della progenie
+            # calculation of individuals "fitness"
             for son in offsprings:
                 son.set_fitness(self.calculate_fitness(son.get_chromosome()))
 
             # TODO - valutazione fitness, da togliere
             eval_fitness = list()
             for son in offsprings:
-                eval_fitness.append(self.calculate_fitness(son.get_chromosome()))
+                eval_fitness.append(son.get_fitness())
             current_max_fit = 0
             current_min_fit = 1
             temp_avg = 0
@@ -248,13 +256,16 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
                 current_avg_fit = temp_avg / population_size
             fit_behave.append((current_min_fit, current_avg_fit, current_max_fit))
 
-            # TODO - "elite", test
+            # TODO - elite, test
+            # "elite" evaluation
             for _ in offsprings:
                 if _.get_fitness() > elite.get_fitness():
                     print(elite.get_fitness(), " -> ", _.get_fitness())
                     # save the better individual
-                    elite.set_chromosome(_.get_chromosome())
+                    elite.set_chromosome(_.get_chromosome().copy())
                     elite.set_fitness(self.calculate_fitness(elite.get_chromosome()))
+                    if elite.get_fitness() != _.get_fitness():
+                        print("stronzo")
 
             # TODO - aggiunto altro criterio di stop "stabilizzazione", test
             # if fabs(previous_avg_fit - current_avg_fit) <= previous_avg_fit * 0.1:
@@ -263,20 +274,19 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
             #     stabilized_gens = 0
             # previous_avg_fit = current_avg_fit
 
-            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
-            # generated individuals
-            # the selection is defined on a "selected_for_tournament" number of offsprings
-            # population = self.toolbox.select(offsprings, k=2)  # TODO - "famiglia tradizionale", test
-            # population = self.toolbox.select(offsprings, k=self.selected_for_tournament)  # TODO - "bisbocce", test
-            # population = self.toolbox.select(offsprings, k=int(population_size))  # TODO - "assembramento", da test
-            # TODO - "elitario", da test
-            elite_copy = Individual(elite.get_chromosome())
-            elite_copy.set_fitness(elite.get_fitness())
-            population.clear()
-            population.append(elite_copy)
-            not_elites = self.tournament_selection(offsprings, int(population_size - 1), self.selected_for_tournament)
-            for normie in not_elites:
-                population.append(normie)
+            # applying tournament selection
+
+            # TODO - con elite, test
+            # elite_copy = Individual(elite.get_chromosome())
+            # elite_copy.set_fitness(elite.get_fitness())
+            # population.clear()
+            # population.append(elite_copy)
+            # not_elites = self.tournament_selection(offsprings, int(population_size - 1), self.selected_for_tournament)
+            # for normie in not_elites:
+            #     population.append(normie)
+
+            # TODO - senza elite, test
+            population = self.tournament_selection(offsprings, int(population_size), self.selected_for_tournament)
 
             epoch += 1
 
@@ -297,10 +307,11 @@ class GeneticGuideSequenceProblem(GeneticEvolution):
         plt.savefig(dataset + ".svg", transparent=True)
         plt.close()
 
-        print("Best fitness: ", elite.get_fitness())  # TODO - valutazione fitness, da togliere
-        print("Halt at generation:", epoch)  # TODO - doppio criterio di fermata "evolve", da togliere
+        print("Best fitness: ", elite.get_fitness())  # TODO - valutazione fitness, test
+        print("Best individual: ", elite.get_chromosome())  # TODO - valutazione individuo, test
+        # print("Halt at generation:", epoch)  # TODO - doppio criterio di fermata "evolve", test
         # convert individual into sequence
-        best_individual = self.convert_individual_into_sequence(elite.get_chromosome(), self.elements_per_dimension)
+        # best_individual = self.convert_individual_into_sequence(elite.get_chromosome(), self.elements_per_dimension)
 
         # return the converted best individual
         # return best_individual

@@ -1,18 +1,23 @@
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
-# from genetic_algorithm.dgp_dummy import DeapGeneticGuideSequenceProblem
-from genetic_algorithm.gp_test import GeneticGuideSequenceProblem
+from genetic_algorithm.dgp_option2_plus1 import DeapGeneticGuideSequenceProblem
+# from genetic_algorithm.gp_test import GeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
 # import winsound
 
+# TODO - varie dimensioni del torneo, test
 gg_args_test = {
-    "selected_for_tournament": 5,
-    "generations": 100,
-    "mating_rate": 0.7
+    "selected_for_tournament": 3,
+    # "selected_for_tournament": 5,
+    # "selected_for_tournament": 10,
+    "generations": 1000,
+    "mating_rate": 0.5
 }
 
-filecuts = open("tagli.txt", "w")
+filecuts = open(str(gg_args_test["selected_for_tournament"]) + ".txt", "w")
+
+content = "generazione individuo nullo\n"
 
 # TODO mutation_rate prefissati, test da togliere
 # mutation_rate = 0.1
@@ -77,15 +82,15 @@ for dataset in test_datasets:
 
     print("Mutation rate calculated: ", mutation_rate)
 
-    genetic_guide = GeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
-    # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+    # genetic_guide = GeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
+    genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
     # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, crossover,
                                                     gg_args_test["selected_for_tournament"], cuts_sequence,
                                                     point_list, genes_per_dimension, m_d, M_d)
 
     a, b = genetic_guide.evolve(population_size, gg_args_test["generations"], dataset[1])
 
-    content = str(a) + "/" + str(b) + "\n"
+    content = dataset[1] + " " + str(a) + "/" + str(b) + "\n"
     filecuts.write(content)
 # '''
 '''
@@ -123,12 +128,13 @@ for num in genes_per_dimension:
 population_size = 2 * genes_number
 
 mutation_rate = 1 / genes_number
-crossover = 1 - mutation_rate
+# crossover = 1 - mutation_rate
 
 print("Mutation rate calculated: ", mutation_rate)
 
+# genetic_guide = GeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
 genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
-                                                # genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, crossover,
+# genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, crossover,
                                                 gg_args_test["selected_for_tournament"], cuts_sequence,
                                                 point_list, genes_per_dimension, m_d, M_d)
 
@@ -137,6 +143,5 @@ a, b = genetic_guide.evolve(population_size, gg_args_test["generations"], "banan
 content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
 '''
-# filecuts.close()
-
+filecuts.close()
 # winsound.PlaySound("SystemHand", winsound.SND_ALIAS)

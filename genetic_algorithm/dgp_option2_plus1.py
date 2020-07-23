@@ -34,13 +34,11 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         random.seed()
 
         # define mutation rate of individual
-        self.mutation_rate = mutation_rate
+        # self.mutation_rate = mutation_rate
 
-        # define mating rate of individual
-        self.mating_rate = mating_rate
-
-        # define how many individuals are to be selected for tournament
-        self.selected_for_tournament = selected_for_tournament
+        # define applicability of mating and mutation of individuals
+        self.cxpb = mating_rate
+        self.mutpb = 0.2
 
         # create object defining max fitness value
         creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -57,16 +55,17 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # define data structure "population" containing all individuals
         self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 
-        # define mating method between individuals using uniform partially matched crossover
-        self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
+        # define mating method between individuals
+        # self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
+        self.toolbox.register("mate", tools.cxOnePoint)
 
-        # define mutation method of individuals' son shuffling genes with "mutation_rate" percentage
+        # define mutation method of individuals' son
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
-        # define selection method using selection for tournament between "selected_for_tournament" individuals
+        # define selection method
         self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
 
-        # define evaluation method with given "evaluate_fun" function
+        # define evaluation method
         # self.toolbox.register("evaluate", self.evaluate1)
         self.toolbox.register("evaluate", self.evaluate)
 
@@ -83,7 +82,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # Function that evaluates the ratio between the "true" genes (considered cuts) and the whole number of them
     # (considered cuts and not)
     # @individual: object that contains the genome
-    '''
+    # '''
     def evaluate(self, individual):
         # initializing evaluation variables
         valutation = 0
@@ -93,9 +92,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         total_genes += len(individual)
         # returns the ratio
         return valutation / total_genes
-    '''
-
     # '''
+
+    '''
     def evaluate(self, individual):
         valutation = 0
         total_genes = 0
@@ -112,11 +111,12 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         p = hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()  # pureness ratio
 
         return (1 - g) * pow(p, 5)
-    # '''
+    '''
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
     # @individual_class: class of the individual to create
     # @individual_dim: number of genes of the individual
+    # TODO - generazione individuo nullo, test
     def generate(self, individual_class, individual_dim):
         # definition of individual's genome
         chromosome = list()
@@ -127,6 +127,23 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # return the individual with the created genome
         return individual_class(chromosome)
+
+    # TODO - generazione individuo random, test
+    '''
+    def generate(self, individual_class, individual_dim):
+        # definition of individual's genome
+        chromosome = list()
+
+        # initializing the genome with all genes to False
+        for gene in range(individual_dim):
+            if random.random() <= 0.5:
+                chromosome.append(True)
+            else:
+                chromosome.append(False)
+
+        # return the individual with the created genome
+        return individual_class(chromosome)
+    '''
 
     # Method generating the best individual possible by the genetic algorithm
     # @population_size: size of population to generate
@@ -146,7 +163,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate
-            offsprings = algorithms.varAnd(population, self.toolbox, self.mating_rate, self.mutation_rate)
+            offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
@@ -203,7 +220,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         print("Total cuts in individual: ", self.individual_size)
         print("Active cuts in best individual: ", bestind.count(True))
         # convert individual into sequence
-        best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
+        # best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
         # return best_individual
