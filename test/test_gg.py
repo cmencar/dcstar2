@@ -1,8 +1,9 @@
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
-from genetic_algorithm.dgp_option2_plus1 import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.gp_test import GeneticGuideSequenceProblem
+from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
+# from genetic_algorithm.dgp_option2_plus1_random import DeapGeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
 # import winsound
 
@@ -11,25 +12,11 @@ gg_args_test = {
     "selected_for_tournament": 3,
     # "selected_for_tournament": 5,
     # "selected_for_tournament": 10,
-    "generations": 1000,
+    "generations": 2000,
     "mating_rate": 0.5
 }
 
-filecuts = open(str(gg_args_test["selected_for_tournament"]) + ".txt", "w")
-
-content = "generazione individuo nullo\n"
-
-# TODO mutation_rate prefissati, test da togliere
-# mutation_rate = 0.1
-# mutation_rate = 0.15
-# mutation_rate = 0.2
-# mutation_rate = 0.3
-# mutation_rate = 0.4
-# mutation_rate = 0.5
-# mutation_rate = 0.6
-# mutation_rate = 0.7
-# mutation_rate = 0.8
-# mutation_rate = 0.9
+filecuts = open(str(gg_args_test["tagli"]) + ".txt", "w")
 
 test_datasets = [
     ("created point lists/banana_100_30.json", "banana"),

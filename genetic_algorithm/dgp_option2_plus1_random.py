@@ -63,11 +63,15 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method
-        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
+        # self.toolbox.register("select", tools.selBest)  # sel prop
 
         # define evaluation method
-        # self.toolbox.register("evaluate", self.evaluate1)
         self.toolbox.register("evaluate", self.evaluate)
+
+        # TODO - elite, test
+        self.elite = tools.HallOfFame(int(individual_size * 0.2))
 
         # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
         # chromosome to sequence
@@ -75,6 +79,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.points_list = points_list
         self.individual_size = individual_size
         self.elements_per_dimension = elements_per_dimension
+
         # save m_d and M_d limits to generate S_d sequence
         self.m_d = min_cut
         self.M_d = max_cut
@@ -116,20 +121,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # Function that generates an individual with the same number of cuts as the cuts sequence
     # @individual_class: class of the individual to create
     # @individual_dim: number of genes of the individual
-    # TODO - generazione individuo nullo, test
-    def generate(self, individual_class, individual_dim):
-        # definition of individual's genome
-        chromosome = list()
-
-        # initializing the genome with all genes to False
-        for gene in range(individual_dim):
-            chromosome.append(False)
-
-        # return the individual with the created genome
-        return individual_class(chromosome)
-
-    # TODO - generazione individuo random, test
-    '''
     def generate(self, individual_class, individual_dim):
         # definition of individual's genome
         chromosome = list()
@@ -143,7 +134,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # return the individual with the created genome
         return individual_class(chromosome)
-    '''
 
     # Method generating the best individual possible by the genetic algorithm
     # @population_size: size of population to generate
@@ -161,9 +151,14 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # for each generation
         for epoch in range(generations - 1):
 
+            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
+            # generated individuals
+            # the selection is defined on a "selected_for_tournament" number of offsprings
+            offsprings = self.toolbox.select(population, k=int(population_size))
+
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate
-            offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
+            offsprings = algorithms.varAnd(offsprings, self.toolbox, self.cxpb, self.mutpb)
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
@@ -191,14 +186,12 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
                     # save the better individual
-                    bestfit = fit
-                    bestind = ind
+                    bestind = ind.copy()
+                    bestfit = self.toolbox.evaluate(bestind)
                 ind.fitness.value = fit
 
-            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
-            # generated individuals
-            # the selection is defined on a "selected_for_tournament" number of offsprings
-            population = self.toolbox.select(offsprings, k=int(population_size))
+            self.elite.update(offsprings)
+            population[:] = offsprings
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
