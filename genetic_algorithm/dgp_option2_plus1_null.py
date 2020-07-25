@@ -176,7 +176,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 if fit > bestfit:
                     # save the better individual
                     bestind = ind.copy()
-                    bestfit = self.toolbox.evaluate(ind)
+                    bestfit = fit
                 ind.fitness.value = fit
 
             # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
