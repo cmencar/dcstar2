@@ -5,18 +5,16 @@ from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeri
 from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_option2_plus1_random import DeapGeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
-# import winsound
+import winsound
 
 # TODO - varie dimensioni del torneo, test
 gg_args_test = {
-    "selected_for_tournament": 3,
-    # "selected_for_tournament": 5,
-    # "selected_for_tournament": 10,
+    "selected_for_tournament": 5,
     "generations": 2000,
     "mating_rate": 0.5
 }
 
-filecuts = open(str(gg_args_test["tagli"]) + ".txt", "w")
+filecuts = open("tagli.txt", "w")
 
 test_datasets = [
     ("created point lists/banana_100_30.json", "banana"),
@@ -131,4 +129,4 @@ content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
 '''
 filecuts.close()
-# winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
