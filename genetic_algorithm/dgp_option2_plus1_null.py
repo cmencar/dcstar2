@@ -63,7 +63,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method
-        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
         # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
         # self.toolbox.register("select", tools.selBest)  # sel prop
 
@@ -83,7 +84,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # Function that evaluates the ratio between the "true" genes (considered cuts) and the whole number of them
     # (considered cuts and not)
     # @individual: object that contains the genome
-    # '''
+    '''
     def evaluate(self, individual):
         # initializing evaluation variables
         valutation = 0
@@ -93,9 +94,9 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         total_genes += len(individual)
         # returns the ratio
         return valutation / total_genes
-    # '''
-
     '''
+
+    # '''
     def evaluate(self, individual):
         valutation = 0
         total_genes = 0
@@ -112,7 +113,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         p = hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()  # pureness ratio
 
         return (1 - g) * pow(p, 5)
-    '''
+    # '''
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
     # @individual_class: class of the individual to create
