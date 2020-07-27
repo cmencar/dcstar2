@@ -174,13 +174,11 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
                     # save the better individual
-                    bestfit = fit
-                    bestind = ind
+                    bestfit = float(fit)
+                    bestind = ind.copy()
                 ind.fitness.value = fit
 
-            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
-            # generated individuals
-            # the selection is defined on a "selected_for_tournament" number of offsprings
+            # select offsprings that will be the next population
             population = self.toolbox.select(offsprings, k=int(population_size))
 
         # TODO - grafico valutazione fitness, da togliere

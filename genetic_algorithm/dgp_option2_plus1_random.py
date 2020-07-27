@@ -70,9 +70,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         # define evaluation method
         self.toolbox.register("evaluate", self.evaluate)
 
-        # TODO - elite, test
-        self.elite = tools.HallOfFame(int(individual_size * 0.2))
-
         # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
         # chromosome to sequence
         self.T_d = cuts_sequence
@@ -148,17 +145,23 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         bestfit = 0
         bestind = None
 
+        # TODO - elite, test
+        # elites = tools.HallOfFame(maxsize=5)
+        elites_fits = []
+        if self.individual_size * 0.1 < 5:
+            elites = self.toolbox.population(n=5)
+        else:
+            elites = self.toolbox.population(n=int(self.individual_size * 0.1))
+
+        for i in range(len(elites)):
+            elites_fits.append(self.toolbox.evaluate(elites[i]))
+
         # for each generation
         for epoch in range(generations - 1):
 
-            # select a couple of offsprings in the population that will be "mother" and "father" of the next batch of
-            # generated individuals
-            # the selection is defined on a "selected_for_tournament" number of offsprings
-            offsprings = self.toolbox.select(population, k=int(population_size))
-
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate
-            offsprings = algorithms.varAnd(offsprings, self.toolbox, self.cxpb, self.mutpb)
+            offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
@@ -186,12 +189,26 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
                     # save the better individual
+                    bestfit = float(fit)
                     bestind = ind.copy()
-                    bestfit = self.toolbox.evaluate(bestind)
                 ind.fitness.value = fit
 
-            self.elite.update(offsprings)
-            population[:] = offsprings
+            # update the elites' list
+            clones = offsprings.copy()
+            clones.sort(key=lambda offspring: offspring.fitness.value, reverse=True)
+            eval_fitness.sort(reverse=True)
+            for i in range(len(elites_fits)):
+                if eval_fitness[i] > elites_fits[elites_fits.index(min(elites_fits))]:
+                    elites[elites_fits.index(min(elites_fits))] = creator.Individual(clones[i].copy())
+                    elites_fits[elites_fits.index(min(elites_fits))] = float(eval_fitness[i])
+
+            # select offsprings that will be the next population
+            population = self.toolbox.select(offsprings, k=population_size - len(elites))
+            for elite in elites:
+                population.append(elite)
+
+
+
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
