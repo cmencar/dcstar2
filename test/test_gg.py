@@ -2,15 +2,15 @@ from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeri
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.dgp_test import DeapGeneticGuideSequenceProblem
 # from genetic_algorithm.gp_test import GeneticGuideSequenceProblem
-# from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
-from genetic_algorithm.dgp_option2_plus1_random import DeapGeneticGuideSequenceProblem
+from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
+# from genetic_algorithm.dgp_option2_plus1_random import DeapGeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
 # import winsound
 
 # TODO - varie dimensioni del torneo, test
 gg_args_test = {
     "selected_for_tournament": 5,
-    "generations": 10,
+    "generations": 15000,
     "mating_rate": 0.5
 }
 
