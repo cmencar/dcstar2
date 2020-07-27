@@ -63,8 +63,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method
-        self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
-        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
+        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
         # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
         # self.toolbox.register("select", tools.selBest)  # sel prop
 
