@@ -1,8 +1,8 @@
-banana 25/29
-bandiera 22/25
-glass 72/100
-iono 137/210
-iris 37/46
-shuttle 41/53
-wbc 326/538
-wine 138/207
+banana 29/29
+bandiera 25/25
+glass 100/100
+iono 210/210
+iris 46/46
+shuttle 53/53
+wbc 538/538
+wine 207/207
