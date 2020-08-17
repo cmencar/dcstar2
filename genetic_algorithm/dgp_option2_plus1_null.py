@@ -64,8 +64,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # define selection method
         # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
-        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
-        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
+        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
         # self.toolbox.register("select", tools.selBest)  # sel prop
 
         # define evaluation method
@@ -142,6 +142,19 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         bestfit = 0
         bestind = None
 
+        # TODO - elite, test
+        # '''
+        # elites = tools.HallOfFame(maxsize=5)
+        elites_fits = []
+        if self.individual_size * 0.1 < 5:
+            elites = self.toolbox.population(n=5)
+        else:
+            elites = self.toolbox.population(n=int(self.individual_size * 0.1))
+
+        for i in range(len(elites)):
+            elites_fits.append(0)
+        # '''
+
         # for each generation
         for epoch in range(generations - 1):
 
@@ -179,8 +192,26 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestind = ind.copy()
                 ind.fitness.value = fit
 
+            # TODO - implemenetazione elites, test
+            # '''
+            # update the elites' list
+            clones = offsprings.copy()
+            clones.sort(key=lambda offspring: offspring.fitness.value, reverse=True)
+            eval_fitness.sort(reverse=True)
+            for i in range(len(elites_fits)):
+                if eval_fitness[i] > elites_fits[elites_fits.index(min(elites_fits))]:
+                    elites[elites_fits.index(min(elites_fits))] = creator.Individual(clones[i].copy())
+                    elites_fits[elites_fits.index(min(elites_fits))] = float(eval_fitness[i])
+
             # select offsprings that will be the next population
-            population = self.toolbox.select(offsprings, k=int(population_size))
+            population = self.toolbox.select(offsprings, k=population_size - len(elites))
+            for elite in elites:
+                population.append(elite)
+            # '''
+
+            # TODO - senza elite, test
+            # select offsprings that will be the next population
+            # population = self.toolbox.select(offsprings, k=int(population_size))
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
