@@ -514,11 +514,11 @@ class DCStarProblem(Problem):
 
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
+        '''
         hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
         if hbs.get_impure_hyperboxes_number() != 0:
             print("Evaluated genetic individual is an impure one\n")
             self.__genetic_individual_purity = False
-            '''
             # purification process
             # set solution not found
             found = False
@@ -572,14 +572,6 @@ class DCStarProblem(Problem):
         # calculate mutation rate
         # N.B.: mutation rate is calculated by reciprocating the number of genes
         mutation_rate = 1 / genes_number
-        # TODO mutation_rate prefissati, test da togliere
-        # mutation_rate = 0.3
-        # mutation_rate = 0.2
-        # mutation_rate = 0.15
-        # mutation_rate = 0.1
-        # mutation_rate = 0.9
-        # TODO stampa mutation_rate, da togliere
-        print("Mutation rate calculated: ", mutation_rate)
 
         # define DGG object to create the genetic guide with monodimensional lists
         genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],

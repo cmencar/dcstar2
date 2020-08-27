@@ -2,8 +2,6 @@
 # OPZIONE 2 (+ 1)
 
 import random
-from math import fabs
-from operator import attrgetter
 from deap import creator, base, tools, algorithms
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
@@ -30,14 +28,21 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     def __init__(self, individual_size, mutation_rate, mating_rate, selected_for_tournament, cuts_sequence, points_list,
                  elements_per_dimension, min_cut, max_cut):
 
+        # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
+        # chromosome to sequence
+        self.T_d = cuts_sequence
+        self.points_list = points_list
+        self.individual_size = individual_size
+        self.elements_per_dimension = elements_per_dimension
+        # save m_d and M_d limits to generate S_d sequence
+        self.m_d = min_cut
+        self.M_d = max_cut
+        
         # initialize the seed for random numbers
         random.seed()
 
-        # define mutation rate of individual
-        # self.mutation_rate = mutation_rate
-
         # define applicability of mating and mutation of individuals
-        self.cxpb = mating_rate
+        self.cxpb = 0.5
         self.mutpb = 0.2
 
         # create object defining max fitness value
@@ -56,7 +61,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 
         # define mating method between individuals
-        # self.toolbox.register("mate", tools.cxUniformPartialyMatched, indpb=mating_rate)
         self.toolbox.register("mate", tools.cxOnePoint)
 
         # define mutation method of individuals' son
@@ -64,56 +68,54 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # define selection method
         # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
-        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
-        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
+        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
         # self.toolbox.register("select", tools.selBest)  # sel prop
 
         # define evaluation method
         self.toolbox.register("evaluate", self.evaluate)
 
-        # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
-        # chromosome to sequence
-        self.T_d = cuts_sequence
-        self.points_list = points_list
-        self.individual_size = individual_size
-        self.elements_per_dimension = elements_per_dimension
-        # save m_d and M_d limits to generate S_d sequence
-        self.m_d = min_cut
-        self.M_d = max_cut
-
-    # Function that evaluates the ratio between the "true" genes (considered cuts) and the whole number of them
-    # (considered cuts and not)
+    # Function that calculates and individual's fitness
     # @individual: object that contains the genome
-    '''
     def evaluate(self, individual):
-        # initializing evaluation variables
-        valutation = 0
-        total_genes = 0
-        # every "true" gene increments the valutation while the total number of genes is calculated
-        valutation += individual.count(True)
-        total_genes += len(individual)
-        # returns the ratio
-        return valutation / total_genes
-    '''
+        return (1 - self.used_cuts_ratio(individual)) * pow(self.pureness(individual), 5)
 
-    # '''
-    def evaluate(self, individual):
-        valutation = 0
+    # Method that calculates used cuts ratio of a given individual
+    # @individual: individual
+    def used_cuts_ratio(self, individual):
+        # initialize true and total genes counter
+        true_genes = 0
         total_genes = 0
-        valutation += individual.count(True)
-        total_genes += len(individual)
-        g = valutation / total_genes  # cuts ratio
 
+        # count true genes
+        true_genes += individual.count(True)
+
+        # count total genes
+        total_genes += len(individual)
+
+        # return ratio of true genes and total genes
+        return true_genes / total_genes
+
+    # Method that calculates the pureness of a given individual
+    # @individual: individual
+    def pureness(self, individual):
+        # initialize selected cuts and binary cuts sequences
         S_d = SelectedDimensionalSequenceNumeric()
         S_d_b = DimensionalSequenceBinary()
-        converted_individual = self.from_list_to_sequence(individual, self.elements_per_dimension)
-        S_d_b.from_binary(converted_individual)
-        S_d.from_binary(self.T_d, S_d_b)
-        hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
-        p = hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()  # pureness ratio
 
-        return (1 - g) * pow(p, 5)
-    # '''
+        # convert individual into sequence
+        converted_individual = self.from_ind_to_sequence(individual, self.elements_per_dimension)
+
+        # create binary cuts sequence
+        S_d_b.from_binary(converted_individual)
+        # generate selected cuts sequence from reference T_d and binary cuts sequence
+        S_d.from_binary(self.T_d, S_d_b)
+
+        # create set of hyperboxes
+        hyperboxes = S_d.generate_hyperboxes_set(self.points_list, self.m_d, self.M_d)
+
+        # return ratio between number of pure hyperboxes and total number of hyperboxes
+        return hyperboxes.get_pure_hyperboxes_number() / hyperboxes.get_hyperboxes_number()
 
     # Function that generates an individual with the same number of cuts as the cuts sequence
     # @individual_class: class of the individual to create
@@ -139,12 +141,13 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         population = self.toolbox.population(n=population_size)
 
         fit_behave = list(tuple())  # TODO - valutazione fitness, da togliere
+        fit_behave.append((0, 0, 0))
+
+        # initialize best individual
         bestfit = 0
         bestind = None
 
         # TODO - elite, test
-        # '''
-        # elites = tools.HallOfFame(maxsize=5)
         elites_fits = []
         if self.individual_size * 0.1 < 5:
             elites = self.toolbox.population(n=5)
@@ -153,24 +156,22 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         for i in range(len(elites)):
             elites_fits.append(0)
-        # '''
 
         # for each generation
         for epoch in range(generations - 1):
 
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
-            # population_size, toolbox, mating rate and mutation rate
+            # population_size, toolbox, mating rate and mutation rate for applicability
             offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
 
             # definizione di una mappa che conterrà i valori delle
             # valutazioni degli individui della progenie
             fitnesses = list(map(self.toolbox.evaluate, offsprings))
 
+            # TODO - valutazione fitness, da togliere
             eval_fitness = list()
             for son in offsprings:
                 eval_fitness.append(self.toolbox.evaluate(son))
-
-            # TODO - valutazione fitness, da togliere
             current_max_fit = 0
             current_min_fit = 1
             temp_avg = 0
@@ -192,8 +193,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestind = ind.copy()
                 ind.fitness.value = fit
 
-            # TODO - implemenetazione elites, test
-            # '''
+            # TODO - implementazione elites, test
             # update the elites' list
             clones = offsprings.copy()
             clones.sort(key=lambda offspring: offspring.fitness.value, reverse=True)
@@ -207,11 +207,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             population = self.toolbox.select(offsprings, k=population_size - len(elites))
             for elite in elites:
                 population.append(elite)
-            # '''
-
-            # TODO - senza elite, test
-            # select offsprings that will be the next population
-            # population = self.toolbox.select(offsprings, k=int(population_size))
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
@@ -233,16 +228,16 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         print("Total cuts in individual: ", self.individual_size)
         print("Active cuts in best individual: ", bestind.count(True))
         # convert individual into sequence
-        # best_individual = self.from_list_to_sequence(bestind, self.elements_per_dimension)
+        # best_individual = self.from_individual_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
         # return best_individual
         return bestind.count(True), self.individual_size
 
-    # Method converting individual's genome from list to "multidimensional cuts sequence" (list of lists)
+    # Method converting individual from list to list of lists
     # @individual: individual
     # @genes_per_dimension: numbers of genes per dimension
-    def from_list_to_sequence(self, individual, genes_per_dimension):
+    def from_ind_to_sequence(self, individual, genes_per_dimension):
         # create support lists
         sequence = list()
         dimension = list()
