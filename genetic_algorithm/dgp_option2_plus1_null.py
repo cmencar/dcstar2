@@ -25,8 +25,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # to sequence
     # @min_cut: m_d cut that will go into S_d
     # @max_cut: M_d cut that will go into S_d
-    def __init__(self, individual_size, mutation_rate, mating_rate, selected_for_tournament, cuts_sequence, points_list,
-                 elements_per_dimension, min_cut, max_cut):
+    def __init__(self, individual_size, mutation_rate, cuts_sequence, points_list, elements_per_dimension, min_cut,
+                 max_cut):
 
         # save cuts_sequence, points_list, individual_size and element_per_dimension, needed for convertion from
         # chromosome to sequence
@@ -67,7 +67,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method
-        # self.toolbox.register("select", tools.selTournament, tournsize=selected_for_tournament)
         self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
         # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
         # self.toolbox.register("select", tools.selBest)  # sel prop
@@ -206,7 +205,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             # select offsprings that will be the next population
             population = self.toolbox.select(offsprings, k=population_size - len(elites))
             for elite in elites:
-                population.append(elite)
+                # population.append(elite)
+                population.insert(random.randint(0, len(population)), elite)
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()

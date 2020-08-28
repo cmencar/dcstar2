@@ -5,11 +5,7 @@ from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequencePro
 from heuristic_search.prototypes_creator import PrototypesCreator
 
 # TODO - varie dimensioni del torneo, test
-gg_args_test = {
-    "selected_for_tournament": 5,
-    "generations": 20,
-    "mating_rate": 0.5
-}
+gg_generations = 200
 
 filecuts = open("tagli.txt", "w")
 
@@ -63,11 +59,10 @@ for dataset in test_datasets:
 
     print("Mutation rate calculated: ", mutation_rate)
 
-    genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
-                                                    gg_args_test["selected_for_tournament"], cuts_sequence,
-                                                    point_list, genes_per_dimension, m_d, M_d)
+    genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, cuts_sequence, point_list,
+                                                    genes_per_dimension, m_d, M_d)
 
-    a, b = genetic_guide.evolve(population_size, gg_args_test["generations"], dataset[1])
+    a, b = genetic_guide.evolve(population_size, gg_generations, dataset[1])
 
     content = dataset[1] + " " + str(a) + "/" + str(b) + "\n"
     filecuts.write(content)
@@ -110,11 +105,10 @@ mutation_rate = 1 / genes_number
 
 print("Mutation rate calculated: ", mutation_rate)
 
-genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_args_test["mating_rate"],
-                                                gg_args_test["selected_for_tournament"], cuts_sequence,
-                                                point_list, genes_per_dimension, m_d, M_d)
+genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, cuts_sequence, point_list, 
+                                                genes_per_dimension, m_d, M_d)
 
-a, b = genetic_guide.evolve(population_size, gg_args_test["generations"], "banana")
+a, b = genetic_guide.evolve(population_size, gg_generations, "banana")
 
 content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
