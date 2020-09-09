@@ -1,10 +1,8 @@
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
 # from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
-# from genetic_algorithm.dgp_option2_plus1_random import DeapGeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
 
-# TODO - varie dimensioni del torneo, test
 gg_generations = 200
 
 filecuts = open("tagli.txt", "w")
@@ -20,7 +18,7 @@ test_datasets = [
     ("created point lists/wine_100_42.json", "wine")
 ]
 
-'''
+# '''
 for dataset in test_datasets:
     print(dataset[1])
     loader = PrototypesCreator()
@@ -66,8 +64,8 @@ for dataset in test_datasets:
 
     content = dataset[1] + " " + str(a) + "/" + str(b) + "\n"
     filecuts.write(content)
-'''
 # '''
+'''
 print("banana")
 loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/banana_100_30.json")
@@ -112,5 +110,5 @@ a, b = genetic_guide.evolve(population_size, gg_generations, "banana")
 
 content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
-# '''
+'''
 filecuts.close()

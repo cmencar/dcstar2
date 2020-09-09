@@ -68,8 +68,6 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # define selection method
         self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
-        # self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.3))  # 15% of pop
-        # self.toolbox.register("select", tools.selBest)  # sel prop
 
         # define evaluation method
         self.toolbox.register("evaluate", self.evaluate)
@@ -144,27 +142,29 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # initialize best individual
         bestfit = 0
+        oldfit = 0.8
         bestind = None
 
-        # TODO - elite, test
+        # create first "hall of fame" of elites with initial fitness
         elites_fits = []
         if self.individual_size * 0.1 < 5:
             elites = self.toolbox.population(n=5)
         else:
             elites = self.toolbox.population(n=int(self.individual_size * 0.1))
-
         for i in range(len(elites)):
             elites_fits.append(0)
 
-        # for each generation
-        for epoch in range(generations - 1):
+        # initialize epoch and convergence counters
+        epoch = 0
+        convergence = 0
+        # while there are generations to be computed and there is no convergence in max fitness values over generations
+        while epoch < generations - 1 and convergence < 5:
 
             # offsprings are generated using the offsprings_generator method, in which are passed the population,
             # population_size, toolbox, mating rate and mutation rate for applicability
             offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
 
-            # definizione di una mappa che conterrà i valori delle
-            # valutazioni degli individui della progenie
+            # define mapping of calculated fitnesses to corresponding individuals
             fitnesses = list(map(self.toolbox.evaluate, offsprings))
 
             # TODO - valutazione fitness, da togliere
@@ -192,7 +192,15 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     bestind = ind.copy()
                 ind.fitness.value = fit
 
-            # TODO - implementazione elites, test
+            # stop nr°2 (convergence of max fitness)
+            if bestfit >= oldfit:
+                if bestfit == oldfit:
+                    convergence += 1
+                    # pass
+                else:
+                    oldfit = float(bestfit)
+                    convergence = 0
+
             # update the elites' list
             clones = offsprings.copy()
             clones.sort(key=lambda offspring: offspring.fitness.value, reverse=True)
@@ -202,11 +210,16 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                     elites[elites_fits.index(min(elites_fits))] = creator.Individual(clones[i].copy())
                     elites_fits[elites_fits.index(min(elites_fits))] = float(eval_fitness[i])
 
-            # select offsprings that will be the next population
+            # select "n - k" offsprings that will be the next population
+            # @n: population size
+            # @k: number of elite individuals
             population = self.toolbox.select(offsprings, k=population_size - len(elites))
+            # insert k elites into current population into random positions
             for elite in elites:
-                # population.append(elite)
                 population.insert(random.randint(0, len(population)), elite)
+
+            # stop nr°1 (number of generations)
+            epoch += 1
 
         # TODO - grafico valutazione fitness, da togliere
         min_ = list()
