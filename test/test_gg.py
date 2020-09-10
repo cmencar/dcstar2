@@ -1,6 +1,5 @@
 from cut_sequences.dimensional_sequence_numeric import DimensionalSequenceNumeric
-# from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
-from genetic_algorithm.dgp_option2_plus1_null import DeapGeneticGuideSequenceProblem
+from genetic_algorithm.deap_genetic_guide_sequence_problem import DeapGeneticGuideSequenceProblem
 from heuristic_search.prototypes_creator import PrototypesCreator
 
 gg_generations = 200

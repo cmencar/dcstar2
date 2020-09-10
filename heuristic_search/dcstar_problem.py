@@ -15,7 +15,7 @@ class DCStarProblem(Problem):
     # @m_d: smallest boundary cut of dimension d
     # @M_d: greatest boundary cut of dimension d
     # @verbose: flag for the debug print
-    def __init__(self, points_list, m_d, M_d, verbose=False, gg_parameters=None):
+    def __init__(self, points_list, m_d, M_d, verbose=False, gg_generations=None):
 
         self.unique_successors = True
 
@@ -38,8 +38,8 @@ class DCStarProblem(Problem):
         self.__genetic_guide_individual = None
         self.__genetic_individual_purity = True
         self.__ga_time = 0
-        if gg_parameters is not None:
-            self.__genetic_guide_individual, self.__ga_time = self.__generate_gg_individual(gg_parameters)
+        if gg_generations is not None:
+            self.__genetic_guide_individual, self.__ga_time = self.__generate_gg_individual(gg_generations)
 
 
     # Method for creating a cuts sequence starting from a list of prototype points
@@ -498,19 +498,19 @@ class DCStarProblem(Problem):
 
 
     # Method for generate a genetic DimensionalSequenceBinary individual to be used as guide for A* computation
-    # @gg_parameters: dictionary of parameters to initialize genetic guide
-    def __generate_gg_individual(self, gg_parameters):
+    # @gg_generations: dictionary of parameters to initialize genetic guide
+    def __generate_gg_individual(self, gg_generations):
 
         start_time = time.time()
 
         # initialize the genetic guide
-        genetic_guide, generations, population_size = self.__initialize_gg(gg_parameters)
+        genetic_guide, population_size = self.__initialize_gg(gg_generations)
 
         # create an empty binary sequence
         sequence = DimensionalSequenceBinary()
 
         # generate genetic sequence with impure possibility
-        sequence.from_binary(genetic_guide.evolve(population_size, generations))
+        sequence.from_binary(genetic_guide.evolve(population_size, gg_generations, "graph"))
 
         s_d = SelectedDimensionalSequenceNumeric()
         s_d.from_binary(self.__cuts_sequences, sequence)
@@ -552,8 +552,8 @@ class DCStarProblem(Problem):
 
 
     # Method for initialize the genetic guide into DCStarProblem if needed
-    # @gg_parameters: dictionary of parameters to initialize genetic guide
-    def __initialize_gg(self, gg_parameters):
+    # @gg_generations: dictionary of parameters to initialize genetic guide
+    def __initialize_gg(self, gg_generations):
 
         # calculate the size of each dimension of cuts sequence
         genes_per_dimension = list()
@@ -574,12 +574,11 @@ class DCStarProblem(Problem):
         mutation_rate = 1 / genes_number
 
         # define DGG object to create the genetic guide with monodimensional lists
-        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, gg_parameters["mating_rate"],
-                                                        gg_parameters["selected_for_tournament"], self.__cuts_sequences,
+        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, self.__cuts_sequences,
                                                         self.__points_list, genes_per_dimension,
                                                         self.__boundary_points[0], self.__boundary_points[1])
 
-        return genetic_guide, gg_parameters["generations"], population_size
+        return genetic_guide, population_size
 
 
     def get_genetic_guide_individual(self):
