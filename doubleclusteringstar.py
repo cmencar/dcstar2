@@ -14,7 +14,7 @@ class DoubleClusteringStar:
     def __init__(self, prototypes, m_d, M_d, verbose=False, genetic_guide_parameters=None):
 
         self.problem = dcstar_problem.DCStarProblem(prototypes, m_d=m_d, M_d=M_d, verbose=verbose,
-                                                    gg_parameters=genetic_guide_parameters)
+                                                    gg_generations=genetic_guide_parameters)
         self.prototypes = prototypes
         self.m_d = m_d
         self.M_d = M_d

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 
 # loading of prototypes point list and dimensional boundaries
+from heuristic_search.prototypes_creator import PrototypesCreator
+
 loader = PrototypesCreator()
 point_list, m_d, M_d = dcstar.DoubleClusteringStar.load("example_point_lists/point_list_3.json")
 for i in range(10):

@@ -6,6 +6,7 @@ from data_compression.compression import compression
 from data_compression.lvq1 import lvq1
 import numpy as np
 
+# FEATURE DI OGNI DATASET NECESSARIE PER FARE LA COMPRESSIONE
 col_bidim = ('f1', 'f2', 'species')
 col_iris = ('f1', 'f2', 'f3', 'f4', 'species')
 col_appendicitis = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'species')
@@ -24,11 +25,13 @@ col_sonar = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11',
              'f38', 'f39', 'f40', 'f41', 'f42', 'f43', 'f44', 'f45', 'f46', 'f47', 'f48', 'f49',
              'f50', 'f51', 'f52', 'f53', 'f54', 'f55', 'f56', 'f57', 'f58', 'f59', 'f60', 'species')
 
-dataset = "phoneme"
+# CAMBIA IL NOME COL DATASET CHE VUOI ESAMINARE
+dataset = "banana"
 n_classes = 2
 nps = [n_classes, n_classes*2, n_classes*4, n_classes*8]
 
-original_dataset = pd.read_csv('dataset_ndimensionali/' + dataset + '.csv', names=col_newthyroid)
+# original_dataset = pd.read_csv('dataset_ndimensionali/' + dataset + '.csv', names=col_newthyroid)
+original_dataset = pd.read_csv('dataset_bidimensionali/' + dataset + '.csv', names=col_bidim)
 
 compression = compression(original_dataset)
 used_dataset = compression.normalized_dataset()
@@ -36,6 +39,7 @@ used_dataset = compression.normalized_dataset()
 folds = []
 res = []
 
+# PARTE PER RIODINARE IL DATASET
 used_dataset = used_dataset.sample(frac=1).reset_index(drop=True)
 X = np.delete(used_dataset.values, np.s_[-1], axis=1)
 y = np.delete(used_dataset.values, np.s_[0:-1], axis=1)
@@ -51,7 +55,7 @@ for n_p in nps:
 
     for index in range(0, 10):
 
-        filename = "RISULTATI TEST ACCURACY/multidim/phoneme_/" + str(dataset) + "_100_" + str(n_p) + "_" + str(index + 1) + ".json"
+        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + str(index + 1) + ".json"
 
         newX = []
         for i in range(len(folds)):
@@ -65,8 +69,10 @@ for n_p in nps:
         lvq1_strategy = lvq1(refactored, n_p)
         compression.set_strategy(lvq1_strategy)
         prototypes = compression.do_compression()
-        m_d, M_d = lvq1_strategy.get_boundary(prototypes)
-        lvq1_strategy.create_json(m_d, M_d, prototypes, filename)
+        m_d = lvq1_strategy.get_min_boundary(prototypes)
+        M_d = lvq1_strategy.get_max_boundary(prototypes)
+        # lvq1_strategy.create_json(m_d, M_d, prototypes, filename)
+        lvq1_strategy.create_json(prototypes, filename)
 #'''
 
 
@@ -78,16 +84,18 @@ for n_p in nps:
     print("\n---- Evaluating ", dataset, ".csv in np=", str(n_p) + ": ----")
     for index in range(0, 10):
 
-        filename = "RISULTATI TEST ACCURACY/multidim/phoneme_/" + str(dataset) + "_100_" + str(n_p) + "_" + str(index + 1) + ".json"
+        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
+                   str(index + 1) + ".json"
 
         print("\n---- Evaluating fold", index + 1, "having", len(folds[index][0]), "elements: ----")
 
         # loading of prototypes point list and dimensional boundaries
         point_list, m_d, M_d = dcstar.DoubleClusteringStar.load(filename)
 
-        clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, verbose=True)
+        clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, genetic_guide_parameters=None,
+                                                 verbose=True)
         clustering.train(save_log=True)
-        #clustering.plot_result()
+        # clustering.plot_result()
 
         # Accuracy LVQ1
         counter = 0
@@ -110,5 +118,24 @@ for n_p in nps:
     print("\n--- DC* Error final percentage:", np.sum(res)/len(res), "---")
     print("--- DC* Standard deviation:", np.std(res), "\n\n\n")
 
-pass
+    for index in range(0, 10):
 
+        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
+                   str(index + 1) + ".json"
+
+        print("\n---- Evaluating fold", index + 1, "having", len(folds[index][0]), "elements: ----")
+
+        # loading of prototypes point list and dimensional boundaries
+        point_list, m_d, M_d = dcstar.DoubleClusteringStar.load(filename)
+
+        clustering = dcstar.DoubleClusteringStar(prototypes=point_list, m_d=m_d, M_d=M_d, genetic_guide_parameters=200,
+                                                 verbose=True)
+        clustering.train(save_log=True)
+        # clustering.plot_result()
+
+        res.append(100 - clustering.evaluate_classificator(folds[index][0], folds[index][1]))
+
+    print("\n--- DC* + GG Error final percentage:", np.sum(res) / len(res), "---")
+    print("--- DC*  + GG Standard deviation:", np.std(res), "\n\n\n")
+
+pass
