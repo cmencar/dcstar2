@@ -2,12 +2,13 @@
 # FINAL VERSION
 
 import random
+import time
 from deap import creator, base, tools, algorithms
 from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
-from matplotlib import pyplot as plt
-import numpy as np
+# from matplotlib import pyplot as plt
+# import numpy as np
 
 
 # Class for utilization of genetic guide using DEAP
@@ -67,7 +68,10 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         self.toolbox.register("mutate", tools.mutFlipBit, indpb=mutation_rate)
 
         # define selection method
-        self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
+        if self.individual_size * 0.2 < 10:
+            self.toolbox.register("select", tools.selTournament, tournsize=1)  # for really small populations
+        else:
+            self.toolbox.register("select", tools.selTournament, tournsize=int(individual_size * 0.2))  # 10% of pop
 
         # define evaluation method
         self.toolbox.register("evaluate", self.evaluate)
@@ -134,6 +138,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
     # @selected_best: number of best individuals to generate
     def evolve(self, population_size, generations, dataset):
 
+        start_time = time.time()
+
         # create a population of "population_size" individuals
         population = self.toolbox.population(n=population_size)
 
@@ -147,8 +153,8 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
 
         # create first "hall of fame" of elites with initial fitness
         elites_fits = []
-        if self.individual_size * 0.1 < 5:
-            elites = self.toolbox.population(n=5)
+        if self.individual_size < 10:
+            elites = self.toolbox.population(n=2)
         else:
             elites = self.toolbox.population(n=int(self.individual_size * 0.1))
         for i in range(len(elites)):
@@ -158,19 +164,17 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         epoch = 0
         convergence = 0
         # while there are generations to be computed and there is no convergence in max fitness values over generations
-        while epoch < generations - 1 and convergence < 5:
+        while epoch < generations - 1 and convergence < 10:
 
-            # offsprings are generated using the offsprings_generator method, in which are passed the population,
-            # population_size, toolbox, mating rate and mutation rate for applicability
+            # generate offsprings of current population
             offsprings = algorithms.varAnd(population, self.toolbox, self.cxpb, self.mutpb)
 
             # define mapping of calculated fitnesses to corresponding individuals
             fitnesses = list(map(self.toolbox.evaluate, offsprings))
 
             # TODO - valutazione fitness, da togliere
-            eval_fitness = list()
-            for son in offsprings:
-                eval_fitness.append(self.toolbox.evaluate(son))
+            '''
+            eval_fitness = fitnesses.copy()
             current_max_fit = 0
             current_min_fit = 1
             temp_avg = 0
@@ -182,15 +186,16 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 temp_avg += eval_fitness[i]
                 current_avg_fit = temp_avg / population_size
             fit_behave.append((current_min_fit, current_avg_fit, current_max_fit))
+            '''
 
             # map each fitness value to the corresponding offspring
             for ind, fit in zip(offsprings, fitnesses):
                 # if an individual had better fitness than the best found so far
                 if fit > bestfit:
-                    # save the better individual
+                    # save the best individual
                     bestfit = float(fit)
                     bestind = ind.copy()
-                ind.fitness.value = fit
+                ind.fitness.setValues((fit, fit, 1))
 
             # stop nr°2 (convergence of max fitness)
             if bestfit >= oldfit:
@@ -199,15 +204,17 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
                 else:
                     oldfit = float(bestfit)
                     convergence = 0
+            else:
+                convergence = 0
 
             # update the elites' list
             clones = offsprings.copy()
-            clones.sort(key=lambda offspring: offspring.fitness.value, reverse=True)
-            eval_fitness.sort(reverse=True)
+            clones.sort(key=lambda offspring: offspring.fitness.values, reverse=True)
+            fitnesses.sort(reverse=True)
             for i in range(len(elites_fits)):
-                if eval_fitness[i] > elites_fits[elites_fits.index(min(elites_fits))]:
+                if fitnesses[i] > elites_fits[elites_fits.index(min(elites_fits))]:
                     elites[elites_fits.index(min(elites_fits))] = creator.Individual(clones[i].copy())
-                    elites_fits[elites_fits.index(min(elites_fits))] = float(eval_fitness[i])
+                    elites_fits[elites_fits.index(min(elites_fits))] = float(fitnesses[i])
 
             # select "n - k" offsprings that will be the next population
             # @n: population size
@@ -221,6 +228,7 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
             epoch += 1
 
         # TODO - grafico valutazione fitness, da togliere
+        '''
         min_ = list()
         avg_ = list()
         max_ = list()
@@ -235,17 +243,19 @@ class DeapGeneticGuideSequenceProblem(GeneticEvolution):
         plt.grid(True)
         plt.savefig(dataset + ".svg", transparent=True)
         plt.close()
+        '''
 
         print("Best fitness: ", bestfit)
         print("Total cuts in individual: ", self.individual_size)
         print("Active cuts in best individual: ", bestind.count(True))
+        print("Elapsed time: ", time.time() - start_time)
 
         # convert individual into sequence
-        # best_individual = self.from_individual_to_sequence(bestind, self.elements_per_dimension)
+        best_individual = self.from_ind_to_sequence(bestind, self.elements_per_dimension)
 
         # return the converted best individual
-        # return best_individual
-        return bestind.count(True), self.individual_size
+        return best_individual
+        # return bestind.count(True), self.individual_size
 
     # Method converting individual from list to list of lists
     # @individual: individual
