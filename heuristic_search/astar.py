@@ -64,198 +64,57 @@ class AStar:
             # if the evaluated current_State is not a possible result then define the list of successors of the
             # evaluated current_state. Those successors will be evaluated in the next steps.
             else:
-                cut_index = (cut_index + 1) % node_state.get_dimension_size(dimension_index)
-                if cut_index == 0:
-                    dimension_index += 1
 
-        # initialization of newly added cut (t_k), the previous cut
-        # (t_k_previous) and the next cut (t_k_next). The first value
-        # set to t_k_previous and t_k_next are, respectively, the values
-        # of m_d and M_d
-        t_k = self.__cuts_sequences.get_dimension(dimension_index)[cut_index]
-        t_k_previous = self.__boundary_points[0]
-        t_k_next = self.__boundary_points[1]
+                # define a list of successors taking the current_state and evaluate them one-by-one. The successors
+                # are DimensionalSequenceBinary objects created by successors() method
+                successors = problem.successors(current_state)
+                for successor_state in successors:
 
-        # reset the found flag
-        found = False
+                    # create a Node object using the successor_state evaluated, i.e. a DimensionalSequenceBinary, and
+                    # estimate a cost using the three-levels priority values
+                    successor_node = Node(successor_state, parent_node = current_node)
+                    estimated_cost = problem.estimate_cost(successor_node)
 
-        # initialize the successor_state scanning index to cut_index
-        # and search into the binary sequence until the index reaches 0
-        # or an element is found. An element is found (so a valid value
-        # for t_k_previous) when a logical cut value is True: using the
-        # value defined by index, the numerical value of cut is taken and
-        # it is assigned to t_k_previous
-        index = cut_index - 1
-        while index > 0 and not found:
-            if successor_state.get_cut(dimension_index, index):
-                t_k_previous = self.__cuts_sequences.get_dimension(dimension_index)[index]
-                found = True
-            index -= 1
+                    # if it is not a unique successor then there could be a duplicate node, i.e. a front priority
+                    # queue's node that has the same state as one of the newly created successors
+                    if not problem.unique_successors:
 
-        # reset the found flag
-        found = False
+                        # Search if the evaluated successor state, i.e. a certain cut configuration defined by
+                        # DimensionalSequenceBinary, is already present in a node in the front priority queue.
+                        # If so (and, therefore, the value defined by estimated_node is different from None) then
+                        # compare the cost value associated to this node with the cost value of the successor state,
+                        # i.e. the amount defined by estimated_cost. If the cost value associated to the successor_state
+                        # is lower than the value of the node already present, then the second is removed and the node
+                        # of the evaluated successor_state replace it
+                        estimated_node = front.find(successor_state)
+                        if estimated_node is not None:
+                            if estimated_cost < estimated_node[0]:
+                                front.remove(estimated_node)
+                                front.put((estimated_cost, successor_node))
 
-        # initialize the successor_state scanning index to cut_index
-        # and search into the binary sequence until the index reaches the
-        # last value of dimension (to which dimension_index refers)
-        # or an element is found. An element is found (so a valid value
-        # for t_k_next) when a logical cut value is True: using the
-        # value defined by index, the numerical value of cut is taken and
-        # it is assigned to t_k_next
-        index = cut_index + 1
-        while index < self.__cuts_sequences.get_dimension_size(dimension_index) and not found:
-            if successor_state.get_cut(dimension_index, index):
-                t_k_next = self.__cuts_sequences.get_dimension(dimension_index)[index]
-                found = True
-            index += 1
+                        # if the evaluated successor state is not present in a node in the front priority queue then
+                        # search that node in the closed priority queue. If the evaluated successor_state is present in
+                        # closed priority queue (and, therefore, the value defined by estimated_node is different from None)
+                        # then compare the cost value associated to this node with the cost value of the successor state,
+                        # i.e. the amount defined by estimated_cost. If the cost value associated to the successor_state
+                        # is lower than the value of the node already present, then the second is inserted in front
+                        # priority queue (with the already defined estimated_cost) and it is removed from closed priority queue.
+                        # If the evaluated successor_state is not present in closed priority queue is a is a node that
+                        # has not yet been evaluated (and consequently inserted in closed). So it is inserted in the front
+                        # priority queue with the already defined estimated_cost and it could be evaluated in the next steps.
+                        else:
+                            estimated_node = closed.find(successor_state)
+                            if estimated_node is not None:
+                                if estimated_cost < estimated_node[0]:
+                                    front.put((estimated_cost, successor_node))
+                                    closed.remove(estimated_node)
+                            else:
+                                front.put((estimated_cost, successor_node))
 
-        # the returned value is the minimum between two elements: the distance
-        # between t_k and t_k_previous and the distance between t_k_next and t_k
-        return min(t_k - t_k_previous, t_k_next - t_k)
+                    # if unique_successor is equal to false then the node is simply inserted in the front priority queue
+                    # with the estimated_cost value previously calculated
+                    else:
+                        front.put((estimated_cost, successor_node))
 
-    # Method for acquiring the value of third-level priority
-    # for the successor node. The third-level priority is a
-    # value based on the number of different feature used
-    # for defining an hyperboxes. It is the number of dimensions
-    # (features) in the binary cuts sequence that contain at least one cut.
-    # The value is subsequently negated, so that more emphasis is placed on
-    # sequences with fewer dimensions used (the more dimensions with at least
-    # one cut are presents, the lower the priority).
-    # @node: node of to be evaluated to get the third-level priority
-    def __get_third_level_priority(self, node):
-
-        # for every dimension in the successor node, if it has at least
-        # one cut, then the counter is decreased by one unit
-        value = 0
-        for dimension_index in range(node.get_state().get_dimensions_number()):
-            if node.get_state().get_dimension_size(dimension_index) > 0:
-                value -= 1
-        return value
-
-    # Method for acquiring the g path-cost value. It is based on the counting
-    # the cuts present in the logical sequence which value is True
-    # @node: node of to be evaluated to get the path-cost value
-    def __get_path_cost_value(self, node):
-        return sum([np.sum(node.get_state().get_dimension(dimension_index) == True)
-                    for dimension_index in range(node.get_state().get_dimensions_number())])
-
-    # Method for acquiring the heuristic value. It is based on the
-    # sum of first-level and second-level heuristic values
-    # @node: node of to be evaluated to get the second-level heuristic
-    def __get_heuristic_value(self, node):
-        return self.__get_first_level_heuristic_value(node) + self.__get_second_level_heuristic_value(node)
-
-    # Method for acquiring the first-level heuristic value. It is based
-    # on the minimum value of cuts to be defined so that all hyperboxes
-    # defined by node are pure. It iterates over the impure hyperboxes,
-    # starting from the one with the maximum number of different class labels.
-    # Once an hyperbox is selected, the heuristic value is summed to a
-    # counter and all connected hyper-boxes are removed (two or more hyperboxes
-    # are connected if they have in common at least a couple of cuts, named boundaries).
-    # The procedure stops when the collection of hyperboxes to scan is empty
-    # and, finally, the value of the counter is returned.
-    # @node: node of to be evaluated to get the heuristic value
-    def __get_first_level_heuristic_value(self, node):
-
-        # create a selected cuts sequence using the binary sequence of passed node
-        selected_cuts_sequences = SelectedDimensionalSequenceNumeric()
-        selected_cuts_sequences.from_binary(self.__cuts_sequences, node.get_state())
-
-        # generate an HyperboxesSet object from the newly created selected
-        # cuts sequence and using the prototype points list
-        hyperboxes_set = selected_cuts_sequences.generate_hyperboxes_set(self.__points_list,
-                                                                         m_d=self.__boundary_points[0],
-                                                                         M_d=self.__boundary_points[1])
-
-        # all impure hyperboxes are captured by the HyperboxesSet object
-        # and placed in a list. On them will be based the evaluation
-        # of the value of the first level heuristics
-        hyperboxes = [hyperbox for hyperbox in hyperboxes_set.get_hyperboxes() if hyperbox.is_impure()]
-
-        # initializing the heuristic value to 0. Later, until the list
-        # of impure hyperboxes is not empty, heuristic_Value is incremented
-        # using the remaining hyperboxes
-        # NOTE: the name most_impure_hyperboxes refers to the hyperbox
-        # with the largest number of different classes within it, obviously
-        # the name given is only used to better render the idea and probably
-        # not to be considered a scientifically valid term
-        heuristic_value = 0
-        while len(hyperboxes) > 0:
-
-            # acquiring the first hyperbox in the impure hyperboxes list
-            # (is not necessarily the 'worst').
-            most_impure_hyperboxes = hyperboxes[0]
-
-            # for each hyperbox is evaluated if it is 'worse' than
-            # most_impure_hyperbox, i.e. if it has more prototypes of
-            # different classes. If so, then the evaluated hyperbox
-            # becomes the most_impure_hyperbox
-            for hyperbox in hyperboxes:
-                if hyperbox.get_different_classes_number() > most_impure_hyperboxes.get_different_classes_number():
-                    most_impure_hyperboxes = hyperbox
-
-            # heuristic_value is increased by adding the already
-            # existing value with the number of prototypes with
-            # different classes in the most_impure_hyperbox. Subsequently,
-            # each hyperbox connected to the most_impure_hyperbox
-            # (thus also the most_impure_hyperbox itself) is deleted from
-            # the list and the evaluation of the remaining hyperboxes continue
-            heuristic_value = heuristic_value + most_impure_hyperboxes.get_different_classes_number()
-            hyperboxes = [hyperbox for hyperbox in hyperboxes if most_impure_hyperboxes.is_connected(hyperbox) is False]
-
-        # finally, the heuristic_value calculated is passed as return value
-        return heuristic_value
-
-    # Method for acquiring the second-level heuristic value
-    # It is based on
-    # TODO(TO BE CONTINUED)
-    # @node: node of to be evaluated to get the second-level heuristic
-    def __get_second_level_heuristic_value_dummy(self, node):
-        return 1
-
-    # Method for acquiring the second-level heuristic value. It is based on Jaccard similarity between the individual
-    # generated by AStar and the one generated by DGG.
-    # @node: node of to be evaluated to get the second-level heuristic
-    def __get_second_level_heuristic_value(self, node):
-        intersection_value = 0
-        union_value = 0
-        for dimension in range(node.get_state().get_dimensions_number()):
-            intersection_value += len(
-                set(node.get_state().get_dimension(dimension)).intersection(
-                    set(self.genetic_guide_individual.get_dimension(dimension))))
-            union_value += len(
-                set(node.get_state().get_dimension(dimension)).union(
-                    set(self.genetic_guide_individual.get_dimension(dimension))))
-        return 1 - intersection_value / union_value
-
-    def __generate_gg_individual(self):
-
-        # generate pure genetic sequence using "evolve" method - possible call of "worst_case_scenario"
-        # elements = self.genetic_guide.evolve(self.population_size, self.generations, self.selected_best)
-
-        # generate pure genetic sequence using "worst_case_scenario" method directly
-        # elements = DeapGeneticGuide.worst_case_scenario(self.genetic_guide, self.genes_per_dimension)
-
-        # generate genetic sequence with correction of impureness when needed
-        # '''
-        elements = self.genetic_guide.evolve_without_wsc(self.population_size, self.generations, self.selected_best)
-        sequence = DimensionalSequenceBinary()
-        sequence.from_binary(elements)
-        s_d = SelectedDimensionalSequenceNumeric()
-        s_d.from_binary(self.__cuts_sequences, sequence)
-        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
-        if hbs.get_impure_hyperboxes_number() != 0:
-            print("Impure DGG sequence generated, purification in process")
-            found = False
-            successors = sequence.get_successors()
-            while not found:
-                for successor in successors:
-                    s_d.from_binary(self.__cuts_sequences, successor)
-                    hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0],
-                                                      self.__boundary_points[1])
-                    if hbs.get_impure_hyperboxes_number() == 0:
-                        found = True
-                        sequence = successor
-                    successors = successor.get_successors()
-        # '''
-        sequence.debug_print()
+        # if there are no possible results then it must return a None value for the result field
+        return None, branches_taken, time.time() - start_time, evaluated_nodes

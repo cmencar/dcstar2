@@ -506,49 +506,53 @@ class DCStarProblem(Problem):
         # initialize the genetic guide
         genetic_guide, population_size = self.__initialize_gg(gg_generations)
 
-        # create an empty binary sequence
-        sequence = DimensionalSequenceBinary()
+        if genetic_guide is None:
+            sequence = None
+            return sequence, 0
+        else:
+            # create an empty binary sequence
+            sequence = DimensionalSequenceBinary()
 
-        # generate genetic sequence with impure possibility
-        sequence.from_binary(genetic_guide.evolve(population_size, gg_generations, "graph"))
+            # generate genetic sequence with impure possibility
+            sequence.from_binary(genetic_guide.evolve(population_size, gg_generations, "graph"))
 
-        s_d = SelectedDimensionalSequenceNumeric()
-        s_d.from_binary(self.__cuts_sequences, sequence)
-        '''
-        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
-        if hbs.get_impure_hyperboxes_number() != 0:
-            print("Evaluated genetic individual is an impure one\n")
-            self.__genetic_individual_purity = False
-            # purification process
-            # set solution not found
-            found = False
-            # generate successors of genetic binary sequence with added random cut
-            successors = sequence.get_successors()
-            # successors = self.successors(sequence)
-            # while is not found a pure solution
-            while not found and successors != []:
-                # for every generated successor
-                for successor in successors:
-                    # generate successor's hyperboxes
-                    s_d.from_binary(self.__cuts_sequences, successor)
-                    hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0],
-                                                      self.__boundary_points[1])
-                    # if evaluated successor is fully pure
-                    if hbs.get_impure_hyperboxes_number() == 0:
-                        # set solution found
-                        found = True
-                        # change generated sequence with pure successor
-                        sequence = successor
-                    # generate other successors
-                    successors = successor.get_successors()
+            s_d = SelectedDimensionalSequenceNumeric()
+            s_d.from_binary(self.__cuts_sequences, sequence)
             '''
+            hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0], self.__boundary_points[1])
+            if hbs.get_impure_hyperboxes_number() != 0:
+                print("Evaluated genetic individual is an impure one\n")
+                self.__genetic_individual_purity = False
+                # purification process
+                # set solution not found
+                found = False
+                # generate successors of genetic binary sequence with added random cut
+                successors = sequence.get_successors()
+                # successors = self.successors(sequence)
+                # while is not found a pure solution
+                while not found and successors != []:
+                    # for every generated successor
+                    for successor in successors:
+                        # generate successor's hyperboxes
+                        s_d.from_binary(self.__cuts_sequences, successor)
+                        hbs = s_d.generate_hyperboxes_set(self.__points_list, self.__boundary_points[0],
+                                                          self.__boundary_points[1])
+                        # if evaluated successor is fully pure
+                        if hbs.get_impure_hyperboxes_number() == 0:
+                            # set solution found
+                            found = True
+                            # change generated sequence with pure successor
+                            sequence = successor
+                        # generate other successors
+                        successors = successor.get_successors()
+                '''
 
-        # show genetic guide sequence
-        if self.verbose:
-            print("Genetic individual:")
-            sequence.debug_print()
+            # show genetic guide sequence
+            if self.verbose:
+                print("Genetic individual:")
+                sequence.debug_print()
 
-        return sequence, time.time() - start_time
+            return sequence, time.time() - start_time
 
 
     # Method for initialize the genetic guide into DCStarProblem if needed
@@ -565,20 +569,25 @@ class DCStarProblem(Problem):
         for num in genes_per_dimension:
             genes_number += num
 
-        # calculate population
-        # N.B.: population is given by duplicating the number of genes in the chromosome
-        population_size = 2 * genes_number
+        if genes_number == 0:
+            genetic_guide = None
+            population_size = 0
+            return genetic_guide, population_size
+        else:
+            # calculate population
+            # N.B.: population is given by duplicating the number of genes in the chromosome
+            population_size = 2 * genes_number
 
-        # calculate mutation rate
-        # N.B.: mutation rate is calculated by reciprocating the number of genes
-        mutation_rate = 1 / genes_number
+            # calculate mutation rate
+            # N.B.: mutation rate is calculated by reciprocating the number of genes
+            mutation_rate = 1 / genes_number
 
-        # define DGG object to create the genetic guide with monodimensional lists
-        genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, self.__cuts_sequences,
-                                                        self.__points_list, genes_per_dimension,
-                                                        self.__boundary_points[0], self.__boundary_points[1])
+            # define DGG object to create the genetic guide with monodimensional lists
+            genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, self.__cuts_sequences,
+                                                            self.__points_list, genes_per_dimension,
+                                                            self.__boundary_points[0], self.__boundary_points[1])
 
-        return genetic_guide, population_size
+            return genetic_guide, population_size
 
 
     def get_genetic_guide_individual(self):
