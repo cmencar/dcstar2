@@ -6,8 +6,12 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 original_dataset = pd.read_csv('dataset_bidimensionali/datasetSynt19.csv', header=None)
+X = original_dataset.values[:, :-1]
 
 compression = compression(original_dataset)
+# parameters
+n_c = 3
+m = 1.5
 
 choice = input('Normalizzare?[S/N]: ')
 if choice == "S":
