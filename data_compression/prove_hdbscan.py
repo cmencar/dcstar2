@@ -9,7 +9,7 @@ from sklearn.datasets import make_blobs
 sns.set_color_codes()
 plot_kwds = {'alpha': 0.5, 's': 80, 'linewidths': 0}
 
-dataset = pd.read_csv("dataset_bidimensionali/bandiera(classiNum).csv", names=['1', '2', 'label'])
+dataset = pd.read_csv("dataset_ndimensionali/iris.csv", names=['1', '2', '3', '4', 'label'])
 
 new_dataset = dataset.iloc[:, :-1]
 
@@ -18,7 +18,7 @@ data_normal = (X - X.min()) / (X.max() - X.min())
 
 # plt.scatter(data_normal.T[0], data_normal.T[1])
 
-clusterer = hdbscan.HDBSCAN(min_cluster_size=10, algorithm='best', alpha=1.0, approx_min_span_tree=True,
+clusterer = hdbscan.HDBSCAN(min_cluster_size=14, algorithm='best', alpha=1.0, approx_min_span_tree=True,
                             gen_min_span_tree=True, leaf_size=40, metric='euclidean')
 clusterer.fit_predict(data_normal)
 

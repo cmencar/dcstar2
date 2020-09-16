@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from data_compression.compression_strategy import compression_strategy
 import matplotlib.pyplot as plt
-import json
 
 
 class lvq1(compression_strategy):
@@ -88,32 +87,3 @@ class lvq1(compression_strategy):
             else:
                 color = "blue"
             plt.scatter(row[1], row[2], color=color, alpha=alpha)
-
-    def create_json(self, prototypes, filename):
-        point_coordinates = prototypes[:, :-1].tolist()
-        point_labels = prototypes[:, -1].tolist()
-        m_d = self.get_min_boundary(prototypes).tolist()
-        M_d = self.get_max_boundary(prototypes).tolist()
-        point_id = list()
-        for i in point_coordinates:
-            point_id.append(point_coordinates.index(i))
-
-        data = {'points': [], 'm_d': m_d, 'M_d': M_d}
-        for i in range(len(point_coordinates)):
-            coordinates = point_coordinates[i]
-            data['points'].append({
-                'coordinates': coordinates,
-                'class': point_labels[i],
-                'name': "point" + str(point_id[i] + 1)
-            })
-
-        with open(filename, 'w') as output:
-            json.dump(data, output, indent=1)
-
-    def get_min_boundary(self, prototypes):
-        minValues = np.amin(prototypes[:, 0:-1], axis=0)
-        return minValues
-
-    def get_max_boundary(self, prototypes):
-        maxValues = np.amax(prototypes[:, 0:-1], axis=0)
-        return maxValues

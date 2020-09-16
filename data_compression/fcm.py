@@ -1,10 +1,7 @@
-import json
-import random
-import operator
 import numpy as np
 import pandas as pd
-import math
 import matplotlib.pyplot as plt
+from fcmeans import FCM
 from seaborn import scatterplot as scatter
 
 from data_compression.compression_strategy import compression_strategy
@@ -12,91 +9,42 @@ from data_compression.compression_strategy import compression_strategy
 
 class fcm(compression_strategy):
 
-    def __init__(self, data, n_clusters=3, n_epochs=100, m=1.7):
+    def __init__(self, data, n_p=3, n_epochs=100, m=1.7):
 
         super().__init__(data)
-        self.n_c = n_clusters
+        self.n_c = int(n_p/self.get_n_class_data())
         self.n_epochs = n_epochs
         self.m = m
 
-    def get_data_features(self):
-        df_features = self.data.iloc[:, :-1]
+    def get_data_features(self, data):
+        df_features = data.iloc[:, :-1]
         return df_features
 
-    # inizializing the membership matrix
-    def initializedMembership(self, n):
-        m_matrix = []
-        for i in range(n):
-            random_num_list = [random.random() for i in range(self.n_c)]
-            summation = sum(random_num_list)
-            temp_list = [x / summation for x in random_num_list]
-
-            flag = temp_list.index(max(temp_list))
-            for j in range(0, len(temp_list)):
-                if j == flag:
-                    temp_list[j] = 1
-                else:
-                    temp_list[j] = 0
-
-            m_matrix.append(temp_list)
-        return m_matrix
-
-    def calculateCenterCluster(self, m_matrix, n, df_features):
-        cluster_mem_val = list(zip(*m_matrix))
-        cluster_centers = []
-        for j in range(self.n_c):
-            x = list(cluster_mem_val[j])
-            xraised = [p ** self.m for p in x]
-            denominator = sum(xraised)
-            temp_num = []
-            for i in range(n):
-                data_point = list(df_features.iloc[i])
-                prod = [xraised[i] * val for val in data_point]
-                temp_num.append(prod)
-            numerator = map(sum, list(zip(*temp_num)))
-            center = [z / denominator for z in numerator]
-            cluster_centers.append(center)
-        return cluster_centers
-
-    def updateMembershipValue(self, m_matrix, c_centers, n, df_features):
-        p = float(2 / (self.m-1))
-        for i in range(n):
-            x = list(df_features.iloc[i])
-            distances = [np.linalg.norm(np.array(list(map(operator.sub, x, c_centers[j])))) for j in range(self.n_c)]
-            for j in range(self.n_c):
-                den = sum([math.pow(float(distances[j] / distances[c]), p) for c in range(self.n_c)])
-                m_matrix[i][j] = float(1 / den)
-        return m_matrix
-
-    def getClusters(self, m_matrix, n):
-        cluster_labels = list()
-        for i in range(n):
-            max_val, idx = max((val, idx) for (idx, val) in enumerate(m_matrix[i]))
-            cluster_labels.append(idx)
-        return cluster_labels
+    def get_n_class_data(self):
+        n_classes = len(self.data.iloc[:, -1].unique())
+        return n_classes
 
     def algorithm(self):
-        df_features = self.get_data_features()
-        n = len(df_features)
-        m_matrix = self.initializedMembership(n)
-        cluster_centers = []
-        cluster_labels = []
-        epoch = 0
-        while epoch < self.n_epochs:
-            cluster_centers = self.calculateCenterCluster(m_matrix, n, df_features)
-            m_matrix = self.updateMembershipValue(m_matrix, cluster_centers, n, df_features)
-            cluster_labels = self.getClusters(m_matrix, n)
+        start = pd.Timestamp.now()
+        unique_y = self.data.iloc[:, -1].unique()
+        prototypes = []
+        for i in range(len(unique_y)):
+            class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
+            df_features = class_data.iloc[:, :-1]
+            # fit the fuzzy-c-means
+            fcm = FCM(n_clusters=self.n_c, max_iter=self.n_epochs, m=self.m)
+            fcm.fit(df_features)
+            # outputs
+            fcm_centers = fcm.centers
+            fcm_centers = fcm_centers.to_numpy().tolist()
 
-            if epoch == 0:
-                print("Cluster Centers:")
-                print(np.array(cluster_centers))
-            epoch += 1
-
-        # print(np.array(m_matrix))
-        # print("Final Cluster center:")  # final cluster centers
-        cluster_centers = np.array(cluster_centers)
-        cluster_labels = np.array(cluster_labels)
-        return cluster_labels, cluster_centers
+            for z in range(len(fcm_centers)):
+                fcm_centers[z].append(unique_y[i])
+                prototypes.append(fcm_centers[z])
+        prototypes = np.array(prototypes)
+        print("Tempo esecuzione algoritmo")
+        print(pd.Timestamp.now() - start)
+        return prototypes
 
     def draw_clusters(self, cluster_label, cluster_center):
         X = self.data.iloc[:, :-1].to_numpy()
@@ -104,4 +52,17 @@ class fcm(compression_strategy):
         scatter(X[:, 0], X[:, 1], ax=axs[0])
         scatter(X[:, 0], X[:, 1], ax=axs[1], hue=cluster_label)
         scatter(cluster_center[:, 0], cluster_center[:, 1], ax=axs[1], marker=">", s=200)
+
+    def draw_prototypes(self, prototypes, alpha):
+        labels = set(prototypes[:, -1])
+        labels = list(labels)
+        data = pd.DataFrame(data=prototypes)
+        for row in data.itertuples():
+            if row[-1] == labels[0]:
+                color = "red"
+            elif row[-1] == labels[1]:
+                color = "green"
+            else:
+                color = "blue"
+            plt.scatter(row[1], row[2], color=color, alpha=alpha)
         plt.show()

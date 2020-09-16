@@ -1,36 +1,30 @@
 import pandas as pd
-from sklearn.metrics import silhouette_score
 from data_compression.compression import compression
 from data_compression.fcm import fcm
+from data_compression.fcm2 import fcm2
 from datetime import datetime
+import matplotlib.pyplot as plt
 
-colnames = ('f1', 'f2', 'species')
-original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv', names=colnames)
-X = original_dataset.values[:, :2]
+original_dataset = pd.read_csv('dataset_bidimensionali/datasetSynt19.csv', header=None)
 
-start = pd.Timestamp.now()
 compression = compression(original_dataset)
 
 choice = input('Normalizzare?[S/N]: ')
 if choice == "S":
     norm = compression.normalized_dataset()
-    X = norm.values[:, :-1]
-    fcm = fcm(norm)
+    fcm = fcm2(norm, n_p=24, m=2)
 else:
-    fcm = fcm(original_dataset)
-    X = original_dataset.values[:, :-1]
+    fcm = fcm2(original_dataset, n_p=24, m=1.7)
 
+start = pd.Timestamp.now()
 print("Esecuzione in corso!")
 compression.set_strategy(fcm)
-cluster_label, cluster_center = compression.do_compression()
-
-silhouette_avg = silhouette_score(X, cluster_label)
-print("The average silhouette_score is :", silhouette_avg)
+prototypes = compression.do_compression()
 
 end = datetime.now()
 print("Timer algoritmo completo:")
 print(pd.Timestamp.now() - start)
-fcm.draw_clusters(cluster_label, cluster_center)
-
-silhouette_avg = silhouette_score(X, cluster_label)
-print("The average silhouette_score is :", silhouette_avg)
+compression.draw_data()
+fcm.draw_prototypes(prototypes=prototypes, alpha=1)
+plt.show()
+# print('Silhouette Coefficient: %0.3f' % metrics.silhouette_score(X, cluster_label))
