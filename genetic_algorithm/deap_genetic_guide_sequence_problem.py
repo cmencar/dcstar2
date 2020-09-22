@@ -4,7 +4,7 @@
 import random
 import time
 from deap import creator, base, tools, algorithms
-from genetic_algorithm.genetic_evolution import GeneticEvolution
+# from genetic_algorithm.genetic_evolution import GeneticEvolution
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 # from matplotlib import pyplot as plt
@@ -12,7 +12,8 @@ from cut_sequences.dimensional_sequence_binary import DimensionalSequenceBinary
 
 
 # Class for utilization of genetic guide using DEAP
-class DeapGeneticGuideSequenceProblem(GeneticEvolution):
+# class DeapGeneticGuideSequenceProblem(GeneticEvolution):
+class DeapGeneticGuideSequenceProblem:
 
     # Definition constructor class
     # @individual_size: number of attributes for each individual
