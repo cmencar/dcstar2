@@ -24,7 +24,6 @@ class DoubleClusteringStar:
         self.branches_taken = 0
         self.time = 0
 
-
     # Static method for acquiring prototypes' list and dimensional limitations
     # @filename: name of JSON file containing the elements
     @staticmethod
@@ -37,16 +36,15 @@ class DoubleClusteringStar:
             data = json.load(json_file)
             m_d = [boundary for boundary in data['m_d']]
             M_d = [boundary for boundary in data['M_d']]
-            point_list = [Point(coordinates=[ coordinate for coordinate in point['coordinates'] ], label=point['class'],
+            point_list = [Point(coordinates=[coordinate for coordinate in point['coordinates']], label=point['class'],
                                 name=point['name']) for point in data['points']]
 
         # returning the loaded data
         return point_list, m_d, M_d
 
-
     # Method for training the monodimensional clustering model
     # @save_log: flag for saving the log fine containing all the process information
-    def train(self, save_log=False):
+    def train(self, strategy, dataset, index, n_p, save_log=False):
 
         # calculating the final result
         binary_result, self.branches_taken, self.time, evaluated_nodes = astar.AStar.astar(problem=self.problem)
@@ -61,10 +59,9 @@ class DoubleClusteringStar:
 
         # define the log print
         if save_log:
-            self.__save_log(evaluated_nodes)
+            self.__save_log(evaluated_nodes, strategy, dataset, index, n_p)
 
         return self.result, self.branches_taken, self.time
-
 
     # Method for predict data from dataset using the defined model
     # @element: element of which is wanted to understand the class that belongs to
@@ -83,7 +80,6 @@ class DoubleClusteringStar:
                 predicted_class = hyperbox.get_belonging_points()[0].get_label()
 
         return predicted_class
-
 
     # Method for plotting a bidimensional feature space
     def plot_result(self):
@@ -121,13 +117,12 @@ class DoubleClusteringStar:
             # showing the plot to video
             plt.show()
 
-
     # method for saving a log file containing A* process' data
     # @evaluated_nodes: list of strings containing the evaluated nodes
-    def __save_log(self, evaluated_nodes):
+    def __save_log(self, evaluated_nodes, strategy, dataset, index, n_p):
 
         # defining the filename
-        filename = time.asctime(time.localtime(time.time())).replace(" ", "_").replace(":", "_") + ".dcl"
+        filename = str(dataset) + "_" + "np_" + str(n_p) + "_" + "fold n." + str(index) + "_" + str(strategy) + "_" + time.asctime(time.localtime(time.time())).replace(" ", "_").replace(":", "_") + ".dcl"
         file = open(filename, "w")
 
         # write the list of prototypes
@@ -169,7 +164,8 @@ class DoubleClusteringStar:
         file.write(repr(self.branches_taken) + "\n")
 
         # write the number of created hyperboxes
-        hbs = self.result.generate_hyperboxes_set(point_list=self.prototypes, m_d=self.m_d, M_d=self.M_d).get_hyperboxes()
+        hbs = self.result.generate_hyperboxes_set(point_list=self.prototypes, m_d=self.m_d,
+                                                  M_d=self.M_d).get_hyperboxes()
         file.write("\n# Number of hyperboxes created\n")
         file.write(repr(len(hbs)) + "\n")
 
@@ -185,7 +181,8 @@ class DoubleClusteringStar:
             sizes.append((hb.get_belonging_points()[0].get_label(),
                           hb.get_different_classes_number(),
                           len(hb.get_belonging_points())))
-        t_d_elements = sum([self.cuts_sequences.get_dimension_size(d) for d in range(self.cuts_sequences.get_dimensions_number())])
+        t_d_elements = sum(
+            [self.cuts_sequences.get_dimension_size(d) for d in range(self.cuts_sequences.get_dimensions_number())])
         print("Hyperboxes generated: ", repr(len(hbs)), "where", repr(sizes))
         print("Number of evaluated nodes: ", repr(self.branches_taken))
         print("Number of cuts for S_d: ", repr(res[0].count('True')))
@@ -194,7 +191,6 @@ class DoubleClusteringStar:
         print("Used features: ", repr(counts))
 
         file.close()
-
 
     # Method for defining an evaluator for the classificator
     def evaluate_classificator(self, dataset, results):
@@ -208,7 +204,7 @@ class DoubleClusteringStar:
             elif cl is None:
                 nonecounter += 1
 
-        print("Classificator accuracy:", counter/len(dataset) * 100, "% (", counter, ")")
-        print("Classificator accuracy (None):", nonecounter/len(dataset) * 100, "% (", nonecounter, ")")
+        print("Classificator accuracy:", counter / len(dataset) * 100, "% (", counter, ")")
+        print("Classificator accuracy (None):", nonecounter / len(dataset) * 100, "% (", nonecounter, ")")
 
-        return counter/len(dataset)*100
+        return counter / len(dataset) * 100
