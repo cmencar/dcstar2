@@ -17,7 +17,7 @@ test_datasets = [
     ("created point lists/wine_100_42.json", "wine")
 ]
 
-'''
+# '''
 for dataset in test_datasets:
     print(dataset[1])
     loader = PrototypesCreator()
@@ -63,8 +63,8 @@ for dataset in test_datasets:
 
     content = dataset[1] + " " + str(a) + "/" + str(b) + "\n"
     filecuts.write(content)
-'''
 # '''
+'''
 print("banana")
 loader = PrototypesCreator()
 point_list, m_d, M_d = loader.load("created point lists/banana_100_30.json")
@@ -105,10 +105,9 @@ print("Mutation rate calculated: ", mutation_rate)
 genetic_guide = DeapGeneticGuideSequenceProblem(genes_number, mutation_rate, cuts_sequence, point_list, 
                                                 genes_per_dimension, m_d, M_d)
 
-# a, b = genetic_guide.evolve(population_size, gg_generations, "banana")
-print(genetic_guide.evolve(population_size, gg_generations, "banana"))
+a, b = genetic_guide.evolve(population_size, gg_generations, "banana")
 
-content = str("O/K") + "\n"
+content = str(a) + "/" + str(b) + "\n"
 filecuts.write(content)
-# '''
+'''
 filecuts.close()
