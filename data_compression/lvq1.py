@@ -7,7 +7,7 @@ import json
 
 class lvq1(compression_strategy):
 
-    def __init__(self, data, n_prototypes, n_epochs=100, learning_rate=0.001, tolerance=8):
+    def __init__(self, data, n_prototypes, n_epochs=1000, learning_rate=0.0001, tolerance=8):
 
         super().__init__(data)
         self.n_prototypes = n_prototypes
@@ -29,7 +29,7 @@ class lvq1(compression_strategy):
             # Division of the dataset according to the label examined
             class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
+            np_class = int(np.ceil(len(class_data) / len(self.data) * self.n_prototypes))
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
@@ -111,9 +111,11 @@ class lvq1(compression_strategy):
             json.dump(data, output, indent=1)
 
     def get_min_boundary(self, prototypes):
-        minValues = np.amin(prototypes[:, 0:-1], axis=0)
+        extendend_data = np.vstack((prototypes, self.data))
+        minValues = np.amin(extendend_data[:, 0:-1], axis=0)
         return minValues
 
     def get_max_boundary(self, prototypes):
-        maxValues = np.amax(prototypes[:, 0:-1], axis=0)
+        extendend_data = np.vstack((prototypes, self.data))
+        maxValues = np.amax(extendend_data[:, 0:-1], axis=0)
         return maxValues

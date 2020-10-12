@@ -1,6 +1,6 @@
 from pandas import DataFrame
 import doubleclusteringstar as dcstar
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import pandas as pd
 from data_compression.compression import compression
 from data_compression.lvq1 import lvq1
@@ -26,12 +26,12 @@ col_sonar = ('f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11',
              'f50', 'f51', 'f52', 'f53', 'f54', 'f55', 'f56', 'f57', 'f58', 'f59', 'f60', 'species')
 
 # CAMBIA IL NOME COL DATASET CHE VUOI ESAMINARE
-dataset = "banana"
+dataset = "appendicitis"
 n_classes = 2
 nps = [n_classes, n_classes*2, n_classes*4, n_classes*8]
 
-# original_dataset = pd.read_csv('dataset_ndimensionali/' + dataset + '.csv', names=col_newthyroid)
-original_dataset = pd.read_csv('dataset_bidimensionali/' + dataset + '.csv', names=col_bidim)
+original_dataset = pd.read_csv('dataset_ndimensionali/' + dataset + '.csv', names=col_appendicitis)
+# original_dataset = pd.read_csv('dataset_bidimensionali/' + dataset + '.csv', names=col_bidim)
 
 compression = compression(original_dataset)
 used_dataset = compression.normalized_dataset()
@@ -55,7 +55,9 @@ for n_p in nps:
 
     for index in range(0, 10):
 
-        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + str(index + 1) + ".json"
+        # filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + str(index + 1) + ".json"
+        filename = "RISULTATI TEST ACCURACY/multidim/appendicitis/" + str(dataset) + "_100_" + str(n_p) + "_" + str(
+            index + 1) + ".json"
 
         newX = []
         for i in range(len(folds)):
@@ -84,8 +86,10 @@ for n_p in nps:
     print("\n---- Evaluating ", dataset, ".csv in np=", str(n_p) + ": ----")
     for index in range(0, 10):
 
-        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
-                   str(index + 1) + ".json"
+        # filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
+        #            str(index + 1) + ".json"
+        filename = "RISULTATI TEST ACCURACY/multidim/appendicitis/" + str(dataset) + "_100_" + str(n_p) + "_" + str(
+            index + 1) + ".json"
 
         print("\n---- Evaluating fold", index + 1, "having", len(folds[index][0]), "elements: ----")
 
@@ -120,8 +124,10 @@ for n_p in nps:
 
     for index in range(0, 10):
 
-        filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
-                   str(index + 1) + ".json"
+        # filename = "RISULTATI TEST ACCURACY/bidim/banana_/" + str(dataset) + "_100_" + str(n_p) + "_" + \
+        #            str(index + 1) + ".json"
+        filename = "RISULTATI TEST ACCURACY/multidim/appendicitis/" + str(dataset) + "_100_" + str(n_p) + "_" + str(
+            index + 1) + ".json"
 
         print("\n---- Evaluating fold", index + 1, "having", len(folds[index][0]), "elements: ----")
 
