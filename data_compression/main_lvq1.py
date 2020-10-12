@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn import random_projection
-from data_compression.compression import compression
-from data_compression.lvq1 import lvq1
+from data_compression.Compression import Compression
+from data_compression.Lvq1 import Lvq1
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -10,13 +10,13 @@ original_dataset = pd.read_csv('dataset_bidimensionali/bandiera(classiNum).csv',
 n_p = 21
 
 start = pd.Timestamp.now()
-compression = compression(original_dataset)
+compression = Compression(original_dataset)
 choice = input('Normalizzare?[S/N]: ')
 if choice == "S":
     norm = compression.normalized_dataset()
-    lvq1 = lvq1(norm, n_p)
+    lvq1 = Lvq1(norm, n_p)
 else:
-    lvq1 = lvq1(original_dataset, n_p)
+    lvq1 = Lvq1(original_dataset, n_p)
 print("Esecuzione in corso!")
 
 compression.set_strategy(lvq1)

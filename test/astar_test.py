@@ -2,8 +2,8 @@ from cut_sequences.point import Point
 from cut_sequences.selected_dimensional_sequence_numeric import SelectedDimensionalSequenceNumeric
 import doubleclusteringstar as dcstar
 import pandas as pd
-from data_compression.compression import compression
-from data_compression.lvq1 import lvq1
+from data_compression.Compression import Compression
+from data_compression.Lvq1 import Lvq1
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -58,7 +58,7 @@ gg_args_test_05 = {"selected_for_tournament": 5,
                    "selected_best": 10}
 '''
 
-compression = compression(original_dataset)
+compression = Compression(original_dataset)
 norm = compression.normalized_dataset()
 used_dataset = norm
 '''
