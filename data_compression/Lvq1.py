@@ -28,7 +28,7 @@ class Lvq1(Compression_strategy):
             # Division of the dataset according to the label examined
             class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = round(len(class_data) / len(self.data) * self.n_prototypes)
+            np_class = round(np.ceil(len(class_data) / len(self.data) * self.n_prototypes))
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
