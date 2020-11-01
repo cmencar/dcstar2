@@ -122,7 +122,8 @@ class DoubleClusteringStar:
     def __save_log(self, evaluated_nodes, strategy, dataset, index, n_p):
 
         # defining the filename
-        filename = str(dataset) + "_" + "np_" + str(n_p) + "_" + "fold n." + str(index) + "_" + str(strategy) + "_" + time.asctime(time.localtime(time.time())).replace(" ", "_").replace(":", "_") + ".dcl"
+        filename = str(dataset) + "_" + "np_" + str(n_p) + "_" + "fold n." + str(index) + "_" + str(strategy) + "_" + \
+                   time.asctime(time.localtime(time.time())).replace(" ", "_").replace(":", "_") + ".dcl"
         file = open(filename, "w")
 
         # write the list of prototypes

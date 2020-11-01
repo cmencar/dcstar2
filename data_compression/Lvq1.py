@@ -1,10 +1,8 @@
 import numpy as np
-import pandas as pd
-from data_compression.Compression_strategy import Compression_strategy
-import matplotlib.pyplot as plt
+from data_compression.CompressionStrategy import CompressionStrategy
 
 
-class Lvq1(Compression_strategy):
+class Lvq1(CompressionStrategy):
 
     def __init__(self, data, n_prototypes, n_epochs=1000, learning_rate=0.0001, tolerance=8):
 
@@ -28,7 +26,7 @@ class Lvq1(Compression_strategy):
             # Division of the dataset according to the label examined
             class_data = self.data.loc[self.data.iloc[:, -1] == unique_y[i]]
             # Calculation of the number of prototypes for the label examined
-            np_class = int(np.ceil(len(class_data) / len(self.data) * self.n_prototypes))
+            np_class = round(np.ceil(len(class_data) / len(self.data) * self.n_prototypes))
             # Causal choice of label prototypes examined
             for j in range(np_class):
                 x = class_data.sample().to_numpy()
@@ -71,16 +69,3 @@ class Lvq1(Compression_strategy):
 
     def get_unique_labels(self):
         return self.data.iloc[:, -1].unique()
-
-    def draw_prototypes(self, prototypes, alpha):
-        labels = set(prototypes[:, -1])
-        labels = list(labels)
-        data = pd.DataFrame(data=prototypes)
-        for row in data.itertuples():
-            if row[-1] == labels[0]:
-                color = "red"
-            elif row[-1] == labels[1]:
-                color = "green"
-            else:
-                color = "blue"
-            plt.scatter(row[1], row[2], color=color, alpha=alpha)
