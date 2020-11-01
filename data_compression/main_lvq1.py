@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn import random_projection
 from data_compression.Compression import Compression
 from data_compression.Lvq1 import Lvq1
 from datetime import datetime
@@ -28,5 +27,5 @@ print(timer)
 filename = "bandiera_100_21.json"
 compression.create_json(prototypes, filename)
 compression.draw_data()
-lvq1.draw_prototypes(prototypes, 1.0)
+compression.draw_prototypes(prototypes, 1.0)
 plt.show()

@@ -1,13 +1,11 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from fcmeans import FCM
-from seaborn import scatterplot as scatter
 
-from data_compression.Compression_strategy import Compression_strategy
+from data_compression.CompressionStrategy import CompressionStrategy
 
 
-class Fcm(Compression_strategy):
+class Fcm(CompressionStrategy):
 
     def __init__(self, data, n_p=3, n_epochs=100, m=1.7):
 
@@ -16,8 +14,8 @@ class Fcm(Compression_strategy):
         self.n_epochs = n_epochs
         self.m = m
 
-    def get_data_features(self, data):
-        df_features = data.iloc[:, :-1]
+    def get_data_features(self):
+        df_features = self.data.iloc[:, :-1]
         return df_features
 
     def get_n_class_data(self):
@@ -45,24 +43,3 @@ class Fcm(Compression_strategy):
         print("Tempo esecuzione algoritmo")
         print(pd.Timestamp.now() - start)
         return prototypes
-
-    def draw_clusters(self, cluster_label, cluster_center):
-        X = self.data.iloc[:, :-1].to_numpy()
-        f, axs = plt.subplots(1, 2, figsize=(11, 5))
-        scatter(X[:, 0], X[:, 1], ax=axs[0])
-        scatter(X[:, 0], X[:, 1], ax=axs[1], hue=cluster_label)
-        scatter(cluster_center[:, 0], cluster_center[:, 1], ax=axs[1], marker=">", s=200)
-
-    def draw_prototypes(self, prototypes, alpha):
-        labels = set(prototypes[:, -1])
-        labels = list(labels)
-        data = pd.DataFrame(data=prototypes)
-        for row in data.itertuples():
-            if row[-1] == labels[0]:
-                color = "red"
-            elif row[-1] == labels[1]:
-                color = "green"
-            else:
-                color = "blue"
-            plt.scatter(row[1], row[2], color=color, alpha=alpha)
-        plt.show()

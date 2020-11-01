@@ -1,7 +1,4 @@
-import csv
-
 from pandas import DataFrame
-import json
 import doubleclusteringstar as dcstar
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -11,7 +8,7 @@ from data_compression.Lvq1 import Lvq1
 from data_compression.Fcm import Fcm
 import numpy as np
 
-datasets = ["appendicitis"]
+datasets = ["monk-2"]
 
 for dataset in datasets:
 
@@ -20,7 +17,7 @@ for dataset in datasets:
 
     original_dataset = pd.read_csv('dataset_ndimensionali/' + str(dataset) + '.csv', header=None)
     n_classes = 2
-    nps = [n_classes, n_classes * 2, n_classes * 4, n_classes * 8]
+    nps = [108]
 
     compression = Compression(original_dataset)
     used_dataset = compression.normalized_dataset()
